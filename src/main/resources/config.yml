@@ -1,0 +1,113 @@
+################################
+#      Mirai configuration     #
+###############################
+
+# user_id: Your bot's QQ number.
+user_id: 165420321
+
+# user_pass_md: MD5 string of your bot's QQ number.
+# It's recommend to use MD5 code to log in. If you filled this one, leave the next blank.
+user_pass_md5: "12354654321"
+
+# user_pass: Your bot's QQ password.
+# If you filled user_pass_md5, leave this blank. Phenyl will only use the first filled one anyway.
+user_pass: ""
+
+# login_protocol: the protocol used to log in.
+# Acceptable options: ANDROID_PHONE，ANDROID_PAD，ANDROID_WATCH. If meet problem logging in, try switch the protocol.
+login_protocol:
+
+# enabled_gourps: the QQ groups you want to enable Phenyl.
+enabled_gourps:
+    - 797717041
+    - 958173932
+
+################################
+#   Database configuration     #
+###############################
+
+# database: the kind of database you choose to store binding informations and chat messages.
+# Acceptable options: sqlite, mysql, postgresql.
+storage: sqlite
+
+# If you chose sqlite above, ignore the following configs.
+host:
+port:
+username:
+password:
+database:
+table_prefix:
+
+################################
+#   Message configuration      #
+###############################
+
+# message_mode: how Phenyl forward messages.
+# Acceptable options:
+#   sync - Sync all messages between QQ and Server.
+#          %username% variable is *NOT AVAILABLE* for qq-to-server message under this mode . Use %nickname% instead.
+#   command - Use `/ph say ~` on server and prefix in QQ to send message.
+#   bind - Only messages from users that bound username and QQ number would be forwarded.
+message_mode: "bind"
+
+# message_command: prefix of QQ messages to get forwarded to the server.
+message_prefix: "&"
+
+# Available variables:
+#   %server% - Your server name.
+#   %sub_server% - Sub-server where the message sent.
+#   %username% - Minecraft username.
+#   %nickname% - Nickname in QQ group.
+#   %message% - Message content.
+
+# send_cross_server: whether to forward message between sub-servers.
+send_cross_server: true
+
+# cross_sever_format: in-game cross server message format.
+cross_sever_format: "[%sub_server]%username%:%message%"
+
+# qq_to_server_format: format of QQ message forwarded to server.
+# Use %nickname% instead of %username% if you selected sync mode.
+qq_to_server_format: "[QQ]%username%:%message%"
+
+# server_to_qq_format: format of server chat message forwarded to QQ.
+server_to_qq_format: "%username%:%message%"
+
+# on_join: message sent to QQ when players joined the game.
+on_join: "%username% joined the game."
+
+# on_switch: message sent to QQ when players switched from one sub-server to another.
+on_switch: "%username% joined %sub_server%."
+
+# on_leave: message sent to QQ when players left the game.
+on_leave: "%username% left the game."
+
+################################
+#  Bungeecord configuration    #
+###############################
+
+# server_alias: the alias of your bungee servers.
+# If not set, Phenyl will use the server name.
+server_alias:
+    survival: "Survival"
+    flat: "Flat"
+    test: "Test"
+
+# enabled_servers: the servers you want to enable message forwarding.
+enabled_servers:
+    - survival
+    - flat
+    - test
+
+################################
+#    Binding configuration     #
+###############################
+
+# group_command: command sent in QQ groups to bind.
+group_command: "#bind"
+
+# confirm_command: command sent in QQ groups to confirm binding.
+confirm_command: "#confirm"
+
+# verification: the length of verification code. 0 to disable verifications.
+verification: 6
