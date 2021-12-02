@@ -1,0 +1,4 @@
+name: Phenyl
+version: '${version}'
+main: live.turna.phenyl.Phenyl
+description: Chat bridge for TurnALive
