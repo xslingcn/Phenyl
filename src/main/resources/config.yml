@@ -1,9 +1,9 @@
 ################################
 #      Mirai configuration     #
-###############################
+################################
 
 # user_id: Your bot's QQ number.
-user_id: 165420321
+user_id: "165420321"
 
 # user_pass_md: MD5 string of your bot's QQ number.
 # It's recommend to use MD5 code to log in. If you filled this one, leave the next blank.
@@ -24,23 +24,23 @@ enabled_gourps:
 
 ################################
 #   Database configuration     #
-###############################
+################################
 
 # database: the kind of database you choose to store binding informations and chat messages.
 # Acceptable options: sqlite, mysql, postgresql.
 storage: sqlite
 
 # If you chose sqlite above, ignore the following configs.
-host:
-port:
-username:
-password:
-database:
-table_prefix:
+host: "127.0.0.1"
+port: 3306
+username: "root"
+password: "123456"
+database: "Phenyl"
+table_prefix: "ph_"
 
 ################################
 #   Message configuration      #
-###############################
+################################
 
 # message_mode: how Phenyl forward messages.
 # Acceptable options:
@@ -84,7 +84,7 @@ on_leave: "%username% left the game."
 
 ################################
 #  Bungeecord configuration    #
-###############################
+################################
 
 # server_alias: the alias of your bungee servers.
 # If not set, Phenyl will use the server name.
@@ -101,7 +101,7 @@ enabled_servers:
 
 ################################
 #    Binding configuration     #
-###############################
+################################
 
 # group_command: command sent in QQ groups to bind.
 group_command: "#bind"

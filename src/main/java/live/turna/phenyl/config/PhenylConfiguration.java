@@ -9,8 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class PhenylConfiguration {
@@ -20,27 +21,36 @@ public class PhenylConfiguration {
     private static Configuration config;
 
     /**
-     * Mirai configuration
+     * @description Get YAML object and return a map.
+     * @param path The keyword to locate YAML section.
+     * @return HashMap map
      */
-    public static Long user_id = null;
-    public static String user_pass = "";
-    public static String login_protocol = "ANDROID_PHONE";
-    public static List<Long> enabled_groups;
+    private static HashMap<String, String> getMap(String path){
+        Collection<String> keys;
+        HashMap<String,String> map = new HashMap<>();
+        keys =  config.getSection(path).getKeys();
+        keys.forEach((key) ->
+                map.put(key,config.getSection(path).getString(key))
+        );
+        return map;
+    }
 
-    /**
-     * Database configuration
-     */
+    // Mirai configuration
+    public static String user_id = "1967859840";
+    public static String user_pass = "12345654321";
+    public static String login_protocol = "ANDROID_PHONE";
+    public static List<Long> enabled_groups = List.of();
+
+    // Database configuration
     public static String storage = "sqlite";
     public static String host = "127.0.0.1";
     public static int port = 3306;
     public static String username = "root";
-    public static String password = "";
+    public static String password = "123456";
     public static String database = "Phenyl";
     public static String table_prefix = "ph_";
 
-    /**
-     * Message configuration
-     */
+    // Message configuration
     public static String message_mode = "bind";
     public static String message_prefix="&";
     public static boolean send_cross_server = true;
@@ -51,22 +61,20 @@ public class PhenylConfiguration {
     public static String on_switch = "%username% joined %sub_server%.";
     public static String on_leave = "%username% left the game.";
 
-    /**
-     * Bungee configuration
-     */
-    public static Map<String,String> server_alias;
-    public static  List<String> enabled_servers;
+    // Bungee configuration
+    public static HashMap<String,String> server_alias = new HashMap<>();
+    public static List<String> enabled_servers = List.of();
 
-    /**
-     * Binding configuration
-     */
+    // Binding configuration
     public static String group_command = "#bind";
     public static String confirm_command = "#confirm";
     public static int verification = 6;
 
 
-
-    public static void PhenylConfiguration(){
+    /**
+     * @description Load Phenyl config.
+     */
+    public static void loadPhenylConfiguration(){
         try{
             if(!phenyl.getDataFolder().exists())
                 if(!phenyl.getDataFolder().mkdir()) throw new IOException();
@@ -87,22 +95,18 @@ public class PhenylConfiguration {
                 e.printStackTrace();
             }
         }
-        catch (IOException e){
-            LOGGER.severe("Failed to create data folder!" );
+        catch (IOException e) {
+            LOGGER.severe("Failed to create data folder!");
             e.printStackTrace();
         }
 
-        /**
-         * Mirai configuration
-         */
-        user_id = config.getLong("user_id");
-        user_pass = config.getString("user_pass_md5").exists() ? config.getString("user_pass_md5") : config.getString("user_pass");
+        //Mirai configuration
+        user_id = config.getString("user_id");
+        user_pass = !config.getString("user_pass_md5").isEmpty() ? config.getString("user_pass_md5") : config.getString("user_pass");
         login_protocol = config.getString("login_protocol");
         enabled_groups = config.getLongList("enabled_groups");
 
-        /**
-         * Database configuration
-         */
+        //Database configuration
         storage = config.getString("storage");
         host = config.getString("host");
         port = config.getInt("port");
@@ -111,9 +115,7 @@ public class PhenylConfiguration {
         database = config.getString("database");
         table_prefix = config.getString("table_prefix");
 
-        /**
-         * Message configuration
-         */
+        //Message configuration
         message_mode = config.getString("message_mode");
         message_prefix = config.getString("message_prefix");
         send_cross_server = config.getBoolean("send_cross_server");
@@ -124,17 +126,15 @@ public class PhenylConfiguration {
         on_switch = config.getString("on_switch");
         on_leave = config.getString("on_leave");
 
-        /**
-         * Bungee configuration
-         */
-        server_alias = config.getStringMap("server_alias");
+        //Bungee configuration
+        server_alias = getMap("server_alias");
         enabled_servers = config.getStringList("enabled_servers");
 
-        /**
-         * Binding configuration
-         */
+        //Binding configuration
         group_command = config.getString("group_command");
         confirm_command = config.getString("confirm_command");
         verification = config.getInt("verification");
+
+        LOGGER.info("Successfully loaded the configurations!");
     }
 }

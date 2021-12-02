@@ -22,4 +22,3 @@ java {
         vendor.set(JvmVendorSpec.ADOPTOPENJDK)
     }
 }
-
