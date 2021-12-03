@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * Configures phenyl.
+ *
  * @author xslingcn
  * @version 1.0
  * @since 2021/12/3 1:12

@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 /**
  * I18n for Phenyl messages.
  * Credit: com.earth2me.essentials.I18n
+ *
  * @author xsling
  * @version 1.0
  * @since 2021/12/3 17:45
@@ -21,6 +22,7 @@ public class I18n extends PhenylBase {
         protected Object handleGetObject(String key) {
             return null;
         }
+
         @Override
         public Enumeration<String> getKeys() {
             return null;
@@ -51,7 +53,8 @@ public class I18n extends PhenylBase {
 
     /**
      * Produce message corresponding to locale.
-     * @param key Keys of messages to locate in properties.
+     *
+     * @param key     Keys of messages to locate in properties.
      * @param objects Append objects.
      * @return String Formatted string
      */
@@ -67,7 +70,8 @@ public class I18n extends PhenylBase {
 
     /**
      * Format messages.
-     * @param key Keys of messages to locate in properties.
+     *
+     * @param key     Keys of messages to locate in properties.
      * @param objects Append objects.
      * @return MessageFormat Formatted string.
      */
@@ -78,7 +82,7 @@ public class I18n extends PhenylBase {
             try {
                 messageFormat = new MessageFormat(format);
             } catch (final IllegalArgumentException e) {
-                LOGGER.severe(i18n("invalidTransKey",key, e.getLocalizedMessage()));
+                LOGGER.severe(i18n("invalidTransKey", key, e.getLocalizedMessage()));
                 format = format.replaceAll("\\{(\\D*?)", "\\[$1\\]");
                 messageFormat = new MessageFormat(format);
             }
@@ -89,6 +93,7 @@ public class I18n extends PhenylBase {
 
     /**
      * Find the corresponding message string from properties.
+     *
      * @param key Keys of messages to locate in properties.
      * @return String Found string.
      */
@@ -100,13 +105,14 @@ public class I18n extends PhenylBase {
                 return localeBundle.getString(key);
             }
         } catch (final MissingResourceException e) {
-            LOGGER.warning(i18n("missingTransKey",e.getKey(),localeBundle.getLocale().toString()));
+            LOGGER.warning(i18n("missingTransKey", e.getKey(), localeBundle.getLocale().toString()));
             return defaultBundle.getString(key);
         }
     }
 
     /**
      * Update the locale.
+     *
      * @param locale The locale to be updated to.
      */
     public void updateLocale(final String locale) {
@@ -127,10 +133,10 @@ public class I18n extends PhenylBase {
 
         try {
             localeBundle = ResourceBundle.getBundle(MESSAGES, currentLocale);
-            LOGGER.info(i18n("usingLocale",currentLocale.toString()));
+            LOGGER.info(i18n("usingLocale", currentLocale.toString()));
         } catch (final MissingResourceException e) {
             localeBundle = NULL_BUNDLE;
-            LOGGER.warning(String.format("Locale %s not found! Falling back to English.",currentLocale));
+            LOGGER.warning(String.format("Locale %s not found! Falling back to English.", currentLocale));
             this.updateLocale("en");
         }
 

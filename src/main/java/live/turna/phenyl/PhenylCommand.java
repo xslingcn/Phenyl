@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 /**
  * Command model with Logger and Phenyl instance.
+ *
  * @author xsling
  * @version 1.0
  * @since 2021/12/3 22:31
