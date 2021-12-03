@@ -1,21 +1,19 @@
 package live.turna.phenyl.message;
 
-import live.turna.phenyl.Phenyl;
+import live.turna.phenyl.PhenylBase;
 
-import javax.security.auth.login.LoginException;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
+ * I18n for Phenyl messages.
+ * Credit: com.earth2me.essentials.I18n
  * @author xsling
  * @version 1.0
  * @since 2021/12/3 17:45
- * Credit: com.earth2me.essentials.I18n
  */
-public class I18n {
-    static final Logger LOGGER = Logger.getLogger("Phenyl");
+public class I18n extends PhenylBase {
     private static final String MESSAGES = "messages";
     private static final Pattern NODOUBLEMARK = Pattern.compile("''");
     private static final ResourceBundle NULL_BUNDLE = new ResourceBundle() {
@@ -31,7 +29,6 @@ public class I18n {
     private static I18n instance;
     private final transient Locale defaultLocale = Locale.getDefault();
     private final transient ResourceBundle defaultBundle;
-    private final transient Phenyl phenyl;
     private transient Locale currentLocale = defaultLocale;
     private transient ResourceBundle customBundle;
     private transient ResourceBundle localeBundle;
@@ -47,14 +44,13 @@ public class I18n {
     }
 
     public I18n() {
-        this.phenyl = Phenyl.getInstance();
         defaultBundle = ResourceBundle.getBundle(MESSAGES, Locale.ENGLISH);
         localeBundle = defaultBundle;
         customBundle = NULL_BUNDLE;
     }
 
     /**
-     * 
+     * Produce message corresponding to locale.
      * @param key Keys of messages to locate in properties.
      * @param objects Append objects.
      * @return String Formatted string
@@ -70,7 +66,7 @@ public class I18n {
     }
 
     /**
-     * 
+     * Format messages.
      * @param key Keys of messages to locate in properties.
      * @param objects Append objects.
      * @return MessageFormat Formatted string.
@@ -82,7 +78,7 @@ public class I18n {
             try {
                 messageFormat = new MessageFormat(format);
             } catch (final IllegalArgumentException e) {
-                LOGGER.severe(i18n("invalidTransKey",key,e.getMessage()));
+                LOGGER.severe(i18n("invalidTransKey",key, e.getLocalizedMessage()));
                 format = format.replaceAll("\\{(\\D*?)", "\\[$1\\]");
                 messageFormat = new MessageFormat(format);
             }
@@ -92,7 +88,7 @@ public class I18n {
     }
 
     /**
-     *
+     * Find the corresponding message string from properties.
      * @param key Keys of messages to locate in properties.
      * @return String Found string.
      */
@@ -110,7 +106,7 @@ public class I18n {
     }
 
     /**
-     *
+     * Update the locale.
      * @param locale The locale to be updated to.
      */
     public void updateLocale(final String locale) {

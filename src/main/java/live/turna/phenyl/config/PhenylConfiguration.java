@@ -1,6 +1,6 @@
 package live.turna.phenyl.config;
 
-import live.turna.phenyl.Phenyl;
+import live.turna.phenyl.PhenylBase;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -14,16 +14,13 @@ import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * @author xslingcn
  * @version 1.0
  * @since 2021/12/3 1:12
  */
-public class PhenylConfiguration {
-    protected static final Logger LOGGER = Logger.getLogger("Phenyl");
-    private static final Phenyl phenyl = Phenyl.getInstance();
+public class PhenylConfiguration extends PhenylBase {
 
     private static Configuration config;
 
@@ -31,12 +28,12 @@ public class PhenylConfiguration {
      * @param path The keyword to locate YAML section.
      * @return HashMap $map
      */
-    private static HashMap<String, String> getMap(String path){
+    private static HashMap<String, String> getMap(String path) {
         Collection<String> keys;
-        HashMap<String,String> map = new HashMap<>();
-        keys =  config.getSection(path).getKeys();
+        HashMap<String, String> map = new HashMap<>();
+        keys = config.getSection(path).getKeys();
         keys.forEach((key) ->
-                map.put(key,config.getSection(path).getString(key))
+                map.put(key, config.getSection(path).getString(key))
         );
         return map;
     }
@@ -44,12 +41,13 @@ public class PhenylConfiguration {
     // General configuration
     public static String locale = "en";
     public static String forward_mode = "bind";
-    public static String forward_prefix="&";
+    public static String forward_prefix = "&";
     public static boolean send_cross_server = true;
 
     // Mirai configuration
-    public static String user_id = "1967859840";
-    public static String user_pass = "12345654321";
+    public static Long user_id = 1967859840L;
+    public static boolean use_md5 = true;
+    public static String user_pass = "E10ADC3949BA59ABBE56E057F20F883E";
     public static String login_protocol = "ANDROID_PHONE";
     public static List<Long> enabled_groups = List.of();
 
@@ -71,7 +69,7 @@ public class PhenylConfiguration {
     public static String on_leave = "%username% left the game.";
 
     // Bungee configuration
-    public static HashMap<String,String> server_alias = new HashMap<>();
+    public static HashMap<String, String> server_alias = new HashMap<>();
     public static List<String> enabled_servers = List.of();
 
     // Binding configuration
@@ -80,32 +78,25 @@ public class PhenylConfiguration {
     public static int verification = 6;
 
     /**
-     * @throws IOException Throws when failed to read or generate config file.
+     * Load configurations.
      */
-    public static void loadPhenylConfiguration(){
-        try{
-            if(!phenyl.getDataFolder().exists())
-                if(!phenyl.getDataFolder().mkdir()) throw new IOException();
-            File configFile = new File(phenyl.getDataFolder(),"config.yml");
-            if(!configFile.exists()){
-                try (InputStream in = phenyl.getResourceAsStream("config.yml")) {
-                    Files.copy(in, configFile.toPath());
-                } catch (IOException e) {
-                    LOGGER.severe(i18n("createConfigFail"));
-                    e.printStackTrace();
-                }
+    public static void loadPhenylConfiguration() {
+        if (!phenyl.getDataFolder().exists())
+            if (!phenyl.getDataFolder().mkdir()) {
+                LOGGER.severe(i18n("createDataFolderFail"));
             }
-            try {
-                config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(phenyl.getDataFolder(), "config.yml"));
-            }
-            catch (IOException e){
-                LOGGER.severe(i18n("readConfigFail"));
-                e.printStackTrace();
+        File configFile = new File(phenyl.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            try (InputStream in = phenyl.getResourceAsStream("config.yml")) {
+                Files.copy(in, configFile.toPath());
+            } catch (IOException e) {
+                LOGGER.severe(i18n("createConfigFail", e.getLocalizedMessage()));
             }
         }
-        catch (IOException e) {
-            LOGGER.severe(i18n("createDataFolderFail"));
-            e.printStackTrace();
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(phenyl.getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            LOGGER.severe(i18n("readConfigFail", e.getLocalizedMessage()));
         }
 
         //General configuration
@@ -115,8 +106,9 @@ public class PhenylConfiguration {
         send_cross_server = config.getBoolean("send_cross_server");
 
         //Mirai configuration
-        user_id = config.getString("user_id");
-        user_pass = !config.getString("user_pass_md5").isEmpty() ? config.getString("user_pass_md5") : config.getString("user_pass");
+        user_id = config.getLong("user_id");
+        use_md5 = config.getBoolean("user_md5");
+        user_pass = config.getString("user_pass");
         login_protocol = config.getString("login_protocol");
         enabled_groups = config.getLongList("enabled_groups");
 
