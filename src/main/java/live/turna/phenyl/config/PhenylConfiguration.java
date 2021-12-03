@@ -5,6 +5,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 
+import static live.turna.phenyl.message.I18n.i18n;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,7 +91,7 @@ public class PhenylConfiguration {
                 try (InputStream in = phenyl.getResourceAsStream("config.yml")) {
                     Files.copy(in, configFile.toPath());
                 } catch (IOException e) {
-                    LOGGER.severe("Failed to create config file!");
+                    LOGGER.severe(i18n("createConfigFail"));
                     e.printStackTrace();
                 }
             }
@@ -97,12 +99,12 @@ public class PhenylConfiguration {
                 config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(phenyl.getDataFolder(), "config.yml"));
             }
             catch (IOException e){
-                LOGGER.severe("Failed to read configurations!");
+                LOGGER.severe(i18n("readConfigFail"));
                 e.printStackTrace();
             }
         }
         catch (IOException e) {
-            LOGGER.severe("Failed to create data folder!");
+            LOGGER.severe(i18n("createDataFolderFail"));
             e.printStackTrace();
         }
 
@@ -144,6 +146,5 @@ public class PhenylConfiguration {
         confirm_command = config.getString("confirm_command");
         verification = config.getInt("verification");
 
-        LOGGER.info("Successfully loaded the configurations!");
     }
 }

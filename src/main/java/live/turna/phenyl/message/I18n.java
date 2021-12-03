@@ -1,16 +1,10 @@
-package live.turna.phenyl;
+package live.turna.phenyl.message;
 
-import org.jetbrains.annotations.NotNull;
+import live.turna.phenyl.Phenyl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import javax.security.auth.login.LoginException;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -26,7 +20,7 @@ public class I18n {
     private static final Pattern NODOUBLEMARK = Pattern.compile("''");
     private static final ResourceBundle NULL_BUNDLE = new ResourceBundle() {
         @Override
-        protected Object handleGetObject(@NotNull String key) {
+        protected Object handleGetObject(String key) {
             return null;
         }
         @Override
@@ -88,7 +82,7 @@ public class I18n {
             try {
                 messageFormat = new MessageFormat(format);
             } catch (final IllegalArgumentException e) {
-                LOGGER.severe("Invalid Translation key for '" + key + "': " + e.getMessage());
+                LOGGER.severe(i18n("invalidTransKey",key,e.getMessage()));
                 format = format.replaceAll("\\{(\\D*?)", "\\[$1\\]");
                 messageFormat = new MessageFormat(format);
             }
@@ -110,7 +104,7 @@ public class I18n {
                 return localeBundle.getString(key);
             }
         } catch (final MissingResourceException e) {
-                LOGGER.warning(String.format("Missing translation key \"%s\" in translation file %s.\n", e.getKey(), localeBundle.getLocale().toString()) + e);
+            LOGGER.warning(i18n("missingTransKey",e.getKey(),localeBundle.getLocale().toString()));
             return defaultBundle.getString(key);
         }
     }
@@ -134,56 +128,17 @@ public class I18n {
         }
         ResourceBundle.clearCache();
         messageFormatCache = new HashMap<>();
-        LOGGER.info(String.format("Using locale %s", currentLocale.toString()));
 
         try {
             localeBundle = ResourceBundle.getBundle(MESSAGES, currentLocale);
+            LOGGER.info(i18n("usingLocale",currentLocale.toString()));
         } catch (final MissingResourceException e) {
             localeBundle = NULL_BUNDLE;
+            LOGGER.warning(String.format("Locale %s not found! Falling back to English.",currentLocale));
+            this.updateLocale("en");
         }
 
-        try {
-            customBundle = ResourceBundle.getBundle(MESSAGES, currentLocale, new FileResClassLoader(I18n.class.getClassLoader(), phenyl));
-        } catch (final MissingResourceException e) {
-            LOGGER.warning(String.format("Translation file of Locale %s not found!\n", customBundle.getLocale().toString()) + e);
-            customBundle = NULL_BUNDLE;
-        }
     }
 
-    private static class FileResClassLoader extends ClassLoader {
-        private final transient File dataFolder;
-
-        FileResClassLoader(final ClassLoader classLoader, final Phenyl phenyl) {
-            super(classLoader);
-            this.dataFolder = phenyl.getDataFolder();
-        }
-
-        @Override
-        public URL getResource(final String string) {
-            final File file = new File(dataFolder, string);
-            if (file.exists()) {
-                try {
-                    return file.toURI().toURL();
-                }
-                catch (final MalformedURLException e) {
-                    LOGGER.warning(e.toString());
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public InputStream getResourceAsStream(final String string) {
-            final File file = new File(dataFolder, string);
-            if (file.exists()) {
-                try {
-                    return new FileInputStream(file);
-                } catch (final FileNotFoundException e) {
-                    LOGGER.warning(e.toString());
-                }
-            }
-            return null;
-        }
-    }
 
 }

@@ -2,6 +2,8 @@ package live.turna.phenyl;
 
 import live.turna.phenyl.commands.CommandHandler;
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.message.I18n;
+import static live.turna.phenyl.message.I18n.i18n;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -11,7 +13,7 @@ public final class Phenyl extends Plugin {
     static final Logger LOGGER = Logger.getLogger("Phenyl");
 
     private static Phenyl instance;
-    private transient I18n i18n;
+    private transient I18n i18nInstance;
 
     public static Phenyl getInstance() {
         return instance;
@@ -27,19 +29,22 @@ public final class Phenyl extends Plugin {
         instance = this;
         PhenylConfiguration.loadPhenylConfiguration();
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
-        i18n = new I18n();
-        i18n.onEnable();
-        i18n.updateLocale("en");
+        i18nInstance = new I18n();
+        i18nInstance.onEnable();
+        i18nInstance.updateLocale(PhenylConfiguration.locale);
+        LOGGER.info(i18n("configLoaded"));
 
     }
 
     public void reload(){
-        i18n.updateLocale(PhenylConfiguration.locale);
+        PhenylConfiguration.loadPhenylConfiguration();
+        i18nInstance.updateLocale(PhenylConfiguration.locale);
+        LOGGER.info(i18n("reloadSuccessful"));
     }
     @Override
     public void onDisable() {
-        if (i18n != null) {
-            i18n.onDisable();
+        if (i18nInstance != null) {
+            i18nInstance.onDisable();
         }
     }
 }
