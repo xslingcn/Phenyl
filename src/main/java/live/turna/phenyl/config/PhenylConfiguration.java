@@ -14,6 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * @author xslingcn
+ * @version 1.0
+ * @since 2021/12/3 1:12
+ */
 public class PhenylConfiguration {
     protected static final Logger LOGGER = Logger.getLogger("Phenyl");
     private static final Phenyl phenyl = Phenyl.getInstance();
@@ -21,9 +26,8 @@ public class PhenylConfiguration {
     private static Configuration config;
 
     /**
-     * @description Get YAML object and return a map.
      * @param path The keyword to locate YAML section.
-     * @return HashMap map
+     * @return HashMap $map
      */
     private static HashMap<String, String> getMap(String path){
         Collection<String> keys;
@@ -34,6 +38,12 @@ public class PhenylConfiguration {
         );
         return map;
     }
+
+    // General configuration
+    public static String locale = "en";
+    public static String forward_mode = "bind";
+    public static String forward_prefix="&";
+    public static boolean send_cross_server = true;
 
     // Mirai configuration
     public static String user_id = "1967859840";
@@ -51,9 +61,6 @@ public class PhenylConfiguration {
     public static String table_prefix = "ph_";
 
     // Message configuration
-    public static String message_mode = "bind";
-    public static String message_prefix="&";
-    public static boolean send_cross_server = true;
     public static String cross_sever_format = "[%sub_server]%username%:%message%";
     public static String qq_to_server_format = "[QQ]%username%:%message%";
     public static String server_to_qq_format = "%username%:%message%";
@@ -70,9 +77,8 @@ public class PhenylConfiguration {
     public static String confirm_command = "#confirm";
     public static int verification = 6;
 
-
     /**
-     * @description Load Phenyl config.
+     * @throws IOException Throws when failed to read or generate config file.
      */
     public static void loadPhenylConfiguration(){
         try{
@@ -100,6 +106,12 @@ public class PhenylConfiguration {
             e.printStackTrace();
         }
 
+        //General configuration
+        locale = config.getString("locale");
+        forward_mode = config.getString("message_mode");
+        forward_prefix = config.getString("message_prefix");
+        send_cross_server = config.getBoolean("send_cross_server");
+
         //Mirai configuration
         user_id = config.getString("user_id");
         user_pass = !config.getString("user_pass_md5").isEmpty() ? config.getString("user_pass_md5") : config.getString("user_pass");
@@ -116,9 +128,6 @@ public class PhenylConfiguration {
         table_prefix = config.getString("table_prefix");
 
         //Message configuration
-        message_mode = config.getString("message_mode");
-        message_prefix = config.getString("message_prefix");
-        send_cross_server = config.getBoolean("send_cross_server");
         cross_sever_format = config.getString("cross_sever_format");
         qq_to_server_format = config.getString("qq_to_server_format");
         server_to_qq_format = config.getString("server_to_qq_format");

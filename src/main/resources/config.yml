@@ -1,8 +1,28 @@
 ################################
+#     General configuration    #
+################################
+# locale: localization of your server
+locale: en
+
+# forward_mode: how Phenyl forward messages.
+# Acceptable options:
+#   sync - Sync all messages between QQ and Server.
+#          %username% variable is *NOT AVAILABLE* for qq-to-server message under this mode . Use %nickname% instead.
+#   command - Use `/ph say ~` on server and prefix in QQ to send message.
+#   bind - Only messages from users that bound username and QQ number would be forwarded.
+forward_mode: "bind"
+
+# message_command: prefix of QQ messages to get forwarded to the server.
+forward_prefix: "&"
+
+# send_cross_server: whether to forward message between sub-servers.
+send_cross_server: true
+
+################################
 #      Mirai configuration     #
 ################################
 
-# user_id: Your bot's QQ number.
+# user_id: your bot's QQ number.
 user_id: "165420321"
 
 # user_pass_md: MD5 string of your bot's QQ number.
@@ -15,7 +35,7 @@ user_pass: ""
 
 # login_protocol: the protocol used to log in.
 # Acceptable options: ANDROID_PHONE，ANDROID_PAD，ANDROID_WATCH. If meet problem logging in, try switch the protocol.
-login_protocol:
+login_protocol: "ANDROID_PHONE"
 
 # enabled_gourps: the QQ groups you want to enable Phenyl.
 enabled_gourps:
@@ -28,7 +48,7 @@ enabled_gourps:
 
 # database: the kind of database you choose to store binding informations and chat messages.
 # Acceptable options: sqlite, mysql, postgresql.
-storage: sqlite
+storage: "sqlite"
 
 # If you chose sqlite above, ignore the following configs.
 host: "127.0.0.1"
@@ -42,26 +62,12 @@ table_prefix: "ph_"
 #   Message configuration      #
 ################################
 
-# message_mode: how Phenyl forward messages.
-# Acceptable options:
-#   sync - Sync all messages between QQ and Server.
-#          %username% variable is *NOT AVAILABLE* for qq-to-server message under this mode . Use %nickname% instead.
-#   command - Use `/ph say ~` on server and prefix in QQ to send message.
-#   bind - Only messages from users that bound username and QQ number would be forwarded.
-message_mode: "bind"
-
-# message_command: prefix of QQ messages to get forwarded to the server.
-message_prefix: "&"
-
 # Available variables:
 #   %server% - Your server name.
 #   %sub_server% - Sub-server where the message sent.
 #   %username% - Minecraft username.
 #   %nickname% - Nickname in QQ group.
 #   %message% - Message content.
-
-# send_cross_server: whether to forward message between sub-servers.
-send_cross_server: true
 
 # cross_sever_format: in-game cross server message format.
 cross_sever_format: "[%sub_server]%username%:%message%"
