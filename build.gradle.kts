@@ -1,10 +1,11 @@
 group = "live.turna"
-version = "1.0-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 
 plugins {
     java
     kotlin("jvm") version "1.5.10"
     id("net.minecrell.plugin-yml.bungee") version "0.5.0"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 repositories {
@@ -15,6 +16,8 @@ repositories {
 dependencies {
     compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
     api("net.mamoe", "mirai-core", "2.8.2")
+    api("org.apache.logging.log4j", "log4j-api", "2.14.1")
+    api("org.apache.logging.log4j", "log4j-core", "2.14.1")
 }
 
 java {
@@ -24,9 +27,18 @@ java {
     }
 }
 
+tasks {
+    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+        mergeServiceFiles()
+        manifest {
+            attributes(mapOf("Main-Class" to "llive.turna.phenyl.Phenyl"))
+        }
+    }
+}
+
 bungee {
     name = "Phenyl"
-    version = "1.0-SNAPSHOT"
+    version = version
     description = "Chat bridge for TurnALive"
     main = "live.turna.phenyl.Phenyl"
     author = "TurnALive"
