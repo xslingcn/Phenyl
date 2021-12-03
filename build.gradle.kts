@@ -4,6 +4,7 @@ version = "1.0-SNAPSHOT"
 plugins {
     java
     kotlin("jvm") version "1.5.10"
+    id("net.minecrell.plugin-yml.bungee") version "0.5.0"
 }
 
 repositories {
@@ -21,4 +22,12 @@ java {
         languageVersion.set(JavaLanguageVersion.of(17))
         vendor.set(JvmVendorSpec.ADOPTOPENJDK)
     }
+}
+
+bungee {
+    name = "Phenyl"
+    version = "1.0-SNAPSHOT"
+    description = "Chat bridge for TurnALive"
+    main = "live.turna.phenyl.Phenyl"
+    author = "TurnALive"
 }

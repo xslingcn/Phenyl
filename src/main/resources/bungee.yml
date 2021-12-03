@@ -1,5 +1,0 @@
-name: Phenyl
-version: '${version}'
-author: xsling
-main: live.turna.phenyl.Phenyl
-description: Chat bridge for TurnALive
