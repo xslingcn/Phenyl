@@ -23,15 +23,14 @@ send_cross_server: true
 ################################
 
 # user_id: your bot's QQ number.
-user_id: "165420321"
+user_id: 165420321
 
-# user_pass_md: MD5 string of your bot's QQ number.
-# It's recommend to use MD5 code to log in. If you filled this one, leave the next blank.
-user_pass_md5: "12354654321"
+# use_md5: Whether the password you give is MD5 digested.
+use_md5: true
 
 # user_pass: Your bot's QQ password.
-# If you filled user_pass_md5, leave this blank. Phenyl will only use the first filled one anyway.
-user_pass: ""
+# If you set use_md5 to true, make sure you filled MD5 digested password for this one.
+user_pass: "E10ADC3949BA59ABBE56E057F20F883E"
 
 # login_protocol: the protocol used to log in.
 # Acceptable options: ANDROID_PHONE，ANDROID_PAD，ANDROID_WATCH. If meet problem logging in, try switch the protocol.
