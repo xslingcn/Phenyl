@@ -52,6 +52,7 @@ public final class Phenyl extends Plugin {
         new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         MiraiHandler.logIn();
         miraiEventInstance.listenEvents();
+        LOGGER.info(i18n("reloadSuccessful"));
     }
 
     @Override

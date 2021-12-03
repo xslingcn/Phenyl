@@ -1,6 +1,9 @@
 package live.turna.phenyl.utils;
 
 import live.turna.phenyl.PhenylBase;
+import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.NormalMember;
+import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.utils.BotConfiguration;
 
 import java.io.File;
@@ -8,7 +11,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import static live.turna.phenyl.message.I18n.i18n;
 
@@ -28,11 +30,12 @@ public class Mirai extends PhenylBase {
      * @return Digested password.
      * @throws NoSuchAlgorithmException No MD5 algorithm
      */
-    public static String md5Digest(String user_pass) throws NoSuchAlgorithmException {
+    public static byte[] md5Digest(String user_pass) throws NoSuchAlgorithmException {
+        byte[] pass;
         MessageDigest digest = MessageDigest.getInstance("MD5");
         digest.update(user_pass.getBytes(StandardCharsets.UTF_8));
-        user_pass = Arrays.toString(digest.digest());
-        return user_pass;
+        pass = digest.digest();
+        return pass;
     }
 
     /**
@@ -69,6 +72,18 @@ public class Mirai extends PhenylBase {
             protocol = BotConfiguration.MiraiProtocol.ANDROID_WATCH;
         } else throw new IllegalArgumentException();
         return protocol;
+    }
+
+    public static void sendGroup(Group group, String message){
+        group.sendMessage(message);
+    }
+
+    public static void sendNormalMember(NormalMember member, String message){
+        member.sendMessage(message);
+    }
+
+    public static void sendUser(User user, String message){
+        user.sendMessage(message);
     }
 
 }

@@ -42,21 +42,21 @@ public class PhenylConfiguration extends PhenylBase {
 
     // General configuration
     public static String locale = "en";
+    public static Boolean debug = false;
     public static String forward_mode = "bind";
     public static String forward_prefix = "&";
-    public static boolean send_cross_server = true;
+    public static Boolean send_cross_server = true;
 
     // Mirai configuration
     public static Long user_id = 1967859840L;
-    public static boolean use_md5 = true;
-    public static String user_pass = "E10ADC3949BA59ABBE56E057F20F883E";
+    public static String user_pass = "12345654321";
     public static String login_protocol = "ANDROID_PHONE";
     public static List<Long> enabled_groups = List.of();
 
     // Database configuration
     public static String storage = "sqlite";
     public static String host = "127.0.0.1";
-    public static int port = 3306;
+    public static Integer port = 3306;
     public static String username = "root";
     public static String password = "123456";
     public static String database = "Phenyl";
@@ -103,13 +103,13 @@ public class PhenylConfiguration extends PhenylBase {
 
         //General configuration
         locale = config.getString("locale");
+        debug = config.getBoolean("debug");
         forward_mode = config.getString("message_mode");
         forward_prefix = config.getString("message_prefix");
         send_cross_server = config.getBoolean("send_cross_server");
 
         //Mirai configuration
         user_id = config.getLong("user_id");
-        use_md5 = config.getBoolean("user_md5");
         user_pass = config.getString("user_pass");
         login_protocol = config.getString("login_protocol");
         enabled_groups = config.getLongList("enabled_groups");

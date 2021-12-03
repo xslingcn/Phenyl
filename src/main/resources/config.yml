@@ -4,6 +4,9 @@
 # locale: localization of your server
 locale: en
 
+# debug: whether to print debug info.
+debug: false
+
 # forward_mode: how Phenyl forward messages.
 # Acceptable options:
 #   sync - Sync all messages between QQ and Server.
@@ -25,19 +28,16 @@ send_cross_server: true
 # user_id: your bot's QQ number.
 user_id: 165420321
 
-# use_md5: Whether the password you give is MD5 digested.
-use_md5: true
-
 # user_pass: Your bot's QQ password.
-# If you set use_md5 to true, make sure you filled MD5 digested password for this one.
-user_pass: "E10ADC3949BA59ABBE56E057F20F883E"
+# If you select ANDROID_PHONE as protocol, make sure your password length is less than 16.
+user_pass: "12345654321"
 
 # login_protocol: the protocol used to log in.
 # Acceptable options: ANDROID_PHONE，ANDROID_PAD，ANDROID_WATCH. If meet problem logging in, try switch the protocol.
 login_protocol: "ANDROID_PHONE"
 
-# enabled_gourps: the QQ groups you want to enable Phenyl.
-enabled_gourps:
+# enabled_groups: the QQ groups you want to enable Phenyl.
+enabled_groups:
     - 797717041
     - 958173932
 
