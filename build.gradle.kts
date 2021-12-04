@@ -14,9 +14,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.4")
-    api("net.mamoe", "mirai-core", "2.8.2")
-    api("org.apache.logging.log4j", "log4j-api", "2.14.1")
+    compileOnly("net.md-5","bungeecord-api","1.16-R0.4")
+
+    api("net.mamoe", "mirai-core-api","2.8.2")
+    runtimeOnly("net.mamoe", "mirai-core", "2.8.2")
+
     api("org.apache.logging.log4j", "log4j-core", "2.14.1")
 }
 
@@ -27,14 +29,6 @@ java {
     }
 }
 
-tasks {
-    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        mergeServiceFiles()
-        manifest {
-            attributes(mapOf("Main-Class" to "llive.turna.phenyl.Phenyl"))
-        }
-    }
-}
 
 bungee {
     name = "Phenyl"
