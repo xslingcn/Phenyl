@@ -10,11 +10,11 @@ import net.md_5.bungee.api.plugin.Event;
  */
 public class CImageUploadEvent extends Event {
     private final ImageUploadEvent event;
-    private final Boolean result;
+    private boolean result;
 
-    public CImageUploadEvent(ImageUploadEvent event, Boolean result) {
+    public CImageUploadEvent(ImageUploadEvent event) {
         this.event = event;
-        this.result = result;
+        this.result = event.getClass().toString().split("\\$")[1].equalsIgnoreCase("Succeed");
     }
 
 }

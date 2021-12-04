@@ -10,10 +10,10 @@ import net.md_5.bungee.api.plugin.Event;
  */
 public class CBotOfflineEvent extends Event {
     private final BotOfflineEvent event;
-    private final String Type;
+    private final String type;
 
-    public CBotOfflineEvent(BotOfflineEvent event, String type) {
+    public CBotOfflineEvent(BotOfflineEvent event) {
         this.event = event;
-        this.Type = type;
+        this.type = event.getClass().toString().split("\\$")[1];
     }
 }
