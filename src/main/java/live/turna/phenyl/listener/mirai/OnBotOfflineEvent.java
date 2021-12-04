@@ -13,6 +13,13 @@ import static live.turna.phenyl.message.I18n.i18n;
  * @since 2021/12/4 18:55
  */
 public class OnBotOfflineEvent extends PhenylListener {
+    public OnBotOfflineEvent() {}
 
-
+    @EventHandler
+    public void OnBotOffline(CBotOfflineEvent event) {
+        if (event.getType().equalsIgnoreCase("force"))
+            LOGGER.warn(i18n("occupiedOffline", String.valueOf(event.getID())));
+        else
+            LOGGER.warn(i18n("droppedOffline", String.valueOf(event.getID()), event.getType()));
+    }
 }

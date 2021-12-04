@@ -16,4 +16,12 @@ public class CBotOfflineEvent extends Event {
         this.event = event;
         this.type = event.getClass().toString().split("\\$")[1];
     }
+
+    public String getType(){
+        return type;
+    }
+
+    public Long getID(){
+        return event.getBot().getId();
+    }
 }
