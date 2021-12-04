@@ -85,20 +85,20 @@ public class PhenylConfiguration extends PhenylBase {
     public static void loadPhenylConfiguration() {
         if (!phenyl.getDataFolder().exists())
             if (!phenyl.getDataFolder().mkdir()) {
-                LOGGER.severe(i18n("createDataFolderFail"));
+                LOGGER.error(i18n("createDataFolderFail"));
             }
         File configFile = new File(phenyl.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             try (InputStream in = phenyl.getResourceAsStream("config.yml")) {
                 Files.copy(in, configFile.toPath());
             } catch (IOException e) {
-                LOGGER.severe(i18n("createConfigFail", e.getLocalizedMessage()));
+                LOGGER.error(i18n("createConfigFail", e.getLocalizedMessage()));
             }
         }
         try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(phenyl.getDataFolder(), "config.yml"));
         } catch (IOException e) {
-            LOGGER.severe(i18n("readConfigFail", e.getLocalizedMessage()));
+            LOGGER.error(i18n("readConfigFail", e.getLocalizedMessage()));
         }
 
         //General configuration

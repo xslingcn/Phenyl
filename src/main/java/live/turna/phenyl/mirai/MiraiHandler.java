@@ -6,11 +6,10 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.utils.BotConfiguration;
 import net.mamoe.mirai.utils.LoggerAdapters;
+import org.apache.logging.log4j.MarkerManager;
 
 import static live.turna.phenyl.message.I18n.i18n;
-import static live.turna.phenyl.utils.Mirai.md5Digest;
-import static live.turna.phenyl.utils.Mirai.checkMiraiDir;
-import static live.turna.phenyl.utils.Mirai.matchProtocol;
+import static live.turna.phenyl.utils.Mirai.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,12 +24,12 @@ import java.security.NoSuchAlgorithmException;
  */
 public class MiraiHandler extends PhenylBase {
 
-    public transient static Bot bot;
+    public static Bot bot;
 
-    private transient static Long user_id;
-    private transient static byte[] user_pass;
-    private transient static BotConfiguration.MiraiProtocol protocol;
-    private transient static File workingDir;
+    private static Long user_id;
+    private static byte[] user_pass;
+    private static BotConfiguration.MiraiProtocol protocol;
+    private static File workingDir;
 
     /**
      * Initialize MiraiHandler.
@@ -44,17 +43,17 @@ public class MiraiHandler extends PhenylBase {
         try {
             workingDir = checkMiraiDir(new File(phenyl.getDataFolder(), "mirai"));
         } catch (IOException e) {
-            LOGGER.severe(i18n("createMiraiDirFail"));
+            LOGGER.error(i18n("createMiraiDirFail"));
         }
         try {
             protocol = matchProtocol(pro);
         } catch (IllegalArgumentException e) {
-            LOGGER.severe(i18n("matchProtocolFail"));
+            LOGGER.error(i18n("matchProtocolFail"));
         }
         try {
             user_pass = md5Digest(pass);
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.severe(i18n("digestFail") + e.getLocalizedMessage());
+            LOGGER.error(i18n("digestFail") + e.getLocalizedMessage());
         }
         configureBot();
     }
@@ -68,14 +67,15 @@ public class MiraiHandler extends PhenylBase {
             setWorkingDir(workingDir);
             fileBasedDeviceInfo();
             if (PhenylConfiguration.debug) {
-                setBotLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LOGGER));
-                setNetworkLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LOGGER));
+                setBotLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LOGGER, MarkerManager.getMarker("MIRAI")));
+                setNetworkLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LOGGER, MarkerManager.getMarker("MIRAI")));
             } else {
                 noBotLog();
                 noNetworkLog();
             }
         }});
     }
+
 
     /**
      * Try to log in.
@@ -84,14 +84,14 @@ public class MiraiHandler extends PhenylBase {
         try {
             if (Bot.getInstanceOrNull(user_id) == null) {
                 new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-            } else if (Bot.getInstance(user_id).isOnline()) {
-                LOGGER.warning(i18n("alreadyLoggedIn", String.valueOf(Bot.getInstance(user_id).getId())));
+            } else if(Bot.getInstance(user_id).isOnline()) {
+                LOGGER.warn(i18n("alreadyLoggedIn", String.valueOf(Bot.getInstance(user_id).getId())));
                 return;
             }
             Bot.getInstance(user_id).login();
             LOGGER.info(i18n("logInSuccess", bot.getNick()));
         } catch (Exception e) {
-            LOGGER.severe(i18n("logInFail", e.getLocalizedMessage()));
+            LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
         }
     }
 
@@ -100,14 +100,14 @@ public class MiraiHandler extends PhenylBase {
      */
     public static void logOut() {
         try {
-            if (Bot.getInstanceOrNull(user_id) == null){
-                LOGGER.warning(i18n("yetLoggedIn"));
+            if (Bot.getInstanceOrNull(user_id) == null) {
+                LOGGER.warn(i18n("yetLoggedIn"));
                 return;
             }
             bot.close();
             LOGGER.info(i18n("logOutSuccess", String.valueOf(Bot.getInstance(user_id).getId())));
         } catch (Exception e) {
-            LOGGER.warning(i18n("logOutFail", e.getLocalizedMessage()));
+            LOGGER.warn(i18n("logOutFail", e.getLocalizedMessage()));
         }
     }
 
