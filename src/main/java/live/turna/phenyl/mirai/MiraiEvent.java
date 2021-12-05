@@ -1,6 +1,8 @@
 package live.turna.phenyl.mirai;
 
+import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.mirai.event.*;
+import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.Listener;
 import net.mamoe.mirai.event.events.*;
@@ -12,7 +14,7 @@ import net.md_5.bungee.api.ProxyServer;
  *
  * @since 2021/12/4 4:20
  */
-public class MiraiEvent {
+public class MiraiEvent extends PhenylBase {
     private static Listener<BotOfflineEvent> BotOfflineListener;
     private static Listener<MemberJoinEvent> MemberJoinListener;
     private static Listener<MemberLeaveEvent> MemberLeaveListener;
@@ -21,9 +23,9 @@ public class MiraiEvent {
     private static Listener<NudgeEvent> NudgeListener;
     private static Listener<UserMessageEvent> UserMessageListener;
 
-    private final static EventChannel<BotEvent> eventChannel = MiraiHandler.bot.getEventChannel();
+    public static void listenEvents(Bot bot) {
+        EventChannel<BotEvent> eventChannel = bot.getEventChannel();
 
-    public static void listenEvents() {
         BotOfflineListener = eventChannel.subscribeAlways(BotOfflineEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CBotOfflineEvent(e)));
         MemberJoinListener = eventChannel.subscribeAlways(MemberJoinEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CMemberJoinEvent(e)));
         MemberLeaveListener = eventChannel.subscribeAlways(MemberLeaveEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CMemberLeaveEvent(e)));
@@ -31,10 +33,7 @@ public class MiraiEvent {
         ImageUploadListener = eventChannel.subscribeAlways(ImageUploadEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CImageUploadEvent(e)));
         NudgeListener = eventChannel.subscribeAlways(NudgeEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CNudgeEvent(e)));
         UserMessageListener = eventChannel.subscribeAlways(UserMessageEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CUserMessageEvent(e)));
-
-
     }
-
     public static void removeListeners() {
         BotOfflineListener.complete();
         MemberJoinListener.complete();

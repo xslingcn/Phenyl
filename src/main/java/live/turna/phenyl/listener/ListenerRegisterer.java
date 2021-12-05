@@ -12,8 +12,12 @@ import net.md_5.bungee.api.ProxyServer;
  * @since 2021/12/4 22:42
  */
 public class ListenerRegisterer extends PhenylBase {
-    public static void registerListeners(){
+    public static void registerListeners() {
         ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnBotOfflineEvent());
         ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnGroupMessageEvent());
+    }
+
+    public static void unregisterListeners() {
+        ProxyServer.getInstance().getPluginManager().unregisterListeners(phenyl);
     }
 }

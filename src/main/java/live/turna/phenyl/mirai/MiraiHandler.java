@@ -23,8 +23,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class MiraiHandler extends PhenylBase {
 
-    public static Bot bot;
-
+    private static Bot bot;
     private static Long userID;
     private static byte[] userPass;
     private static BotConfiguration.MiraiProtocol protocol;
@@ -54,13 +53,12 @@ public class MiraiHandler extends PhenylBase {
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error(i18n("digestFail") + e.getLocalizedMessage());
         }
-        configureBot();
     }
 
     /**
      * Configures bot to login.
      */
-    private static void configureBot() {
+    private void configureBot() {
         bot = BotFactory.INSTANCE.newBot(userID, userPass, new BotConfiguration() {{
             setProtocol(protocol);
             setWorkingDir(workingDir);
@@ -75,39 +73,40 @@ public class MiraiHandler extends PhenylBase {
         }});
     }
 
-
-    /**
-     * Try to log in.
-     */
-    public static void logIn() {
+    public void onEnable() {
         try {
-            if (Bot.getInstanceOrNull(userID) == null) {
-                new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-            } else if (Bot.getInstance(userID).isOnline()) {
-                LOGGER.warn(i18n("alreadyLoggedIn", String.valueOf(Bot.getInstance(userID).getId())));
-                return;
-            }
-            Bot.getInstance(userID).login();
-            LOGGER.info(i18n("logInSuccess", bot.getNick()));
+            configureBot();
+            bot.login();
+            MiraiEvent.listenEvents(bot);
         } catch (Exception e) {
             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
         }
     }
 
-    /**
-     * Try to log out.
-     */
-    public static void logOut() {
-        try {
-            if (Bot.getInstanceOrNull(userID) == null) {
-                LOGGER.warn(i18n("yetLoggedIn"));
-                return;
-            }
-            bot.close();
-            LOGGER.info(i18n("logOutSuccess", String.valueOf(Bot.getInstance(userID).getId())));
-        } catch (Exception e) {
-            LOGGER.warn(i18n("logOutFail", e.getLocalizedMessage()));
-        }
+    public void onDisable() {
+        MiraiEvent.removeListeners();
+        bot.close();
     }
+
+    public Bot getBot() {
+        return bot;
+    }
+
+    public boolean logIn() {
+        if (!bot.isOnline()) {
+            configureBot();
+            bot.login();
+            MiraiEvent.listenEvents(bot);
+            return true;
+        } else return false;
+    }
+
+    public boolean logOut() {
+        if (!bot.isOnline()) return false;
+        MiraiEvent.removeListeners();
+        bot.close();
+        return true;
+    }
+
 
 }
