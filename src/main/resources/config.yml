@@ -15,7 +15,7 @@ debug: false
 #   bind - Only messages from users that bound username and QQ number would be forwarded.
 forward_mode: "bind"
 
-# message_command: prefix of QQ messages to get forwarded to the server.
+# message_command: prefix of QQ messages to match forwarded to the server.
 forward_prefix: "&"
 
 # send_cross_server: whether to forward message between sub-servers.
@@ -108,11 +108,15 @@ enabled_servers:
 #    Binding configuration     #
 ################################
 
+# command_prefix: prefix of group messages to be produced as commands.
+# This should have only one letter, or it may produce unexpected results.
+command_prefix: "#"
+
 # group_command: command sent in QQ groups to bind.
-group_command: "#bind"
+bind_command: "bind"
 
 # confirm_command: command sent in QQ groups to confirm binding.
-confirm_command: "#confirm"
+confirm_command: "confirm"
 
 # verification: the length of verification code. 0 to disable verifications.
 verification: 6

@@ -2,8 +2,7 @@ package live.turna.phenyl.utils;
 
 import live.turna.phenyl.PhenylBase;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.contact.NormalMember;
-import net.mamoe.mirai.contact.User;
+import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.utils.BotConfiguration;
 
 import java.io.File;
@@ -15,10 +14,9 @@ import java.security.NoSuchAlgorithmException;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
- * Utils work for mirai.
+ * <b>MiraiUtils</b><br>
+ * Provide utils for Mirai.
  *
- * @author xsling
- * @version 1.0
  * @since 2021/12/3 23:44
  */
 public class Mirai extends PhenylBase {
@@ -74,16 +72,24 @@ public class Mirai extends PhenylBase {
         return protocol;
     }
 
-    public static void sendGroup(Group group, String message){
+
+    /**
+     * Send group message.
+     *
+     * @param group   The group to send to.
+     * @param message The message in plain string type.
+     */
+    public static void sendGroup(Group group, String message) {
         group.sendMessage(message);
     }
 
-    public static void sendNormalMember(NormalMember member, String message){
-        member.sendMessage(message);
+    /**
+     * Send group message.
+     *
+     * @param group   The group to send to.
+     * @param message The message in {@link MessageChain} type.
+     */
+    public static void sendGroup(Group group, MessageChain message) {
+        group.sendMessage(message);
     }
-
-    public static void sendUser(User user, String message){
-        user.sendMessage(message);
-    }
-
 }

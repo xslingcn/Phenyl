@@ -27,6 +27,8 @@ public class PhenylConfiguration extends PhenylBase {
     private static Configuration config;
 
     /**
+     * Converting a YAML object to HashMap.
+     *
      * @param path The keyword to locate YAML section.
      * @return HashMap $map
      */
@@ -75,8 +77,9 @@ public class PhenylConfiguration extends PhenylBase {
     public static List<String> enabled_servers = List.of();
 
     // Binding configuration
-    public static String group_command = "#bind";
-    public static String confirm_command = "#confirm";
+    public static String command_prefix = "#";
+    public static String bind_command = "bind";
+    public static String confirm_command = "confirm";
     public static int verification = 6;
 
     /**
@@ -136,7 +139,8 @@ public class PhenylConfiguration extends PhenylBase {
         enabled_servers = config.getStringList("enabled_servers");
 
         //Binding configuration
-        group_command = config.getString("group_command");
+        command_prefix = config.getString("command_prefix");
+        bind_command = config.getString("bind_command");
         confirm_command = config.getString("confirm_command");
         verification = config.getInt("verification");
 
