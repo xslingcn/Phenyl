@@ -12,10 +12,13 @@ import static live.turna.phenyl.utils.Mirai.sendGroup;
 import static live.turna.phenyl.bind.BindHandler.handleRequest;
 
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
+import net.md_5.bungee.event.EventHandler;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <b>OnGroupMessageEvent</b><br>
@@ -32,20 +35,30 @@ public class OnGroupMessageEvent extends PhenylListener {
 
     @EventHandler
     public void onGroupMessage(CGroupMessageEvent event) {
+
         group = event.getGroup();
         senderID = event.getSenderID();
         message = event.getMessage();
         if (group == null || senderID == null || message == null) return;
-
         if (!PhenylConfiguration.enabled_groups.contains(group.getId())) return;
+
+//        LOGGER.info(event.getMessageString());
         String messageString = event.getMessageString();
         if (messageString.startsWith(PhenylConfiguration.command_prefix)) {
-            try {
-                String command = messageString.substring(PhenylConfiguration.command_prefix.length() - 1, messageString.length() - 1);
-                handleCommand(command);
-            } catch (IllegalArgumentException e) {
-                sendGroup(group, e.getMessage());
-            }
+            String command = messageString.substring(PhenylConfiguration.command_prefix.length());
+            CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            return handleCommand(command);
+                        } catch (IllegalArgumentException e) {
+                            MessageChain reply = new MessageChainBuilder()
+                                    .append(new QuoteReply(message))
+                                    .append(e.getMessage())
+                                    .build();
+                            sendGroup(group, reply);
+                        }
+                        return false;
+                    })
+                    .orTimeout(3, TimeUnit.SECONDS);
         }
     }
 
@@ -58,7 +71,7 @@ public class OnGroupMessageEvent extends PhenylListener {
      * @throws IllegalArgumentException invalidUserName: Provided username isn't a valid Minecraft username.
      * @throws IllegalArgumentException illegalArgument: Command arguments are illegal.
      */
-    private void handleCommand(String command) throws IllegalArgumentException {
+    private boolean handleCommand(String command) throws IllegalArgumentException {
         String[] args = command.split(" ");
         if (args[0].equals(PhenylConfiguration.bind_command)) {
             if (args.length == 2) {
@@ -67,9 +80,10 @@ public class OnGroupMessageEvent extends PhenylListener {
                 String code = handleRequest(userName, senderID);
                 MessageChain reply = new MessageChainBuilder()
                         .append(new QuoteReply(message))
-                        .append(i18n("completeBind", code))
+                        .append(i18n("completeBind"))
                         .build();
                 sendGroup(group, reply);
+                sendGroup(group, "/phenyl verify " + code);
             } else throw new IllegalArgumentException(i18n("illegalArgument"));
         } else if (args[0].equals(PhenylConfiguration.confirm_command)) {
             if (args.length == 2) {
@@ -86,6 +100,7 @@ public class OnGroupMessageEvent extends PhenylListener {
                 } else throw new IllegalArgumentException(i18n("invalidCode"));
             } else throw new IllegalArgumentException(i18n("illegalArgument"));
         } else throw new IllegalArgumentException(i18n("commandNotFound"));
+        return true;
     }
 
 
