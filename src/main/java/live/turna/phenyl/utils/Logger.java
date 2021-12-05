@@ -16,11 +16,20 @@ import java.io.File;
 import java.io.Serializable;
 
 /**
- * @author xsling
- * @version 1.0
+ * <b>LoggerUtils</b><br>
+ * Provide utils for logger.
+ *
  * @since 2021/12/4 14:29
  */
 public class Logger extends PhenylBase {
+    /**
+     * Configures log4j2.
+     *
+     * @param appender_name Appender name.
+     * @param package_name Logger's working package's name.
+     * @param level Logging level.
+     * @param file Logfile.
+     */
     public static void setLogger(String appender_name, String package_name, Level level, @Nullable String file) {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         Configuration configuration = context.getConfiguration();

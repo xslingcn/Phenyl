@@ -16,30 +16,29 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * <b>MiraiHandler</b><br>
  * Manage mirai bot.
  *
- * @author xsling
- * @version 1.0
  * @since 2021/12/3 22:52
  */
 public class MiraiHandler extends PhenylBase {
 
     public static Bot bot;
 
-    private static Long user_id;
-    private static byte[] user_pass;
+    private static Long userID;
+    private static byte[] userPass;
     private static BotConfiguration.MiraiProtocol protocol;
     private static File workingDir;
 
     /**
      * Initialize MiraiHandler.
      *
-     * @param id   Bot's QQ id.
-     * @param pass Bot's QQ password.
-     * @param pro  The protocol to use.
+     * @param user_id   Bot's QQ id.
+     * @param user_pass Bot's QQ password.
+     * @param pro       The protocol to use.
      */
-    public MiraiHandler(Long id, String pass, String pro) {
-        user_id = id;
+    public MiraiHandler(Long user_id, String user_pass, String pro) {
+        userID = user_id;
         try {
             workingDir = checkMiraiDir(new File(phenyl.getDataFolder(), "mirai"));
         } catch (IOException e) {
@@ -51,7 +50,7 @@ public class MiraiHandler extends PhenylBase {
             LOGGER.error(i18n("matchProtocolFail"));
         }
         try {
-            user_pass = md5Digest(pass);
+            userPass = md5Digest(user_pass);
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error(i18n("digestFail") + e.getLocalizedMessage());
         }
@@ -62,7 +61,7 @@ public class MiraiHandler extends PhenylBase {
      * Configures bot to login.
      */
     private static void configureBot() {
-        bot = BotFactory.INSTANCE.newBot(user_id, user_pass, new BotConfiguration() {{
+        bot = BotFactory.INSTANCE.newBot(userID, userPass, new BotConfiguration() {{
             setProtocol(protocol);
             setWorkingDir(workingDir);
             fileBasedDeviceInfo();
@@ -82,13 +81,13 @@ public class MiraiHandler extends PhenylBase {
      */
     public static void logIn() {
         try {
-            if (Bot.getInstanceOrNull(user_id) == null) {
+            if (Bot.getInstanceOrNull(userID) == null) {
                 new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-            } else if(Bot.getInstance(user_id).isOnline()) {
-                LOGGER.warn(i18n("alreadyLoggedIn", String.valueOf(Bot.getInstance(user_id).getId())));
+            } else if (Bot.getInstance(userID).isOnline()) {
+                LOGGER.warn(i18n("alreadyLoggedIn", String.valueOf(Bot.getInstance(userID).getId())));
                 return;
             }
-            Bot.getInstance(user_id).login();
+            Bot.getInstance(userID).login();
             LOGGER.info(i18n("logInSuccess", bot.getNick()));
         } catch (Exception e) {
             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
@@ -100,12 +99,12 @@ public class MiraiHandler extends PhenylBase {
      */
     public static void logOut() {
         try {
-            if (Bot.getInstanceOrNull(user_id) == null) {
+            if (Bot.getInstanceOrNull(userID) == null) {
                 LOGGER.warn(i18n("yetLoggedIn"));
                 return;
             }
             bot.close();
-            LOGGER.info(i18n("logOutSuccess", String.valueOf(Bot.getInstance(user_id).getId())));
+            LOGGER.info(i18n("logOutSuccess", String.valueOf(Bot.getInstance(userID).getId())));
         } catch (Exception e) {
             LOGGER.warn(i18n("logOutFail", e.getLocalizedMessage()));
         }

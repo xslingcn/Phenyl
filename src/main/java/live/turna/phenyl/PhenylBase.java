@@ -4,10 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * <b>PhenylBase</b><br>
  * Base class with Logger and Phenyl instance.
  *
- * @author xslingcn
- * @version 1.0
  * @since 2021/12/3 22:18
  */
 public class PhenylBase {

@@ -7,13 +7,9 @@ import static live.turna.phenyl.mirai.MiraiHandler.logIn;
 import static live.turna.phenyl.mirai.MiraiHandler.logOut;
 import static live.turna.phenyl.utils.Message.sendMessage;
 
-import live.turna.phenyl.config.PhenylConfiguration;
-import net.mamoe.mirai.Bot;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import java.util.List;
 
 
 /**
@@ -72,11 +68,11 @@ public class CommandHandler extends PhenylCommand {
 //
 //                    }
 //                    break;
-//                case "reload":
-//                    if(sender.hasPermission("phenyl.admin.reload")){
-//                        phenyl.reload();
-//                    }
-//                    break;
+                case "reload":
+                    if(sender.hasPermission("phenyl.admin.reload")){
+                        phenyl.reload();
+                    }
+                    break;
                 case "login":
                     if(sender.hasPermission("phenyl.admin.login")){
                         logIn();
@@ -84,10 +80,6 @@ public class CommandHandler extends PhenylCommand {
                     break;
                 case "logout":
                     if(sender.hasPermission("phenyl.admin.logout")){
-                        if(Bot.getInstanceOrNull(PhenylConfiguration.user_id) == null){
-                            LOGGER.warning(i18n("yetLoggedIn"));
-                            break;
-                        }
                         logOut();
                     }
                     break;

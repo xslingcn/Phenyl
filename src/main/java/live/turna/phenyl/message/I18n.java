@@ -1,17 +1,16 @@
 package live.turna.phenyl.message;
 
 import live.turna.phenyl.PhenylBase;
-import live.turna.phenyl.utils.Logger;
 
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * I18n for Phenyl messages.
- * Credit: com.earth2me.essentials.I18n
+ * <b>I18n</b><br>
+ * I18n for Phenyl messages.<br>
+ * Credit: <a href="https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/main/java/com/earth2me/essentials/I18n.java">com.earth2me.essentials.I18n</a>
  *
- * @author xsling
  * @version 1.0
  * @since 2021/12/3 17:45
  */
@@ -32,8 +31,8 @@ public class I18n extends PhenylBase {
     private static I18n instance;
     private final transient Locale defaultLocale = Locale.getDefault();
     private final transient ResourceBundle defaultBundle;
+    private final transient ResourceBundle customBundle;
     private transient Locale currentLocale = defaultLocale;
-    private transient ResourceBundle customBundle;
     private transient ResourceBundle localeBundle;
     private transient Map<String, MessageFormat> messageFormatCache = new HashMap<>();
 

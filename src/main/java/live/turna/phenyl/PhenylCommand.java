@@ -6,19 +6,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Command model with Logger and Phenyl instance.
+ * <b>PhenylCommand</b><br>
+ * Command class with Logger and Phenyl instance.
  *
- * @author xsling
- * @version 1.0
  * @since 2021/12/3 22:31
  */
 public class PhenylCommand extends Command {
     public static final Logger LOGGER = LogManager.getLogger("Phenyl");
     public static Phenyl phenyl = Phenyl.getInstance();
 
-    /**
-     * @param name Command name
-     */
     public PhenylCommand(String name) {
         super(name);
     }

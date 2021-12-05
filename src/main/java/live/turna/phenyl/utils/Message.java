@@ -5,13 +5,10 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import java.util.logging.Logger;
-
 /**
+ * <b>MessageUtils</b><br>
  * Utils for message sending.
  *
- * @author xsling
- * @version 1.0
  * @since 2021/12/3 20:27
  */
 public class Message extends PhenylBase {

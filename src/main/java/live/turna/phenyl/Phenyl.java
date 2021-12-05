@@ -2,12 +2,13 @@ package live.turna.phenyl;
 
 import live.turna.phenyl.commands.CommandHandler;
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.listener.ListenerRegisterer;
 import live.turna.phenyl.message.I18n;
+import live.turna.phenyl.mirai.MiraiEvent;
+import live.turna.phenyl.mirai.MiraiHandler;
 
 import static live.turna.phenyl.message.I18n.i18n;
 
-import live.turna.phenyl.mirai.MiraiEvent;
-import live.turna.phenyl.mirai.MiraiHandler;
 import net.mamoe.mirai.Bot;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -20,11 +21,10 @@ import java.io.File;
 
 
 public final class Phenyl extends Plugin {
-    private static final Logger LOGGER = LogManager.getLogger("Phenyl");
+    private final Logger LOGGER = LogManager.getLogger("Phenyl");
 
     private static Phenyl instance;
     private transient I18n i18nInstance;
-    private transient MiraiEvent miraiEventInstance;
 
     private transient File workingDir;
 
@@ -57,27 +57,27 @@ public final class Phenyl extends Plugin {
 
         new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         MiraiHandler.logIn();
-        miraiEventInstance = new MiraiEvent();
-        miraiEventInstance.listenEvents();
+        MiraiEvent.listenEvents();
+        ListenerRegisterer.registerListeners();
     }
 
     public void reload() {
         PhenylConfiguration.loadPhenylConfiguration();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
         if (PhenylConfiguration.debug) LOGGER.warn(i18n("debugEnabled"));
-        miraiEventInstance.removeListeners();
+        MiraiEvent.removeListeners();
         if (Bot.getInstanceOrNull(PhenylConfiguration.user_id) != null) MiraiHandler.logOut();
         Configurator.setLevel(LogManager.getLogger("Phenyl").getName(), readLevel());
         new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         MiraiHandler.logIn();
-        miraiEventInstance.listenEvents();
+        MiraiEvent.listenEvents();
         LOGGER.info(i18n("reloadSuccessful"));
     }
 
     @Override
     public void onDisable() {
         if (Bot.getInstanceOrNull(PhenylConfiguration.user_id) != null) MiraiHandler.logOut();
-        miraiEventInstance.removeListeners();
+        MiraiEvent.removeListeners();
         if (i18nInstance != null) {
             i18nInstance.onDisable();
         }

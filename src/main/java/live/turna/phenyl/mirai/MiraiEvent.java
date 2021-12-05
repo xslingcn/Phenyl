@@ -7,8 +7,9 @@ import net.mamoe.mirai.event.events.*;
 import net.md_5.bungee.api.ProxyServer;
 
 /**
- * @author xsling
- * @version 1.0
+ * <b>MiraiEvent</b><br>
+ * Listen on necessary mirai events and call Bungeecord events.
+ *
  * @since 2021/12/4 4:20
  */
 public class MiraiEvent {
