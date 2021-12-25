@@ -42,16 +42,19 @@ public class MiraiHandler extends PhenylBase {
             workingDir = checkMiraiDir(new File(phenyl.getDataFolder(), "mirai"));
         } catch (IOException e) {
             LOGGER.error(i18n("createMiraiDirFail"));
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
         try {
             protocol = matchProtocol(pro);
         } catch (IllegalArgumentException e) {
             LOGGER.error(i18n("matchProtocolFail"));
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
         try {
             userPass = md5Digest(user_pass);
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error(i18n("digestFail") + e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
     }
 
@@ -89,6 +92,7 @@ public class MiraiHandler extends PhenylBase {
             MiraiEvent.listenEvents(bot);
         } catch (Exception e) {
             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
     }
 

@@ -1,6 +1,7 @@
 package live.turna.phenyl.message;
 
 import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.config.PhenylConfiguration;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -81,10 +82,11 @@ public class I18n extends PhenylBase {
         if (messageFormat == null) {
             try {
                 messageFormat = new MessageFormat(format);
-            } catch (final IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 LOGGER.error(i18n("invalidTransKey", key, e.getLocalizedMessage()));
                 format = format.replaceAll("\\{(\\D*?)", "\\[$1\\]");
                 messageFormat = new MessageFormat(format);
+                if (PhenylConfiguration.debug) e.printStackTrace();
             }
             messageFormatCache.put(format, messageFormat);
         }
@@ -104,8 +106,9 @@ public class I18n extends PhenylBase {
             } catch (final MissingResourceException e) {
                 return localeBundle.getString(key);
             }
-        } catch (final MissingResourceException e) {
+        } catch (MissingResourceException e) {
             LOGGER.warn(i18n("missingTransKey", e.getKey(), localeBundle.getLocale().toString()));
+            if (PhenylConfiguration.debug) e.printStackTrace();
             return defaultBundle.getString(key);
         }
     }
@@ -134,10 +137,11 @@ public class I18n extends PhenylBase {
         try {
             localeBundle = ResourceBundle.getBundle(MESSAGES, currentLocale);
             LOGGER.info(i18n("usingLocale", currentLocale.toString()));
-        } catch (final MissingResourceException e) {
+        } catch (MissingResourceException e) {
             localeBundle = NULL_BUNDLE;
             LOGGER.warn(String.format("Locale %s not found! Falling back to English.", currentLocale));
             this.updateLocale("en");
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
 
     }

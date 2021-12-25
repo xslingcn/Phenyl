@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 
 import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.utils.Bind.isValidQQID;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,8 +50,6 @@ public class PhenylConfiguration extends PhenylBase {
     // General configuration
     public static String locale = "en";
     public static Boolean debug = false;
-    //    public static String forward_prefix = "&";
-    public static Boolean send_cross_server = true;
 
     // Mirai configuration
     public static String user_id = "1967859840";
@@ -102,18 +101,19 @@ public class PhenylConfiguration extends PhenylBase {
                 Files.copy(in, configFile.toPath());
             } catch (IOException e) {
                 LOGGER.error(i18n("createConfigFail", e.getLocalizedMessage()));
+                if (PhenylConfiguration.debug) e.printStackTrace();
             }
         }
         try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(phenyl.getDataFolder(), "config.yml"));
         } catch (IOException e) {
             LOGGER.error(i18n("readConfigFail", e.getLocalizedMessage()));
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
 
         //General configuration
         locale = config.getString("locale");
         debug = config.getBoolean("debug");
-        send_cross_server = config.getBoolean("send_cross_server");
 
         //Mirai configuration
         user_id = config.getString("user_id");

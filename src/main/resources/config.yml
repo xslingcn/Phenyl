@@ -7,12 +7,6 @@ locale: en
 # debug: whether to print debug info.
 debug: false
 
-# message_command: prefix of QQ messages to match forwarded to the server.
-#forward_prefix: "&"
-
-# send_cross_server: whether to forward message between sub-servers.
-send_cross_server: true
-
 ################################
 #      Mirai configuration     #
 ################################

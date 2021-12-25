@@ -44,15 +44,12 @@ public final class Phenyl extends Plugin {
 
     @Override
     public void onLoad() {
-
     }
 
     @Override
     public void onEnable() {
         instance = this;
         PhenylConfiguration.loadPhenylConfiguration();
-        miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-        miraiInstance.onEnable();
         i18nInstance = new I18n();
         i18nInstance.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
@@ -71,7 +68,6 @@ public final class Phenyl extends Plugin {
         Database.initialize();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
-        ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
     }
 
     public boolean reload() {

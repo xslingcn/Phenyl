@@ -87,7 +87,8 @@ public class PostgreSQL extends PhenylBase {
                 return result;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
         return new Player(null, null, null, null);
     }

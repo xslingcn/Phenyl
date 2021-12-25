@@ -55,16 +55,14 @@ public class CommandHandler extends PhenylCommand {
         }
         // Commands executable for both CONSOLE and players.
         switch (args[0].toLowerCase()) {
-            case "help" -> {
-                sendMessage(i18n("welcomeMessage", phenyl.getDescription().getVersion()), sender);
-                sendMessage(i18n("helpMessage"), sender);
-                sendMessage(i18n("commandHelp"), sender);
-            }
+            case "help" -> sendMessage(i18n("welcomeMessage", phenyl.getDescription().getVersion()) + "\n"
+                    + i18n("helpMessage") + "\n"
+                    + i18n("commandHelp"), sender);
             case "reload" -> {
                 if (sender.hasPermission("phenyl.admin.reload")) {
                     if (args.length == 1) {
-                        phenyl.reload();
-                        sendMessage(i18n("reloadSuccessful", phenyl.getDescription().getVersion()), sender);
+                        if (phenyl.reload())
+                            sendMessage(i18n("reloadSuccessful", phenyl.getDescription().getVersion()), sender);
                     } else sendMessage(i18n("illegalArgumentPhenyl"), sender);
                 } else sendMessage(i18n("noPermission"), sender);
             }

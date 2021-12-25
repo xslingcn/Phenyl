@@ -60,6 +60,7 @@ public class MySQL extends PhenylBase {
             connection.close();
         } catch (SQLException e) {
             LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
     }
 
@@ -88,7 +89,8 @@ public class MySQL extends PhenylBase {
                 return result;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
         return new Player(null, null, null, null);
     }
@@ -136,6 +138,7 @@ public class MySQL extends PhenylBase {
             return result;
         } catch (SQLException e) {
             LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
         return false;
     }
@@ -155,6 +158,7 @@ public class MySQL extends PhenylBase {
             return result;
         } catch (SQLException e) {
             LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
         return false;
     }
@@ -174,6 +178,7 @@ public class MySQL extends PhenylBase {
             return result;
         } catch (SQLException e) {
             LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
         return false;
     }

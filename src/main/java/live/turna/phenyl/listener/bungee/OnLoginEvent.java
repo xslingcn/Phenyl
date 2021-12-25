@@ -55,11 +55,13 @@ public class OnLoginEvent extends PhenylListener {
         }
 
         // Register a player if logging in for the first time. Updating the player's username if username not found.
-        String uuid = e.getPlayer().getUniqueId().toString();
-        String userName = e.getPlayer().getName();
-        if (!Database.getRegistered(uuid))
-            Database.registerPlayer(uuid, userName);
-        Database.updateUserName(uuid, e.getPlayer().getName());
+        CompletableFuture<Boolean> futureLogIn = CompletableFuture.supplyAsync(() -> {
+            String uuid = e.getPlayer().getUniqueId().toString();
+            String userName = e.getPlayer().getName();
+            if (!Database.getRegistered(uuid))
+                Database.registerPlayer(uuid, userName);
+            return Database.updateUserName(uuid, e.getPlayer().getName());
+        }).orTimeout(3, TimeUnit.SECONDS);
 
     }
 }

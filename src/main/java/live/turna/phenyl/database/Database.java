@@ -38,6 +38,7 @@ public class Database extends PhenylBase {
 
                     } catch (Exception e) {
                         LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
+                        if (PhenylConfiguration.debug) e.printStackTrace();
                     }
                 }
                 if (messageFile != null) {
@@ -47,6 +48,7 @@ public class Database extends PhenylBase {
                                 LOGGER.error(i18n("databaseInitFail"));
                         } catch (Exception e) {
                             LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
+                            if (PhenylConfiguration.debug) e.printStackTrace();
                         }
                     }
                 }
@@ -60,6 +62,7 @@ public class Database extends PhenylBase {
                     new SQLite(playerConnection, messageConnection);
                 } catch (Exception e) {
                     LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
+                    if (PhenylConfiguration.debug) e.printStackTrace();
                 }
             }
             case "mysql" -> {
@@ -133,7 +136,6 @@ public class Database extends PhenylBase {
     }
 
     public static boolean updateMutedPlayer(String uuid, Boolean toggle) {
-        LOGGER.warn("updating");
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.updateMutedPlayer(uuid, toggle);
             case "mysql" -> MySQL.updateMutedPlayer(uuid, toggle);

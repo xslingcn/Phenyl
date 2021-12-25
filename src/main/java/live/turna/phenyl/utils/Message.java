@@ -37,7 +37,7 @@ public class Message extends PhenylBase {
      * @param sender  The receiver of the message.
      */
     public static void sendMessage(String message, CommandSender sender) {
-        TextComponent result = new TextComponent(altColor(message));
+        TextComponent result = new TextComponent(altColor("&7[Phenyl] " + message));
         sender.sendMessage(result);
     }
 
