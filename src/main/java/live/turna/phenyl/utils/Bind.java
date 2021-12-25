@@ -17,7 +17,7 @@ public class Bind {
      * @return If the username is valid.
      */
     public static Boolean isValidUsername(String userName) {
-        String pattern = "^\\w{3,16}\\$";
+        String pattern = "[_a-zA-Z0-9]{3,16}";
         return userName.matches(pattern);
     }
 
@@ -28,7 +28,7 @@ public class Bind {
      * @return The generated random string of given length to verify.
      */
     public static String generateVerificationCode(Integer length) {
-        String pattern = "^\\w{" + length.toString() + "}\\$";
+        String pattern = "[0-9]{" + length.toString() + "}";
         Generex generex = new Generex(pattern);
         return generex.random();
     }
@@ -41,7 +41,7 @@ public class Bind {
      * @return If the code is valid.
      */
     public static Boolean isValidVerificationCode(String code, Integer length) {
-        String pattern = "^\\w{" + length + "}\\$";
+        String pattern = "[0-9]{" + length.toString() + "}";
         return code.matches(pattern);
     }
 }

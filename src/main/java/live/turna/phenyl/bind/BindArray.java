@@ -1,5 +1,7 @@
 package live.turna.phenyl.bind;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -13,9 +15,12 @@ import java.util.Collection;
  */
 public class BindArray extends ArrayList<BindMap> {
 
-    public ArrayList<BindMap> instance;
+    public final ArrayList<BindMap> instance;
 
-    public BindArray(){
+    public static Logger LOGGER = LogManager.getLogger("Phenyl");
+
+
+    public BindArray() {
         this.instance = new ArrayList<>();
     }
 
@@ -26,8 +31,8 @@ public class BindArray extends ArrayList<BindMap> {
      * @param map The BindMap.
      * @return {@code true} (as specified by {@link Collection#add})
      */
-    public boolean add(BindMap map){
-        if(map == null) return false;
+    public boolean add(BindMap map) {
+        if (map == null) return false;
         this.remove(map.getUserName());
         this.remove(map.getUserID());
         this.remove(map.getCode());
@@ -42,12 +47,14 @@ public class BindArray extends ArrayList<BindMap> {
      * @return The array object or null for no corresponding result.
      */
     @Nullable
-    public BindArray get(String key){
+    public BindArray get(String key) {
         BindArray matches = new BindArray();
-        for(BindMap entry : instance){
-            matches.add(entry.match(key));
+        for (BindMap entry : this.instance) {
+            if(entry.match(key)){
+                matches.add(entry);
+            }
         }
-        return matches.isEmpty()?null:matches;
+        return matches.instance.isEmpty() ? null : matches;
     }
 
     /**
@@ -57,12 +64,14 @@ public class BindArray extends ArrayList<BindMap> {
      * @return The array object or null for no corresponding result.
      */
     @Nullable
-    public BindArray get(Long key){
+    public BindArray get(Long key) {
         BindArray matches = new BindArray();
-        for(BindMap entry : instance){
-            matches.add(entry.match(key));
+        for (BindMap entry : instance) {
+            if(entry.match(key)){
+                matches.add(entry);
+            }
         }
-        return matches.isEmpty()?null:matches;
+        return matches.instance.isEmpty() ? null : matches;
     }
 
     /**
@@ -70,10 +79,10 @@ public class BindArray extends ArrayList<BindMap> {
      *
      * @param key The string key to proceed search in BindArray. Could be userName or verification code.
      */
-    public void remove(String key){
+    public void remove(String key) {
         BindArray matches = this.get(key);
-        if(matches==null) return;
-        for(BindMap entry : matches){
+        if (matches == null) return;
+        for (BindMap entry : matches) {
             instance.remove(entry);
         }
     }
@@ -83,10 +92,10 @@ public class BindArray extends ArrayList<BindMap> {
      *
      * @param key The key to proceed search in BindArray, which is userID.
      */
-    public void remove(Long key){
+    public void remove(Long key) {
         BindArray matches = this.get(key);
-        if(matches==null) return;
-        for(BindMap entry : matches){
+        if (matches == null) return;
+        for (BindMap entry : matches) {
             instance.remove(entry);
         }
     }

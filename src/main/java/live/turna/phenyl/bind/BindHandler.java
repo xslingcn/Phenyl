@@ -1,7 +1,9 @@
 package live.turna.phenyl.bind;
 
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.database.Database;
 import live.turna.phenyl.utils.Bind;
+import net.md_5.bungee.api.ProxyServer;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -11,14 +13,13 @@ import org.jetbrains.annotations.Nullable;
  * @since 2021/12/5 2:58
  */
 public class BindHandler {
-
     private static final BindArray userBindings = new BindArray();
 
     /**
      * Generate verification code for a request from QQ group and add the request to array.
      *
      * @param userName The username to bind.
-     * @param userID The QQ ID to bind.
+     * @param userID   The QQ ID to bind.
      * @return Verification code.
      */
     public static String handleRequest(String userName, Long userID) {
@@ -31,21 +32,21 @@ public class BindHandler {
      * Complete the verification and proceed binding and remove the binding request from array.
      *
      * @param userName The username to bind.
-     * @param code The verification code.
+     * @param code     The verification code.
      * @return If the confirmation is valid, return username. Or return null to indicate not succeeding.
      */
     @Nullable
-    public static String handleConfirm(String userName, String code) {
+    public static BindResult handleConfirm(String userName, String code) {
         BindArray result = userBindings.get(code);
-        if (result != null) {
-            for (BindMap entry : result) {
-                BindMap match = entry.match(code);
+        if (result != null && result.instance != null) {
+            for (BindMap entry : result.instance) {
+                BindMap match = entry.match(code) ? entry : null;
                 if (match != null) {
                     if (match.getUserName().equals(userName)) {
-                        userBindings.remove(match.getUserName());
-                        userBindings.remove(match.getUserID());
+                        String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
+                        BindResult bindResult = new BindResult(Database.registerPlayer(uuid), Database.addBinding(uuid, userName, match.userID()), userName);
                         userBindings.remove(match.getCode());
-                        return userName;
+                        return bindResult;
                     }
                 }
             }
@@ -57,22 +58,22 @@ public class BindHandler {
      * Complete the verification and proceed binding and remove the binding request from array.
      *
      * @param userID The userID to bind.
-     * @param code The verification code.
+     * @param code   The verification code.
      * @return Corresponding username if the code is valid. Or null indicating not succeeding.
      */
     @Nullable
-    public static String handleConfirm(Long userID, String code) {
+    public static BindResult handleConfirm(Long userID, String code) {
         BindArray result = userBindings.get(code);
-        if (result != null) {
-            for (BindMap entry : result) {
-                BindMap match = entry.match(code);
+        if (result != null && result.instance != null) {
+            for (BindMap entry : result.instance) {
+                BindMap match = entry.match(code) ? entry : null;
                 if (match != null) {
                     if (match.getUserID().equals(userID)) {
                         String userName = match.getUserName();
-                        userBindings.remove(match.getUserName());
-                        userBindings.remove(match.getUserID());
+                        String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
+                        BindResult bindResult = new BindResult(Database.registerPlayer(uuid), Database.addBinding(uuid, userName, userID), userName);
                         userBindings.remove(match.getCode());
-                        return userName;
+                        return bindResult;
                     }
                 }
             }
