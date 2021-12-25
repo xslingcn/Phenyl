@@ -2,6 +2,7 @@ package live.turna.phenyl.bind;
 
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
+import live.turna.phenyl.database.Player;
 import live.turna.phenyl.utils.Bind;
 import net.md_5.bungee.api.ProxyServer;
 import org.jetbrains.annotations.Nullable;
@@ -44,9 +45,15 @@ public class BindHandler {
                 if (match != null) {
                     if (match.getUserName().equals(userName)) {
                         String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
-                        BindResult bindResult = new BindResult(Database.registerPlayer(uuid), Database.addBinding(uuid, userName, match.userID()), userName);
-                        userBindings.remove(match.getCode());
-                        return bindResult;
+                        Long userID = match.userID();
+                        Player oldBinding = Database.getBinding(userID);
+                        userBindings.remove(match);
+                        if (oldBinding.uuid() == null)
+                            return new BindResult(null, Database.addBinding(uuid, userID), userName);
+                        if (oldBinding.uuid().equals(uuid))
+                            return new BindResult(oldBinding.mcname(), true, userName);
+                        Database.removeBinding(oldBinding.uuid());
+                        return new BindResult(oldBinding.mcname(), Database.addBinding(uuid, userID), userName);
                     }
                 }
             }
@@ -71,9 +78,14 @@ public class BindHandler {
                     if (match.getUserID().equals(userID)) {
                         String userName = match.getUserName();
                         String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
-                        BindResult bindResult = new BindResult(Database.registerPlayer(uuid), Database.addBinding(uuid, userName, userID), userName);
-                        userBindings.remove(match.getCode());
-                        return bindResult;
+                        Player oldBinding = Database.getBinding(userID);
+                        userBindings.remove(match);
+                        if (oldBinding.uuid() == null)
+                            return new BindResult(null, Database.addBinding(uuid, userID), userName);
+                        if (oldBinding.uuid().equals(uuid))
+                            return new BindResult(oldBinding.mcname(), true, userName);
+                        Database.removeBinding(oldBinding.uuid());
+                        return new BindResult(oldBinding.mcname(), Database.addBinding(uuid, userID), userName);
                     }
                 }
             }

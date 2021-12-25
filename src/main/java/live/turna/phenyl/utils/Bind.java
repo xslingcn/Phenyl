@@ -1,6 +1,11 @@
 package live.turna.phenyl.utils;
 
 import com.mifmif.common.regex.Generex;
+import live.turna.phenyl.bind.BindResult;
+import live.turna.phenyl.config.PhenylConfiguration;
+
+import static live.turna.phenyl.bind.BindHandler.handleConfirm;
+import static live.turna.phenyl.message.I18n.i18n;
 
 /**
  * <b>BindUtils</b><br>
@@ -43,5 +48,69 @@ public class Bind {
     public static Boolean isValidVerificationCode(String code, Integer length) {
         String pattern = "[0-9]{" + length.toString() + "}";
         return code.matches(pattern);
+    }
+
+    /**
+     * @param userName The Minecraft username to request a confirmation.
+     * @param code     The code to be checked.
+     * @return The binding success message. Which are 1). bindSuccess when a new binding is successfully added;
+     * 2). bindNoChange when the binding already exists and no operation is done; 3). changeBind when an existing binding is updated.
+     * @throws IllegalArgumentException invalidCode: Verification code is neither format-correct nor valid.
+     * @throws IllegalArgumentException bindFail: The request is valid, but binding attempt failed while operating database.
+     */
+    public static String verifier(String userName, String code) throws IllegalArgumentException {
+        // Code not matching generating regex.
+        if (!isValidVerificationCode(code, PhenylConfiguration.verification))
+            throw new IllegalArgumentException(i18n("invalidCode"));
+
+        BindResult bindResult = handleConfirm(userName, code);
+
+        // Code not found in binding queue.
+        if (bindResult == null) throw new IllegalArgumentException(i18n("invalidCode"));
+
+        // Failed while updating the database.
+        if (!bindResult.getQuerySucceeded()) throw new IllegalArgumentException(i18n("bindFail"));
+
+        //The first time someone attempts binding and succeeded.
+        if (bindResult.getOldUserName() == null) return i18n("bindSuccess", bindResult.getUserName());
+
+        // Binding found in database and the request is the same as the existing, not updating.
+        if (bindResult.getOldUserName().equals(bindResult.getUserName()))
+            return i18n("bindNoChange");
+
+        //Update binding succeeded.
+        return i18n("changeBind", bindResult.getOldUserName(), bindResult.getUserName());
+    }
+
+    /**
+     * @param qqID The QQ ID to request a confirmation.
+     * @param code The code to be checked.
+     * @return The binding success message. Which are 1). bindSuccess when a new binding is successfully added;
+     * 2). bindNoChange when the binding already exists and no operation is done; 3). changeBind when an existing binding is updated.
+     * @throws IllegalArgumentException invalidCode: Verification code is neither format-correct nor valid.
+     * @throws IllegalArgumentException bindFail: The request is valid, but binding attempt failed while operating database.
+     */
+    public static String verifier(Long qqID, String code) throws IllegalArgumentException {
+        // Code not matching generating regex.
+        if (!isValidVerificationCode(code, PhenylConfiguration.verification))
+            throw new IllegalArgumentException(i18n("invalidCode"));
+
+        BindResult bindResult = handleConfirm(qqID, code);
+
+        // Code not found in binding queue.
+        if (bindResult == null) throw new IllegalArgumentException(i18n("invalidCode"));
+
+        // Failed while updating the database.
+        if (!bindResult.getQuerySucceeded()) throw new IllegalArgumentException(i18n("bindFail"));
+
+        //The first time someone attempts binding and succeeded.
+        if (bindResult.getOldUserName() == null) return i18n("bindSuccess", bindResult.getUserName());
+
+        // Binding found in database and the request is the same as the existing, not updating.
+        if (bindResult.getOldUserName().equals(bindResult.getUserName()))
+            return i18n("bindNoChange");
+
+        //Update binding succeeded.
+        return i18n("changeBind", bindResult.getOldUserName(), bindResult.getUserName());
     }
 }

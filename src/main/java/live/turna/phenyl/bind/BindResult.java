@@ -1,16 +1,15 @@
 package live.turna.phenyl.bind;
 
-import live.turna.phenyl.database.Player;
 import org.jetbrains.annotations.Nullable;
 
-public record BindResult(Player registered, Boolean succeeded, @Nullable String userName) {
+public record BindResult(@Nullable String oldUserName, Boolean querySucceeded, @Nullable String userName) {
 
-    public Player getRegistered() {
-        return registered;
+    public String getOldUserName() {
+        return oldUserName;
     }
 
-    public Boolean getSucceeded() {
-        return succeeded;
+    public Boolean getQuerySucceeded() {
+        return querySucceeded;
     }
 
     public String getUserName() {
