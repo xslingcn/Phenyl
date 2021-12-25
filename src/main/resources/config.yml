@@ -83,6 +83,16 @@ qq_to_server_format: "&7[QQ]%username%:%message%"
 #   %sub_server%, %username%, %message%
 server_to_qq_format: "%username%:%message%"
 
+# online_total_format: get how many players are online. Set to "disabled" to disable it.
+# Available variables:
+#   %player_count%
+online_total_format: "Total players: %player_count%"
+
+# online_total_format: get player list in each sub-server. Set to "disabled" to disable it.
+# Available variables:
+#   %sub_server%, %username%
+online_list_format: "[%sub_server%]%username%"
+
 # on_join: message sent to QQ when players joined the game. Set to "disabled" to disable it.
 # Available variables:
 #   %sub_server%, %username%
@@ -135,6 +145,9 @@ bind_command: "bind"
 
 # confirm_command: command sent in QQ groups to confirm binding.
 confirm_command: "confirm"
+
+# player_command: command to get a list of online players.
+online_command: "online"
 
 # verification: the length of verification code.
 verification: 6

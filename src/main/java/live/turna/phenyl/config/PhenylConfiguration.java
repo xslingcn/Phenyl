@@ -72,6 +72,8 @@ public class PhenylConfiguration extends PhenylBase {
     public static String cross_sever_format = "&7[%sub_server%]%username%:%message%";
     public static String qq_to_server_format = "&7[QQ]%username%:%message%";
     public static String server_to_qq_format = "%username%:%message%";
+    public static String online_total_format = "Total players: %player_count%";
+    public static String online_list_format = "[%sub_server%]%username%";
     public static String on_join = "%username% joined the %sub_server%";
     public static String on_leave = "%username% left the game";
     public static String on_join_broadcast = "&e%username% joined the %sub_server%";
@@ -85,6 +87,7 @@ public class PhenylConfiguration extends PhenylBase {
     public static String command_prefix = "#";
     public static String bind_command = "bind";
     public static String confirm_command = "confirm";
+    public static String online_command = "online";
     public static int verification = 6;
 
     /**
@@ -135,6 +138,8 @@ public class PhenylConfiguration extends PhenylBase {
         forward_mode = config.getString("forward_mode");
         cross_sever_format = config.getString("cross_sever_format");
         qq_to_server_format = config.getString("qq_to_server_format");
+        online_total_format = config.getString("online_total_format");
+        online_list_format = config.getString("online_list_format");
         server_to_qq_format = config.getString("server_to_qq_format");
         on_join = config.getString("on_join");
         on_leave = config.getString("on_leave");
@@ -149,6 +154,7 @@ public class PhenylConfiguration extends PhenylBase {
         command_prefix = config.getString("command_prefix");
         bind_command = config.getString("bind_command");
         confirm_command = config.getString("confirm_command");
+        online_command = config.getString("online_command");
         verification = config.getInt("verification");
     }
 

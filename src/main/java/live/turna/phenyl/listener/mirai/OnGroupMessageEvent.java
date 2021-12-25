@@ -9,16 +9,22 @@ import static live.turna.phenyl.message.Forward.forwardToBungee;
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Bind.*;
 import static live.turna.phenyl.utils.Mirai.sendGroup;
+import static live.turna.phenyl.utils.Message.getServerName;
 import static live.turna.phenyl.bind.BindHandler.handleRequest;
 
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.event.EventHandler;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <b>OnGroupMessageEvent</b><br>
@@ -121,11 +127,42 @@ public class OnGroupMessageEvent extends PhenylListener {
             return;
         }
 
+        // get online list
+        if (args[0].equals(PhenylConfiguration.online_command)) {
+            AtomicInteger onlineCount = new AtomicInteger();
+            onlineCount.getAndSet(0);
+            HashMap<String, String> result = new HashMap<>();
+            ProxyServer.getInstance().getServers().forEach((s, serverInfo) -> {
+                StringBuilder players = new StringBuilder();
+                serverInfo.getPlayers().forEach(player -> {
+                    players.append(player.getName()).append(",");
+                    onlineCount.getAndIncrement();
+                });
+                if (players.isEmpty()) return;
+                result.put(getServerName(serverInfo), players.substring(0, players.length() - 1));
+            });
+
+            String totalFormat = PhenylConfiguration.online_total_format
+                    .replace("%player_count%", ((Integer) onlineCount.get()).toString());
+            List<String> listFormat = new ArrayList<>();
+            result.forEach((key, value) -> listFormat.add(PhenylConfiguration.online_list_format
+                    .replace("%sub_server%", key)
+                    .replace("%username%", value)));
+            MessageChainBuilder reply = new MessageChainBuilder()
+                    .append(new QuoteReply(message))
+                    .append(totalFormat)
+                    .append("\n");
+            listFormat.forEach(reply::append);
+            sendGroup(group, reply.build());
+            return;
+        }
+
         //Random message that needs to be forwarded in *command* mode.
         if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
             String userName = Database.getBinding(senderID).mcname();
             if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
             forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), userName);
+            return;
         }
         throw new IllegalArgumentException(i18n("commandNotFound"));
     }
