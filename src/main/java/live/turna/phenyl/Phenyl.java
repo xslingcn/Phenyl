@@ -56,9 +56,17 @@ public final class Phenyl extends Plugin {
         i18nInstance = new I18n();
         i18nInstance.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
 
-        PhenylConfiguration.postConfiguration();
+        try {
+            PhenylConfiguration.postConfiguration();
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getMessage());
+            return;
+        }
 
+        miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+        miraiInstance.onEnable();
         ListenerRegisterer.registerListeners();
         Database.initialize();
         mutedPlayer = Database.getMutedPlayer();
@@ -66,25 +74,36 @@ public final class Phenyl extends Plugin {
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
     }
 
-    public void reload() {
-        ListenerRegisterer.unregisterListeners();
-        miraiInstance.onDisable();
-
+    public boolean reload() {
         PhenylConfiguration.loadPhenylConfiguration();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
+
+        try {
+            PhenylConfiguration.postConfiguration();
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getMessage());
+            return false;
+        }
+
+        ListenerRegisterer.unregisterListeners();
+
+        if (miraiInstance == null)
+            miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+        else
+            miraiInstance.onDisable();
         miraiInstance.onEnable();
-        PhenylConfiguration.postConfiguration();
 
         ListenerRegisterer.registerListeners();
         Database.initialize();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
+        return true;
     }
 
     @Override
     public void onDisable() {
         ListenerRegisterer.unregisterListeners();
-        miraiInstance.onDisable();
+        if (miraiInstance != null) miraiInstance.onDisable();
         i18nInstance.onDisable();
         LogManager.shutdown();
     }

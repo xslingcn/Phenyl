@@ -36,8 +36,8 @@ public class MiraiHandler extends PhenylBase {
      * @param user_pass Bot's QQ password.
      * @param pro       The protocol to use.
      */
-    public MiraiHandler(Long user_id, String user_pass, String pro) {
-        userID = user_id;
+    public MiraiHandler(String user_id, String user_pass, String pro) {
+        userID = Long.parseLong(user_id);
         try {
             workingDir = checkMiraiDir(new File(phenyl.getDataFolder(), "mirai"));
         } catch (IOException e) {

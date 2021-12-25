@@ -18,7 +18,7 @@ send_cross_server: true
 ################################
 
 # user_id: your bot's QQ number.
-user_id: 165420321
+user_id: "165420321"
 
 # user_pass: Your bot's QQ password.
 # If you select ANDROID_PHONE as protocol, make sure your password length is less than 16.

@@ -26,6 +26,11 @@ public class Bind {
         return userName.matches(pattern);
     }
 
+    public static Boolean isValidQQID(String qqid) {
+        String pattern = "^[1-9]\\d{4,10}$";
+        return qqid.matches(pattern);
+    }
+
     /**
      * Generates random string to proceed verify.
      *

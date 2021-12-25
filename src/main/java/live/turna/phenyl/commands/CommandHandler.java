@@ -5,6 +5,7 @@ import live.turna.phenyl.PhenylCommand;
 
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.message.Forward.forwardToQQ;
+import static live.turna.phenyl.utils.Bind.isValidQQID;
 import static live.turna.phenyl.utils.Bind.verifier;
 import static live.turna.phenyl.utils.Message.getServerName;
 import static live.turna.phenyl.utils.Message.sendMessage;
@@ -124,6 +125,10 @@ public class CommandHandler extends PhenylCommand {
                         case "bind" -> {
                             if (player.hasPermission("phenyl.use.bind")) {
                                 if (args.length == 2) {
+                                    if (!isValidQQID(args[1])) {
+                                        sendMessage(i18n("invalidQQID"), player);
+                                        return;
+                                    }
                                     String code = handleRequest(player.getName(), Long.parseLong(args[1]));
                                     sendMessage(i18n("completeBindInGroup"), player);
                                     sendMessage(PhenylConfiguration.command_prefix + PhenylConfiguration.confirm_command + " " + code, player);

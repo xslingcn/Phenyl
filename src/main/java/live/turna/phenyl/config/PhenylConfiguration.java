@@ -53,7 +53,7 @@ public class PhenylConfiguration extends PhenylBase {
     public static Boolean send_cross_server = true;
 
     // Mirai configuration
-    public static Long user_id = 1967859840L;
+    public static String user_id = "1967859840";
     public static String user_pass = "12345654321";
     public static String login_protocol = "ANDROID_PHONE";
     public static List<Long> enabled_groups = new ArrayList<>();
@@ -116,7 +116,7 @@ public class PhenylConfiguration extends PhenylBase {
         send_cross_server = config.getBoolean("send_cross_server");
 
         //Mirai configuration
-        user_id = config.getLong("user_id");
+        user_id = config.getString("user_id");
         user_pass = config.getString("user_pass");
         login_protocol = config.getString("login_protocol");
         enabled_groups = config.getLongList("enabled_groups");
@@ -152,20 +152,31 @@ public class PhenylConfiguration extends PhenylBase {
         verification = config.getInt("verification");
     }
 
-    public static void postConfiguration() {
-        LOGGER.info(i18n("configLoaded"));
+    public static void postConfiguration() throws IllegalArgumentException {
 
-        if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))) {
+        if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
+                || ((!forward_mode.equals("bind")) && (!forward_mode.equals("sync")) && (!forward_mode.equals("command")))) {
             forward_mode = "invalid";
-            LOGGER.error(i18n("invalidForward"));
+            throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidForward")));
         }
 
+        if (!isValidQQID(user_id)) {
+            throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidQQIDSetting")));
+        }
+
+        enabled_groups.forEach(group -> {
+            if (!isValidQQID(group.toString()))
+                throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidGroupID")));
+        });
+
         if ((!storage.equals("sqlite")) && (!storage.equals("mysql")) && (!storage.equals("postgresql"))) {
-            LOGGER.error(i18n("invalidStorage"));
+            throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidStorage")));
         }
 
         Configurator.setLevel(LogManager.getLogger("Phenyl").getName(), debug ? Level.DEBUG : Level.INFO);
         if (debug) LOGGER.warn(i18n("debugEnabled"));
+
+        LOGGER.info(i18n("configLoaded"));
 
     }
 }
