@@ -4,8 +4,8 @@ import net.mamoe.mirai.event.events.ImageUploadEvent;
 import net.md_5.bungee.api.plugin.Event;
 
 /**
- * @author xsling
- * @version 1.0
+ * <b>CImageUploadEvent</b><br>
+ *
  * @since 2021/12/4 4:59
  */
 public class CImageUploadEvent extends Event {

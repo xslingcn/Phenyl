@@ -1,7 +1,5 @@
 package live.turna.phenyl.bind;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -16,9 +14,6 @@ import java.util.Collection;
 public class BindArray extends ArrayList<BindMap> {
 
     public final ArrayList<BindMap> instance;
-
-    public static Logger LOGGER = LogManager.getLogger("Phenyl");
-
 
     public BindArray() {
         this.instance = new ArrayList<>();
@@ -50,7 +45,7 @@ public class BindArray extends ArrayList<BindMap> {
     public BindArray get(String key) {
         BindArray matches = new BindArray();
         for (BindMap entry : this.instance) {
-            if(entry.match(key)){
+            if (entry.match(key)) {
                 matches.add(entry);
             }
         }
@@ -67,7 +62,7 @@ public class BindArray extends ArrayList<BindMap> {
     public BindArray get(Long key) {
         BindArray matches = new BindArray();
         for (BindMap entry : instance) {
-            if(entry.match(key)){
+            if (entry.match(key)) {
                 matches.add(entry);
             }
         }

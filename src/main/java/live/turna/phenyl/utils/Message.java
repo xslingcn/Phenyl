@@ -39,6 +39,11 @@ public class Message extends PhenylBase {
         sender.sendMessage(result);
     }
 
+    /**
+     * Send message to every player in enabled servers.
+     *
+     * @param message The message content.
+     */
     public static void broadcastMessage(String message) {
         TextComponent result = new TextComponent(altColor(message));
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
@@ -48,6 +53,13 @@ public class Message extends PhenylBase {
         }
     }
 
+
+    /**
+     * Send message to every player in enabled and not excluded servers.
+     *
+     * @param message The message content.
+     * @param exclude Excluded servers.
+     */
     public static void broadcastMessage(String message, Server[] exclude) {
         TextComponent result = new TextComponent(altColor(message));
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
@@ -59,6 +71,11 @@ public class Message extends PhenylBase {
         }
     }
 
+    /**
+     * Send message to every player in enabled servers.
+     *
+     * @param message The message of {@link BaseComponent} type to be sent.
+     */
     public static void broadcastMessage(BaseComponent[] message) {
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
@@ -67,6 +84,12 @@ public class Message extends PhenylBase {
         }
     }
 
+    /**
+     * Get the server's alia set in {@code server_alias}, return the server name from bungee if not found.
+     *
+     * @param server The server to get the name.
+     * @return Server alia or server name.
+     */
     public static String getServerName(Server server) {
         String serverName = server.getInfo().getName();
         String alia = PhenylConfiguration.server_alias.get(serverName);

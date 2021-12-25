@@ -20,12 +20,10 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-
 /**
+ * <b>CommandHandler</b><br>
  * CommandHandler of Phenyl.
  *
- * @author xsling
- * @version 1.0
  * @since 2021/12/3 4:28
  */
 public class CommandHandler extends PhenylCommand {
@@ -122,7 +120,7 @@ public class CommandHandler extends PhenylCommand {
                             if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
                                 CompletableFuture<Boolean> futureBind = CompletableFuture.supplyAsync(() -> {
                                     try {
-                                        forwardToQQ(PhenylConfiguration.enabled_groups, args[1], player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()));
+                                        forwardToQQ(args[1], player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()));
                                     } catch (NoSuchElementException e) {
                                         LOGGER.error(i18n("noSuchGroup"));
                                         if (PhenylConfiguration.debug) e.printStackTrace();

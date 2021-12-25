@@ -19,6 +19,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <b>OnBungeeChatEvent</b><br>
+ * Called when player sent a chat message.
+ * Forward the message to QQ group.<br>
+ * Forward the message to all online players in other sub-servers if {@code cross_sever_format} is not set to "disabled".
  *
  * @since 2021/12/4 21:54
  */
@@ -31,10 +34,11 @@ public class OnChatEvent extends PhenylListener {
         ProxiedPlayer player = (ProxiedPlayer) e.getSender();
         if (!PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) return;
         switch (PhenylConfiguration.forward_mode) {
+            // always forward message from in-game players.
             case "sync", "bind" -> {
                 CompletableFuture<Boolean> futureSync = CompletableFuture.supplyAsync(() -> {
                     try {
-                        forwardToQQ(PhenylConfiguration.enabled_groups, e.getMessage(), player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()));
+                        forwardToQQ(e.getMessage(), player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()));
                     } catch (NoSuchElementException ex) {
                         LOGGER.error(i18n("noSuchGroup"));
                         if (PhenylConfiguration.debug) ex.printStackTrace();

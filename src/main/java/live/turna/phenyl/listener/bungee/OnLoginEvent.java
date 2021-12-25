@@ -18,7 +18,11 @@ import static live.turna.phenyl.utils.Mirai.sendGroup;
 
 /**
  * <b>OnLoginEvent</b><br>
- * * @since 2021/12/4 21:52
+ * Called when a server is ready to take control of a player instance.
+ * Send a message to QQ group if {@code on_join} is not set to "disabled".<br>
+ * Send a message to all online players if {@code on_join_broadcast} is not set to "disabled".
+ *
+ * @since 2021/12/4 21:52
  */
 public class OnLoginEvent extends PhenylListener {
     @EventHandler
@@ -50,6 +54,7 @@ public class OnLoginEvent extends PhenylListener {
             }).orTimeout(3, TimeUnit.SECONDS);
         }
 
+        // Register a player if logging in for the first time. Updating the player's username if username not found.
         String uuid = e.getPlayer().getUniqueId().toString();
         String userName = e.getPlayer().getName();
         Integer id = Database.getIDByUserName(userName);

@@ -73,6 +73,15 @@ public class MiraiHandler extends PhenylBase {
         }});
     }
 
+    /**
+     * Get the bot instance.
+     *
+     * @return The bot instance.
+     */
+    public Bot getBot() {
+        return bot;
+    }
+
     public void onEnable() {
         try {
             configureBot();
@@ -86,10 +95,6 @@ public class MiraiHandler extends PhenylBase {
     public void onDisable() {
         MiraiEvent.removeListeners();
         bot.close();
-    }
-
-    public Bot getBot() {
-        return bot;
     }
 
     public boolean logIn() {

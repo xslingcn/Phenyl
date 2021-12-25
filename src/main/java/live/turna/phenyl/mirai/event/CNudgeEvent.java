@@ -4,8 +4,8 @@ import net.mamoe.mirai.event.events.NudgeEvent;
 import net.md_5.bungee.api.plugin.Event;
 
 /**
- * @author xsling
- * @version 1.0
+ * <b>CNudgeEvent</b><br>
+ *
  * @since 2021/12/4 4:59
  */
 public class CNudgeEvent extends Event {

@@ -16,7 +16,11 @@ import static live.turna.phenyl.utils.Mirai.sendGroup;
 
 /**
  * <b>OnPlayerDisconnectEvent</b><br>
- * * @since 2021/12/4 21:51
+ * Called when a player has disconnected from bungee.
+ * Send a message to QQ group if {@code on_leave} is not set to "disabled".<br>
+ * Send a message to all online players if {@code on_leave_broadcast} is not set to "disabled".
+ *
+ * @since 2021/12/4 21:51
  */
 public class OnPlayerDisconnectEvent extends PhenylListener {
     @EventHandler

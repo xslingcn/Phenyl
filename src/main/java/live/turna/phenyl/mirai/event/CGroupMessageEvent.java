@@ -6,8 +6,6 @@ import net.mamoe.mirai.message.code.MiraiCode;
 import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.md_5.bungee.api.plugin.Event;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * <b>CGroupMessageEvent</b><br>
@@ -16,8 +14,6 @@ import org.apache.logging.log4j.Logger;
  * @since 2021/12/4 4:59
  */
 public class CGroupMessageEvent extends Event {
-    public static final Logger LOGGER = LogManager.getLogger("Phenyl");
-
     private final GroupMessageEvent event;
 
     public CGroupMessageEvent(GroupMessageEvent event) {
@@ -56,9 +52,9 @@ public class CGroupMessageEvent extends Event {
     }
 
     /**
-     * Get the message sender's in-group name card.
+     * Get the message sender's in-group name card. If not found, return the message sender's nickname.
      *
-     * @return The sender's name card.
+     * @return The sender's name card or nickname.
      */
     public String getSenderNameCardOrNick() {
         return event.getSender().getNameCard().isEmpty() ? event.getSender().getNick() : event.getSender().getNameCard();

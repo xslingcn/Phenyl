@@ -4,8 +4,8 @@ import net.mamoe.mirai.event.events.MemberJoinEvent;
 import net.md_5.bungee.api.plugin.Event;
 
 /**
- * @author xsling
- * @version 1.0
+ * <b>CMemberJoinEvent</b><br>
+ *
  * @since 2021/12/4 4:59
  */
 public class CMemberJoinEvent extends Event {

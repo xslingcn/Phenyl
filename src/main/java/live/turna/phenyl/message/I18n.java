@@ -41,7 +41,9 @@ public class I18n extends PhenylBase {
         instance = this;
     }
 
-    public void onDisable() { instance = null; }
+    public void onDisable() {
+        instance = null;
+    }
 
     public I18n() {
         defaultBundle = ResourceBundle.getBundle(MESSAGES, Locale.ENGLISH);

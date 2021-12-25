@@ -1,9 +1,7 @@
 package live.turna.phenyl.listener.mirai;
 
 import live.turna.phenyl.PhenylListener;
-import live.turna.phenyl.mirai.MiraiHandler;
 import live.turna.phenyl.mirai.event.CBotOfflineEvent;
-import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.events.BotOfflineEvent;
 import net.md_5.bungee.event.EventHandler;
 

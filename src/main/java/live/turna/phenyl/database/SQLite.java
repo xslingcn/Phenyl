@@ -13,7 +13,7 @@ import static live.turna.phenyl.message.I18n.i18n;
 
 /**
  * <b>SQLite</b><br>
- * *
+ * SQLite handler.
  *
  * @since 2021/12/5 21:08
  */
@@ -46,6 +46,9 @@ public class SQLite extends PhenylBase {
         initTables();
     }
 
+    /**
+     * Initialize tables for sqlite.
+     */
     private void initTables() {
         try {
             player = playerConnection.createStatement();
@@ -62,6 +65,14 @@ public class SQLite extends PhenylBase {
         }
     }
 
+    /**
+     * Get a player instance from database.
+     *
+     * @param selectColumn The column name of selecting.
+     * @param selectValue  The corresponding value.
+     * @return A Player instance in 3 circumstances. 1). Fully bound player, with valid id, uuid, qqid, mcname; 2). Registered but not bound
+     * player, with valid id, uuid but <b>NULL qqid and mcname</b>. 3). Not registered player, all 4 columns are NULL.
+     */
     private static Player getPlayer(String selectColumn, String selectValue) {
         if (!selectColumn.equalsIgnoreCase("qqid")) selectValue = String.format("'%s'", selectValue);
 
@@ -86,6 +97,15 @@ public class SQLite extends PhenylBase {
         return new Player(null, null, null, null);
     }
 
+    /**
+     * Update players in database.
+     *
+     * @param setColumn    The column to set.
+     * @param setValue     The value to be set.
+     * @param selectColumn The selecting column.
+     * @param selectValue  The selecting value.
+     * @return True - the update done successfully. False - query failed.
+     */
     private static boolean updatePlayer(String setColumn, String setValue, String selectColumn, String selectValue) {
         if (!setColumn.equalsIgnoreCase("qqid")) setValue = String.format("'%s'", setValue);
         if (!selectColumn.equalsIgnoreCase("qqid")) selectValue = String.format("'%s'", selectValue);
@@ -102,6 +122,13 @@ public class SQLite extends PhenylBase {
         return false;
     }
 
+    /**
+     * Insert a player.
+     *
+     * @param insertColumns The column to insert into.
+     * @param insertValues  The value to insert.
+     * @return True - the insert query was done successfully. False - query failed.
+     */
     private static boolean insertPlayer(String insertColumns, String insertValues) {
         try {
             player = playerConnection.createStatement();
@@ -115,6 +142,13 @@ public class SQLite extends PhenylBase {
         return false;
     }
 
+    /**
+     * Insert a message.
+     *
+     * @param insertColumns The column to insert into.
+     * @param insertValues  The value to insert.
+     * @return True - the insert query was done successfully. False - query failed.
+     */
     private static boolean insertMessage(String insertColumns, String insertValues) {
         try {
             message = messageConnection.createStatement();
@@ -128,6 +162,13 @@ public class SQLite extends PhenylBase {
         return false;
     }
 
+    /**
+     * <b>Below are public methods for database operations.</b><br>
+     * Try to register a player.
+     *
+     * @param uuid The player's UUID.
+     * @return Player instance gotten from {@link #getPlayer(String, String)};
+     */
     public static Player registerPlayer(String uuid) {
         Player result = getPlayer("uuid", uuid);
         if (result.uuid() == null) {
@@ -137,6 +178,13 @@ public class SQLite extends PhenylBase {
         return result;
     }
 
+    /**
+     * Update the username if is null or does not match the param's.
+     *
+     * @param id       The player's id.
+     * @param userName The player's Minecraft username.
+     * @return True - the username needs to be updated and that is done successfully. False - no need to update username or query failed.
+     */
     public static boolean updateUserName(String id, String userName) {
         Player result = getPlayer("id", id);
         if (result.mcname() == null || !result.mcname().equals(userName)) {
@@ -145,24 +193,59 @@ public class SQLite extends PhenylBase {
         return false;
     }
 
+    /**
+     * Add a binding.
+     *
+     * @param uuid   The player's UUID.
+     * @param mcname The player's Minecraft username.
+     * @param qqid   The player's QQ ID.
+     * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
+     */
     public static boolean addBinding(String uuid, String mcname, Long qqid) {
         return updatePlayer("mcname", mcname, "uuid", uuid) &&
                 updatePlayer("qqid", qqid.toString(), "uuid", uuid);
     }
 
+    /**
+     * Get QQ ID by Minecraft UUID.
+     *
+     * @param uuid The player's UUID.
+     * @return Corresponding QQ ID if found, null if not.
+     */
     public static Long getBinding(String uuid) {
         return getPlayer("uuid", uuid).qqid();
     }
 
+    /**
+     * Get Minecraft username by QQ ID.
+     *
+     * @param qqid The player's QQ ID.
+     * @return Corresponding UUID if found, null if not.
+     */
     public static String getBinding(Long qqid) {
         return getPlayer("qqid", qqid.toString()).mcname();
     }
 
+    /**
+     * Get the player id by Minecraft username.
+     *
+     * @param userName The player's Minecraft username.
+     * @return Corresponding id if found, null if not.
+     */
     public static Integer getIDByUserName(String userName) {
         return getPlayer("mcname", userName).id();
     }
 
-    // qq[0] GroupID; qq[1] QQID
+    /**
+     * Add a message from QQ group.<br>
+     * Phenyl will try to find the sender's binding first. If succeeded, the player's id and Minecraft UUID would be attached as well.
+     * If not, only group ID and QQ ID would be added.
+     *
+     * @param content The message content.
+     * @param groupID The group ID of which the message is from.
+     * @param qqID    The sender's QQ ID.
+     * @return True - the insert query was done successfully. False - query failed.
+     */
     public static boolean addMessage(String content, Long groupID, Long qqID) {
         Player result = getPlayer("qqid", qqID.toString());
         if (result.uuid() != null)
@@ -171,6 +254,15 @@ public class SQLite extends PhenylBase {
             return insertMessage("content,fromgroup,fromqqid", String.format("'%s',%s,%s", content, groupID.toString(), qqID));
     }
 
+    /**
+     * Add a message from Minecraft chat.
+     * Phenyl will try to find the sender's binding first. If succeeded, the player's id and QQ ID would be attached as well.
+     * If not, only the player's UUID would be added.
+     *
+     * @param content  message content.
+     * @param fromuuid The sender's Minecraft UUID.
+     * @return True - the insert query was done successfully. False - query failed.
+     */
     public static boolean addMessage(String content, String fromuuid) {
         Player result = getPlayer("uuid", fromuuid);
         if (result.qqid() != null)

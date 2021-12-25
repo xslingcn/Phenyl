@@ -13,11 +13,15 @@ import java.sql.DriverManager;
 
 /**
  * <b>Database</b><br>
+ * Encapsulate all database operation methods.
  *
  * @since 2021/12/6 2:43
  */
 public class Database extends PhenylBase {
 
+    /**
+     * Initialize database connection and/or files.
+     */
     public static void initialize() {
         switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> {
@@ -85,6 +89,13 @@ public class Database extends PhenylBase {
         }
     }
 
+    /**
+     * Try to register a player.
+     *
+     * @param uuid The player's UUID.
+     * @return Player instance;
+     * @see SQLite#registerPlayer(String)
+     */
     public static Player registerPlayer(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.registerPlayer(uuid);
@@ -94,6 +105,13 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Update the username if is null or does not match the param's.
+     *
+     * @param id       The player's id.
+     * @param userName The player's Minecraft username.
+     * @return True - the username needs to be updated and that is done successfully. False - no need to update username or query failed.
+     */
     public static boolean updateUserName(String id, String userName) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.updateUserName(id, userName);
@@ -103,6 +121,14 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Add a binding.
+     *
+     * @param uuid   The player's UUID.
+     * @param mcname The player's Minecraft username.
+     * @param qqid   The player's QQ ID.
+     * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
+     */
     public static boolean addBinding(String uuid, String mcname, Long qqid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.addBinding(uuid, mcname, qqid);
@@ -112,6 +138,12 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Get QQ ID by Minecraft UUID.
+     *
+     * @param uuid The player's UUID.
+     * @return Corresponding QQ ID if found, null if not.
+     */
     public static Long getBinding(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getBinding(uuid);
@@ -121,6 +153,12 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Get Minecraft username by QQ ID.
+     *
+     * @param qqid The player's QQ ID.
+     * @return Corresponding UUID if found, null if not.
+     */
     public static String getBinding(Long qqid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getBinding(qqid);
@@ -130,6 +168,12 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Get the player id by Minecraft username.
+     *
+     * @param userName The player's Minecraft username.
+     * @return Corresponding id if found, null if not.
+     */
     public static Integer getIDByUserName(String userName) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getIDByUserName(userName);
@@ -139,6 +183,16 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Add a message from QQ group.<br>
+     * Phenyl will try to find the sender's binding first. If succeeded, the player's id and Minecraft UUID would be attached as well.
+     * If not, only group ID and QQ ID would be added.
+     *
+     * @param content The message content.
+     * @param groupID The group ID of which the message is from.
+     * @param qqID    The sender's QQ ID.
+     * @return True - the insert query was done successfully. False - query failed.
+     */
     public static boolean addMessage(String content, Long groupID, Long qqID) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.addMessage(content, groupID, qqID);
@@ -148,6 +202,15 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Add a message from Minecraft chat.
+     * Phenyl will try to find the sender's binding first. If succeeded, the player's id and QQ ID would be attached as well.
+     * If not, only the player's UUID would be added.
+     *
+     * @param content  message content.
+     * @param fromuuid The sender's Minecraft UUID.
+     * @return True - the insert query was done successfully. False - query failed.
+     */
     public static boolean addMessage(String content, String fromuuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.addMessage(content, fromuuid);
