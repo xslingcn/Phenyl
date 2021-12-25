@@ -17,9 +17,12 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * <b>CommandHandler</b><br>
@@ -178,5 +181,51 @@ public class CommandHandler extends PhenylCommand {
                 }
             }
         }
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (!(sender instanceof ProxiedPlayer) || args.length == 0) {
+            return null;
+        }
+        List<String> completions = new ArrayList<>();
+        if (args.length == 1) {
+            String argument = args[0].toLowerCase();
+            completions.add("help");
+            if (sender.hasPermission("phenyl.use.bind")) {
+                completions.add("bind");
+            }
+            if (sender.hasPermission("phenyl.use.verify")) {
+                completions.add("verify");
+            }
+            if (sender.hasPermission("phenyl.use.say")) {
+                completions.add("say");
+            }
+            if (sender.hasPermission("phenyl.use.nomessage")) {
+                completions.add("nomessage");
+            }
+            if (sender.hasPermission("phenyl.admin.reload")) {
+                completions.add("reload");
+            }
+            if (sender.hasPermission("phenyl.admin.login")) {
+                completions.add("login");
+            }
+            if (sender.hasPermission("phenyl.admin.logout")) {
+                completions.add("logout");
+            }
+            if (sender.hasPermission("phenyl.admin.mute")) {
+                completions.add("mute");
+            }
+            return completions.stream().filter(val -> val.startsWith(argument)).collect(Collectors.toList());
+        }
+        if (args.length == 2) {
+            if (args[0].equals("mute")) {
+                List<ProxiedPlayer> playerList = ProxyServer.getInstance().getPlayers().stream().filter(player -> player.getName().startsWith(args[1])).collect(Collectors.toList());
+                playerList.forEach(player -> completions.add(player.getName()));
+                playerList.clear();
+                return completions;
+            }
+        }
+        return completions;
     }
 }

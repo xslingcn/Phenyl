@@ -3,6 +3,7 @@ package live.turna.phenyl;
 import live.turna.phenyl.mirai.MiraiHandler;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +13,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @since 2021/12/3 22:31
  */
-public class PhenylCommand extends Command {
+public class PhenylCommand extends Command implements TabExecutor {
     public static final Logger LOGGER = LogManager.getLogger("Phenyl");
     public static Phenyl phenyl = Phenyl.getInstance();
     public static MiraiHandler miraiInstance = Phenyl.getMiraiInstance();
@@ -23,5 +24,10 @@ public class PhenylCommand extends Command {
 
     public void execute(CommandSender sender, String[] args) {
 
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return null;
     }
 }
