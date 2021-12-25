@@ -2,19 +2,18 @@ package live.turna.phenyl;
 
 import live.turna.phenyl.commands.CommandHandler;
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.database.Database;
 import live.turna.phenyl.listener.ListenerRegisterer;
 import live.turna.phenyl.message.I18n;
-import live.turna.phenyl.mirai.MiraiEvent;
 import live.turna.phenyl.mirai.MiraiHandler;
 
 import static live.turna.phenyl.message.I18n.i18n;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
+
 
 public final class Phenyl extends Plugin {
     private final Logger LOGGER = LogManager.getLogger("Phenyl");
@@ -26,11 +25,11 @@ public final class Phenyl extends Plugin {
     public static Phenyl getInstance() {
         return instance;
     }
-    public static MiraiHandler getMiraiInstance(){return miraiInstance;}
 
-    private static Level readLevel() {
-        return PhenylConfiguration.debug ? Level.DEBUG : Level.INFO;
+    public static MiraiHandler getMiraiInstance() {
+        return miraiInstance;
     }
+
 
     @Override
     public void onLoad() {
@@ -47,11 +46,10 @@ public final class Phenyl extends Plugin {
         i18nInstance.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
 
-        Configurator.setLevel(LogManager.getLogger("Phenyl").getName(), readLevel());
-        LOGGER.info(i18n("configLoaded"));
-        if (PhenylConfiguration.debug) LOGGER.warn(i18n("debugEnabled"));
+        PhenylConfiguration.postConfiguration();
 
         ListenerRegisterer.registerListeners();
+        Database.initialize();
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
     }
 
@@ -61,11 +59,11 @@ public final class Phenyl extends Plugin {
 
         PhenylConfiguration.loadPhenylConfiguration();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
-        Configurator.setLevel(LogManager.getLogger("Phenyl").getName(), readLevel());
-        if (PhenylConfiguration.debug) LOGGER.warn(i18n("debugEnabled"));
-
         miraiInstance.onEnable();
+        PhenylConfiguration.postConfiguration();
+
         ListenerRegisterer.registerListeners();
+        Database.initialize();
 
         LOGGER.info(i18n("reloadSuccessful"));
     }

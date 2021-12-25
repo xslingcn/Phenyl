@@ -4,6 +4,9 @@ import live.turna.phenyl.PhenylBase;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import static live.turna.phenyl.message.I18n.i18n;
 
@@ -45,8 +48,7 @@ public class PhenylConfiguration extends PhenylBase {
     // General configuration
     public static String locale = "en";
     public static Boolean debug = false;
-    public static String forward_mode = "bind";
-    public static String forward_prefix = "&";
+    //    public static String forward_prefix = "&";
     public static Boolean send_cross_server = true;
 
     // Mirai configuration
@@ -57,6 +59,7 @@ public class PhenylConfiguration extends PhenylBase {
 
     // Database configuration
     public static String storage = "sqlite";
+    public static Boolean save_message = true;
     public static String host = "127.0.0.1";
     public static Integer port = 3306;
     public static String username = "root";
@@ -65,12 +68,14 @@ public class PhenylConfiguration extends PhenylBase {
     public static String table_prefix = "ph_";
 
     // Message configuration
-    public static String cross_sever_format = "[%sub_server]%username%:%message%";
-    public static String qq_to_server_format = "[QQ]%username%:%message%";
+    public static String forward_mode = "bind";
+    public static String cross_sever_format = "&7[%sub_server%]%username%:%message%";
+    public static String qq_to_server_format = "&7[QQ]%username%:%message%";
     public static String server_to_qq_format = "%username%:%message%";
-    public static String on_join = "%username% joined the game.";
-    public static String on_switch = "%username% joined %sub_server%.";
-    public static String on_leave = "%username% left the game.";
+    public static String on_join = "%username% joined the %sub_server%";
+    public static String on_leave = "%username% left the game";
+    public static String on_join_broadcast = "&e%username% joined the %sub_server%";
+    public static String on_leave_broadcast = "&e%username% left the game";
 
     // Bungee configuration
     public static HashMap<String, String> server_alias = new HashMap<>();
@@ -107,8 +112,6 @@ public class PhenylConfiguration extends PhenylBase {
         //General configuration
         locale = config.getString("locale");
         debug = config.getBoolean("debug");
-        forward_mode = config.getString("message_mode");
-        forward_prefix = config.getString("message_prefix");
         send_cross_server = config.getBoolean("send_cross_server");
 
         //Mirai configuration
@@ -119,6 +122,7 @@ public class PhenylConfiguration extends PhenylBase {
 
         //Database configuration
         storage = config.getString("storage");
+        save_message = config.getBoolean("save_message");
         host = config.getString("host");
         port = config.getInt("port");
         username = config.getString("username");
@@ -127,12 +131,14 @@ public class PhenylConfiguration extends PhenylBase {
         table_prefix = config.getString("table_prefix");
 
         //Message configuration
+        forward_mode = config.getString("forward_mode");
         cross_sever_format = config.getString("cross_sever_format");
         qq_to_server_format = config.getString("qq_to_server_format");
         server_to_qq_format = config.getString("server_to_qq_format");
         on_join = config.getString("on_join");
-        on_switch = config.getString("on_switch");
         on_leave = config.getString("on_leave");
+        on_join_broadcast = config.getString("on_join_broadcast");
+        on_leave_broadcast = config.getString("on_leave_broadcast");
 
         //Bungee configuration
         server_alias = getMap("server_alias");
@@ -143,6 +149,22 @@ public class PhenylConfiguration extends PhenylBase {
         bind_command = config.getString("bind_command");
         confirm_command = config.getString("confirm_command");
         verification = config.getInt("verification");
+    }
+
+    public static void postConfiguration() {
+        LOGGER.info(i18n("configLoaded"));
+
+        if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))) {
+            forward_mode = "invalid";
+            LOGGER.error(i18n("invalidForward"));
+        }
+
+        if ((!storage.equals("sqlite")) && (!storage.equals("mysql")) && (!storage.equals("postgresql"))) {
+            LOGGER.error(i18n("invalidStorage"));
+        }
+
+        Configurator.setLevel(LogManager.getLogger("Phenyl").getName(), debug ? Level.DEBUG : Level.INFO);
+        if (debug) LOGGER.warn(i18n("debugEnabled"));
 
     }
 }

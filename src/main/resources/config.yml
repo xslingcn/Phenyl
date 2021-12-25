@@ -7,16 +7,8 @@ locale: en
 # debug: whether to print debug info.
 debug: false
 
-# forward_mode: how Phenyl forward messages.
-# Acceptable options:
-#   sync - Sync all messages between QQ and Server.
-#          %username% variable is *NOT AVAILABLE* for qq-to-server message under this mode . Use %nickname% instead.
-#   command - Use `/ph say ~` on server and prefix in QQ to send message.
-#   bind - Only messages from users that bound username and QQ number would be forwarded.
-forward_mode: "bind"
-
 # message_command: prefix of QQ messages to match forwarded to the server.
-forward_prefix: "&"
+#forward_prefix: "&"
 
 # send_cross_server: whether to forward message between sub-servers.
 send_cross_server: true
@@ -38,16 +30,20 @@ login_protocol: "ANDROID_PHONE"
 
 # enabled_groups: the QQ groups you want to enable Phenyl.
 enabled_groups:
-    - 797717041
-    - 958173932
+  - 797717041
+  - 958173932
 
 ################################
 #   Database configuration     #
 ################################
 
-# database: the kind of database you choose to store binding informations and chat messages.
+# database: the kind of database you choose to store binding information(and chat messages).
 # Acceptable options: sqlite, mysql, postgresql.
 storage: "sqlite"
+
+# save_message: whether to save messages.
+# If you find out the message database/table to be too large, feel free to delete/drop it.
+save_message: true
 
 # If you chose sqlite above, ignore the following configs.
 host: "127.0.0.1"
@@ -58,51 +54,79 @@ database: "Phenyl"
 table_prefix: "ph_"
 
 ################################
-#   Message configuration      #
+#    Message configuration     #
 ################################
 
-# Available variables:
-#   %server% - Your server name.
-#   %sub_server% - Sub-server where the message sent.
+# forward_mode: how Phenyl forward messages.
+# Acceptable options:
+#   sync - Sync all messages between QQ and Server.
+#          %username% variable is *NOT AVAILABLE* for qq-to-server messages under this mode . Use %nickname% instead.
+#   command - Use `/ph say ~` on server and prefix in QQ to send messages.
+#   bind - Only messages from users that bound username and QQ number would be forwarded.
+forward_mode: "bind"
+
+# Variables:
+#   %sub_server% - Sub-server where the message sent. *CROSS SERVER AND SERVER TO QQ MESSAGES ONLY.
+#   %group_id% - The id of the group. *QQ TO SERVER MESSAGES ONLY*
+#   %group_name% - The name of the group *QQ TO SERVER MESSAGES ONLY*
 #   %username% - Minecraft username.
-#   %nickname% - Nickname in QQ group.
+#   %nickname% - Nickname or name card if available in QQ group. *QQ TO SERVER MESSAGES ONLY*
 #   %message% - Message content.
 
-# cross_sever_format: in-game cross server message format.
-cross_sever_format: "[%sub_server]%username%:%message%"
+# cross_sever_format: in-game cross server message format. Set to "disabled" to disable it.
+# Available variables:
+#   %sub_server%, %username%, %message%
+cross_sever_format: "&7[%sub_server%]%username%:%message%"
 
 # qq_to_server_format: format of QQ message forwarded to server.
 # Use %nickname% instead of %username% if you selected sync mode.
-qq_to_server_format: "[QQ]%username%:%message%"
+# Available variables:
+#   %group_id%, %group_id%, %group_name%, %username%, %nickname%, %message%
+qq_to_server_format: "&7[QQ]%username%:%message%"
 
 # server_to_qq_format: format of server chat message forwarded to QQ.
+# Available variables:
+#   %sub_server%, %username%, %message%
 server_to_qq_format: "%username%:%message%"
 
-# on_join: message sent to QQ when players joined the game.
-on_join: "%username% joined the game."
+# on_join: message sent to QQ when players joined the game. Set to "disabled" to disable it.
+# Available variables:
+#   %sub_server%, %username%
+on_join: "%username% joined the %sub_server%"
 
-# on_switch: message sent to QQ when players switched from one sub-server to another.
-on_switch: "%username% joined %sub_server%."
+# on_leave: message sent to QQ when players left the game. Set to "disabled" to disable it.
+# Available variables:
+#   %username%
+on_leave: "%username% left the game"
 
-# on_leave: message sent to QQ when players left the game.
-on_leave: "%username% left the game."
+# on_join: message sent to all sub-servers when players joined the game. Set to "disabled" to disable it.
+# You may use it with Essentials, disabling each sub-server's joining message.
+# Available variables:
+#   %sub_server%, %username%
+on_join_broadcast: "&e%username% joined the %sub_server%"
+
+# on_leave: message sent to all sub-servers when players left the game. Set to "disabled" to disable it.
+# You may use it with Essentials, disabling each sub-server's joining message.
+# Available variables:
+#   %username%
+on_leave_broadcast: "&e%username% left the game"
 
 ################################
-#  Bungeecord configuration    #
+#   Bungeecord configuration   #
 ################################
 
 # server_alias: the alias of your bungee servers.
 # If not set, Phenyl will use the server name.
 server_alias:
-    survival: "Survival"
-    flat: "Flat"
-    test: "Test"
+  survival: "Survival"
+  flat: "Flat"
+  test: "Test"
 
 # enabled_servers: the servers you want to enable message forwarding.
 enabled_servers:
-    - survival
-    - flat
-    - test
+  - survival
+  - flat
+  - test
 
 ################################
 #    Binding configuration     #
