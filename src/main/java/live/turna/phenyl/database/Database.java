@@ -10,6 +10,8 @@ import static live.turna.phenyl.message.I18n.i18n;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <b>Database</b><br>
@@ -94,46 +96,100 @@ public class Database extends PhenylBase {
      *
      * @param uuid The player's UUID.
      * @return Player instance;
-     * @see SQLite#registerPlayer(String)
+     * @see SQLite#registerPlayer(String, String)
      */
-    public static Player registerPlayer(String uuid) {
+    public static boolean registerPlayer(String uuid, String mcname) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.registerPlayer(uuid);
-            case "mysql" -> MySQL.registerPlayer(uuid);
-            case "postgresql" -> PostgreSQL.registerPlayer(uuid);
-            default -> null;
+            case "sqlite" -> SQLite.registerPlayer(uuid, mcname);
+            case "mysql" -> MySQL.registerPlayer(uuid, mcname);
+            case "postgresql" -> PostgreSQL.registerPlayer(uuid, mcname);
+            default -> false;
+        };
+    }
+
+    public static boolean getRegistered(String uuid) {
+        return switch (PhenylConfiguration.storage.toLowerCase()) {
+            case "sqlite" -> SQLite.getRegistered(uuid);
+            case "mysql" -> MySQL.getRegistered(uuid);
+            case "postgresql" -> PostgreSQL.getRegistered(uuid);
+            default -> false;
         };
     }
 
     /**
      * Update the username if is null or does not match the param's.
      *
-     * @param id       The player's id.
+     * @param uuid     The player's Minecraft UUID.
      * @param userName The player's Minecraft username.
      * @return True - the username needs to be updated and that is done successfully. False - no need to update username or query failed.
      */
-    public static boolean updateUserName(String id, String userName) {
+    public static boolean updateUserName(String uuid, String userName) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.updateUserName(id, userName);
-            case "mysql" -> MySQL.updateUserName(id, userName);
-            case "postgresql" -> PostgreSQL.updateUserName(id, userName);
+            case "sqlite" -> SQLite.updateUserName(uuid, userName);
+            case "mysql" -> MySQL.updateUserName(uuid, userName);
+            case "postgresql" -> PostgreSQL.updateUserName(uuid, userName);
             default -> false;
+        };
+    }
+
+    public static boolean updateMutedPlayer(String uuid, Boolean toggle) {
+        LOGGER.warn("updating");
+        return switch (PhenylConfiguration.storage.toLowerCase()) {
+            case "sqlite" -> SQLite.updateMutedPlayer(uuid, toggle);
+            case "mysql" -> MySQL.updateMutedPlayer(uuid, toggle);
+            case "postgresql" -> PostgreSQL.updateMutedPlayer(uuid, toggle);
+            default -> false;
+        };
+    }
+
+    public static boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
+        return switch (PhenylConfiguration.storage.toLowerCase()) {
+            case "sqlite" -> SQLite.updateNoMessagePlayer(uuid, toggle);
+            case "mysql" -> MySQL.updateNoMessagePlayer(uuid, toggle);
+            case "postgresql" -> PostgreSQL.updateNoMessagePlayer(uuid, toggle);
+            default -> false;
+        };
+    }
+
+    public static List<Player> getMutedPlayer() {
+        return switch (PhenylConfiguration.storage.toLowerCase()) {
+            case "sqlite" -> SQLite.getMutedPlayer();
+            case "mysql" -> MySQL.getMutedPlayer();
+            case "postgresql" -> PostgreSQL.getMutedPlayer();
+            default -> new ArrayList<>();
+        };
+    }
+
+    public static List<Player> getNoMessagePlayer() {
+        return switch (PhenylConfiguration.storage.toLowerCase()) {
+            case "sqlite" -> SQLite.getNoMessagePlayer();
+            case "mysql" -> MySQL.getNoMessagePlayer();
+            case "postgresql" -> PostgreSQL.getNoMessagePlayer();
+            default -> new ArrayList<>();
         };
     }
 
     /**
      * Add a binding.
      *
-     * @param uuid   The player's UUID.
-     * @param mcname The player's Minecraft username.
-     * @param qqid   The player's QQ ID.
+     * @param uuid The player's UUID.
+     * @param qqid The player's QQ ID.
      * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
      */
-    public static boolean addBinding(String uuid, String mcname, Long qqid) {
+    public static boolean addBinding(String uuid, Long qqid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.addBinding(uuid, mcname, qqid);
-            case "mysql" -> MySQL.addBinding(uuid, mcname, qqid);
-            case "postgresql" -> PostgreSQL.addBinding(uuid, mcname, qqid);
+            case "sqlite" -> SQLite.addBinding(uuid, qqid);
+            case "mysql" -> MySQL.addBinding(uuid, qqid);
+            case "postgresql" -> PostgreSQL.addBinding(uuid, qqid);
+            default -> false;
+        };
+    }
+
+    public static boolean removeBinding(String uuid) {
+        return switch (PhenylConfiguration.storage.toLowerCase()) {
+            case "sqlite" -> SQLite.removeBinding(uuid);
+            case "mysql" -> MySQL.removeBinding(uuid);
+            case "postgresql" -> PostgreSQL.removeBinding(uuid);
             default -> false;
         };
     }
@@ -144,7 +200,7 @@ public class Database extends PhenylBase {
      * @param uuid The player's UUID.
      * @return Corresponding QQ ID if found, null if not.
      */
-    public static Long getBinding(String uuid) {
+    public static Player getBinding(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getBinding(uuid);
             case "mysql" -> MySQL.getBinding(uuid);
@@ -159,7 +215,7 @@ public class Database extends PhenylBase {
      * @param qqid The player's QQ ID.
      * @return Corresponding UUID if found, null if not.
      */
-    public static String getBinding(Long qqid) {
+    public static Player getBinding(Long qqid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getBinding(qqid);
             case "mysql" -> MySQL.getBinding(qqid);

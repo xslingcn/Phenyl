@@ -7,6 +7,7 @@ import live.turna.phenyl.config.PhenylConfiguration;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import static live.turna.phenyl.message.I18n.i18n;
 
@@ -24,7 +25,9 @@ public class PostgreSQL extends PhenylBase {
             "id SERIAL PRIMARY KEY, " +
             "uuid CHAR(32) UNIQUE, " +
             "qqid BIGINT UNIQUE, " +
-            "mcname TEXT);";
+            "mcname TEXT, " +
+            "muted BOOLEAN," +
+            "nomessage BOOLEAN);";
     private final String initMessagesTable = "CREATE TABLE IF NOT EXISTS %smessage (" +
             "content TEXT, " +
             "fromid BIGINT, " +
@@ -33,11 +36,12 @@ public class PostgreSQL extends PhenylBase {
             "fromuuid CHAR(32), " +
             "senttime TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP); ";
     private static final String selectPlayer = "SELECT * FROM %splayer WHERE %s=%s LIMIT 1;";
+    private static final String selectPlayerList = "SELECT * FROM %splayer WHERE %s=%s;";
     private static final String updatePlayer = "UPDATE %splayer SET %s=%s WHERE %s=%s;";
     private static final String insertPlayer = "INSERT INTO %splayer(%s) VALUES('%s') ON CONFLICT DO NOTHING;";
     private static final String insertMessage = "INSERT INTO %smessage(%s) VALUES(%s) ON CONFLICT DO NOTHING;";
 
-    public PostgreSQL(HikariDataSource ds) {
+    PostgreSQL(HikariDataSource ds) {
         dataSource = ds;
         initTables();
     }
@@ -86,6 +90,29 @@ public class PostgreSQL extends PhenylBase {
             e.printStackTrace();
         }
         return new Player(null, null, null, null);
+    }
+
+    private static List<Player> getPlayerList(String selectColumn, String selectValue) {
+        ResultSet resultSet;
+        List<Player> result = new java.util.ArrayList<>();
+        try {
+            connection = dataSource.getConnection();
+            resultSet = connection.prepareStatement(String.format(selectPlayerList, PhenylConfiguration.table_prefix, selectColumn, selectValue)).executeQuery();
+            if (resultSet.isBeforeFirst()) {
+                while (resultSet.next()) {
+                    result.add(new Player(resultSet.getInt("id"),
+                            resultSet.getString("uuid"),
+                            resultSet.getString("qqid") == null ? null : Long.parseLong(resultSet.getString("qqid")),
+                            resultSet.getString("mcname")));
+                }
+                connection.close();
+                return result;
+            }
+        } catch (SQLException e) {
+            LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -151,67 +178,87 @@ public class PostgreSQL extends PhenylBase {
     }
 
     /**
-     * <b>Below are public methods for database operations.</b><br>
+     * <b>Below are methods for database operations.</b><br>
      * Try to register a player.
      *
-     * @param uuid The player's UUID.
-     * @return Player instance gotten from {@link #getPlayer(String, String)};
+     * @param uuid   The player's UUID.
+     * @param mcname The player's Minecraft username.
+     * @return Whether the queries succeeded;
      */
-    public static Player registerPlayer(String uuid) {
-        Player result = getPlayer("uuid", uuid);
-        if (result.uuid() == null) {
-            insertPlayer("uuid", uuid);
-            result = getPlayer("uuid", uuid);
-        }
-        return result;
+    static boolean registerPlayer(String uuid, String mcname) {
+        if (getPlayer("uuid", uuid).id() == null)
+            return insertPlayer("uuid", uuid) && insertPlayer("mcname", mcname);
+        return false;
+    }
+
+    static boolean getRegistered(String uuid) {
+        return getPlayer("uuid", uuid).id() == null;
     }
 
     /**
      * Update the username if is null or does not match the param's.
      *
-     * @param id       The player's id.
+     * @param uuid     The player's Minecraft UUID.
      * @param userName The player's Minecraft username.
      * @return True - the username needs to be updated and that is done successfully. False - no need to update username or query failed.
      */
-    public static boolean updateUserName(String id, String userName) {
-        Player result = getPlayer("id", id);
+    static boolean updateUserName(String uuid, String userName) {
+        Player result = getPlayer("uuid", uuid);
         if (result.mcname() == null || !result.mcname().equals(userName)) {
-            return updatePlayer("mcname", userName, "id", id);
+            return updatePlayer("mcname", userName, "uuid", uuid);
         }
         return false;
+    }
+
+    static boolean updateMutedPlayer(String uuid, Boolean toggle) {
+        return updatePlayer("muted", toggle ? "1" : "0", "uuid", uuid);
+    }
+
+    static boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
+        return updatePlayer("nomessage", toggle ? "1" : "0", "uuid", uuid);
+    }
+
+    static List<Player> getMutedPlayer() {
+        return getPlayerList("muted", "1");
+    }
+
+    static List<Player> getNoMessagePlayer() {
+        return getPlayerList("nomessage", "1");
     }
 
     /**
      * Add a binding.
      *
-     * @param uuid   The player's UUID.
-     * @param mcname The player's Minecraft username.
-     * @param qqid   The player's QQ ID.
+     * @param uuid The player's UUID.
+     * @param qqid The player's QQ ID.
      * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
      */
-    public static boolean addBinding(String uuid, String mcname, Long qqid) {
-        return updatePlayer("mcname", mcname, "uuid", uuid) &&
-                updatePlayer("qqid", qqid.toString(), "uuid", uuid);
+    static boolean addBinding(String uuid, Long qqid) {
+        return updatePlayer("qqid", qqid.toString(), "uuid", uuid);
+    }
+
+    static boolean removeBinding(String uuid) {
+        return updatePlayer("qqid", "NULL", "uuid", uuid);
     }
 
     /**
-     * Get QQ ID by Minecraft UUID.
+     * Get player by Minecraft UUID.
      *
      * @param uuid The player's UUID.
-     * @return Corresponding QQ ID if found, null if not.
+     * @return Player instance gotten from {@link #getPlayer(String, String)}.
      */
-    public static Long getBinding(String uuid) {
-        return getPlayer("uuid", uuid).qqid();
+    static Player getBinding(String uuid) {
+        return getPlayer("uuid", uuid);
     }
 
     /**
-     * Get Minecraft username by QQ ID.
+     * Get player username by QQ ID.
      *
      * @param qqid The player's QQ ID.
-     * @return Corresponding UUID if found, null if not.
+     * @return Player instance gotten from {@link #getPlayer(String, String)}.
      */
-    public static String getBinding(Long qqid) {
-        return getPlayer("qqid", qqid.toString()).mcname();
+    static Player getBinding(Long qqid) {
+        return getPlayer("qqid", qqid.toString());
     }
 
     /**
@@ -220,7 +267,7 @@ public class PostgreSQL extends PhenylBase {
      * @param userName The player's Minecraft username.
      * @return Corresponding id if found, null if not.
      */
-    public static Integer getIDByUserName(String userName) {
+    static Integer getIDByUserName(String userName) {
         return getPlayer("mcname", userName).id();
     }
 
@@ -234,7 +281,7 @@ public class PostgreSQL extends PhenylBase {
      * @param qqID    The sender's QQ ID.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    public static boolean addMessage(String content, Long groupID, Long qqID) {
+    static boolean addMessage(String content, Long groupID, Long qqID) {
         Player result = getPlayer("qqid", qqID.toString());
         if (result.uuid() != null)
             return insertMessage("content,fromid,fromuuid,fromgroup,fromqqid", String.format("'%s',%s,'%s',%s,%s", content, result.id(), result.uuid(), groupID.toString(), qqID));
@@ -251,11 +298,10 @@ public class PostgreSQL extends PhenylBase {
      * @param fromuuid The sender's Minecraft UUID.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    public static boolean addMessage(String content, String fromuuid) {
+    static boolean addMessage(String content, String fromuuid) {
         Player result = getPlayer("uuid", fromuuid);
         if (result.qqid() != null)
             return insertMessage("content,fromid,fromqqid", String.format("'%s',%s,%s", content, result.id(), result.qqid()));
-        else if (result.uuid() == null) registerPlayer(fromuuid);
         return insertMessage("content,fromuuid", String.format("'%s','%s'", content, fromuuid));
     }
 }

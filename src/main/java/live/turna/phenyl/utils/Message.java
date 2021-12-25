@@ -1,7 +1,9 @@
 package live.turna.phenyl.utils;
 
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.database.Player;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -62,11 +64,17 @@ public class Message extends PhenylBase {
      */
     public static void broadcastMessage(String message, Server[] exclude) {
         TextComponent result = new TextComponent(altColor(message));
+        out:
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
-                for (Server server : exclude)
-                    if (server != player.getServer())
+                for (Server server : exclude) {
+                    if (server != player.getServer()) {
+                        for (Player it : Phenyl.getNoMessagePlayer()) {
+                            if (player.getUniqueId().toString().equals(it.uuid())) continue out;
+                        }
                         player.sendMessage(result);
+                    }
+                }
             }
         }
     }
@@ -77,8 +85,12 @@ public class Message extends PhenylBase {
      * @param message The message of {@link BaseComponent} type to be sent.
      */
     public static void broadcastMessage(BaseComponent[] message) {
+        out:
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
+                for (Player it : Phenyl.getNoMessagePlayer()) {
+                    if (player.getUniqueId().toString().equals(it.uuid())) continue out;
+                }
                 player.sendMessage(message);
             }
         }

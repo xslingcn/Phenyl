@@ -142,5 +142,5 @@ bind_command: "bind"
 # confirm_command: command sent in QQ groups to confirm binding.
 confirm_command: "confirm"
 
-# verification: the length of verification code. 0 to disable verifications.
+# verification: the length of verification code.
 verification: 6

@@ -1,16 +1,13 @@
 package live.turna.phenyl.listener.mirai;
 
 import live.turna.phenyl.PhenylListener;
-import live.turna.phenyl.bind.BindResult;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
 
-import static live.turna.phenyl.bind.BindHandler.handleConfirm;
 import static live.turna.phenyl.message.Forward.forwardToBungee;
 import static live.turna.phenyl.message.I18n.i18n;
-import static live.turna.phenyl.utils.Bind.isValidUsername;
-import static live.turna.phenyl.utils.Bind.isValidVerificationCode;
+import static live.turna.phenyl.utils.Bind.*;
 import static live.turna.phenyl.utils.Mirai.sendGroup;
 import static live.turna.phenyl.bind.BindHandler.handleRequest;
 
@@ -73,17 +70,10 @@ public class OnGroupMessageEvent extends PhenylListener {
             switch (PhenylConfiguration.forward_mode) {
                 case "sync" -> forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), null);
                 case "bind" -> {
-                    String userName = Database.getBinding(senderID);
+                    String userName = Database.getBinding(senderID).mcname();
                     // Check if is bound.
                     if (userName != null)
                         forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), userName);
-                    else {
-                        MessageChain reply = new MessageChainBuilder()
-                                .append(new QuoteReply(message))
-                                .append(i18n("notBoundYet"))
-                                .build();
-                        sendGroup(group, reply);
-                    }
                 }
                 default -> {
                     if (PhenylConfiguration.debug) LOGGER.error(i18n("invalidForward"));
@@ -113,7 +103,7 @@ public class OnGroupMessageEvent extends PhenylListener {
             String code = handleRequest(userName, senderID);
             MessageChain reply = new MessageChainBuilder()
                     .append(new QuoteReply(message))
-                    .append(i18n("completeBindInGroup"))
+                    .append(i18n("completeBindInGame"))
                     .build();
             sendGroup(group, reply);
             sendGroup(group, "/phenyl verify " + code);
@@ -133,42 +123,11 @@ public class OnGroupMessageEvent extends PhenylListener {
 
         //Random message that needs to be forwarded in *command* mode.
         if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
-            String userName = Database.getBinding(senderID);
+            String userName = Database.getBinding(senderID).mcname();
             if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
             forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), userName);
         }
         throw new IllegalArgumentException(i18n("commandNotFound"));
     }
 
-    /**
-     * @param qqID The QQ ID to request a confirmation.
-     * @param code The code to be checked.
-     * @return The binding success message. Which are 1). bindSuccess when a new binding is successfully added;
-     * 2). bindNoChange when the binding already exists and no operation is done; 3). changeBind when an existing binding is updated.
-     * @throws IllegalArgumentException invalidCode: Verification code is neither format-correct nor valid.
-     * @throws IllegalArgumentException bindFail: The request is valid, but binding attempt failed while operating database.
-     */
-    private static String verifier(Long qqID, String code) throws IllegalArgumentException {
-        // Code not matching generating regex.
-        if (!isValidVerificationCode(code, PhenylConfiguration.verification))
-            throw new IllegalArgumentException(i18n("invalidCode"));
-
-        BindResult bindResult = handleConfirm(qqID, code);
-
-        // Code not found in binding queue.
-        if (bindResult == null) throw new IllegalArgumentException(i18n("invalidCode"));
-
-        // Failed while updating the database.
-        if (!bindResult.getSucceeded()) throw new IllegalArgumentException(i18n("bindFail"));
-
-        //The first time someone attempts binding and succeeded.
-        if (bindResult.getRegistered().mcname() == null) return i18n("bindSuccess", bindResult.getUserName());
-
-        // Binding found in database and the request is the same as the existing, not updating.
-        if (bindResult.getRegistered().mcname().equals(bindResult.getUserName()))
-            return i18n("bindNoChange");
-
-        //Update binding succeeded.
-        return i18n("changeBind", bindResult.getRegistered(), bindResult.getUserName());
-    }
 }

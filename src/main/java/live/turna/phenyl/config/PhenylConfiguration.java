@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +56,7 @@ public class PhenylConfiguration extends PhenylBase {
     public static Long user_id = 1967859840L;
     public static String user_pass = "12345654321";
     public static String login_protocol = "ANDROID_PHONE";
-    public static List<Long> enabled_groups = List.of();
+    public static List<Long> enabled_groups = new ArrayList<>();
 
     // Database configuration
     public static String storage = "sqlite";
@@ -79,7 +80,7 @@ public class PhenylConfiguration extends PhenylBase {
 
     // Bungee configuration
     public static HashMap<String, String> server_alias = new HashMap<>();
-    public static List<String> enabled_servers = List.of();
+    public static List<String> enabled_servers = new ArrayList<>();
 
     // Binding configuration
     public static String command_prefix = "#";

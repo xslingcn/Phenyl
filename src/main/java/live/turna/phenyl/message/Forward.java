@@ -13,6 +13,7 @@ import live.turna.phenyl.database.Database;
 
 import static live.turna.phenyl.utils.Mirai.sendGroup;
 
+import live.turna.phenyl.database.Player;
 import live.turna.phenyl.message.parser.TencentMiniAppMessage;
 import live.turna.phenyl.message.parser.TencentStructMessage;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
@@ -49,6 +50,10 @@ public class Forward extends PhenylBase {
      * @see CGroupMessageEvent#getSenderNameCardOrNick()
      */
     public static void forwardToBungee(Group group, Long senderID, String message, @Nullable String nickName, @Nullable String userName) {
+        for (Player it : Phenyl.getMutedPlayer()) {
+            if (it == null || it.qqid() == null) break;
+            if (senderID.equals(it.qqid())) return;
+        }
         String[] format = PhenylConfiguration.qq_to_server_format.split("%message%");
         Matcher matcher = Pattern.compile("&(?![\\s\\S]*&)\\d{1}").matcher(PhenylConfiguration.qq_to_server_format); // match the last color code occurrence
         String color = matcher.find() ? matcher.group() : "&f"; // if no color specified, fallback to white
@@ -110,7 +115,6 @@ public class Forward extends PhenylBase {
         String pattern = "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
         Matcher match = Pattern.compile(pattern).matcher(message);
         List<String> other = List.of(message.split(pattern));
-        List<TextComponent> links = new java.util.ArrayList<>(List.of());
         ComponentBuilder result = new ComponentBuilder().append(altColor(format[0]));
         while (match.find()) {
             if (other.size() > matchCount) {
@@ -148,6 +152,9 @@ public class Forward extends PhenylBase {
      * @throws NoSuchElementException The target group is not found in bot's group list.
      */
     public static void forwardToQQ(String message, String userName, String uuid, String subServer) throws NoSuchElementException {
+        for (Player it : Phenyl.getMutedPlayer()) {
+            if (uuid.equals(it.uuid())) return;
+        }
         String format = PhenylConfiguration.server_to_qq_format
                 .replace("%sub_server%", subServer)
                 .replace("%username%", userName)
