@@ -1,15 +1,23 @@
 package live.turna.phenyl.utils;
 
 import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.config.PhenylConfiguration;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.BotConfiguration;
+import net.mamoe.mirai.utils.ExternalResource;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.NoSuchElementException;
 
 import static live.turna.phenyl.message.I18n.i18n;
 
@@ -91,5 +99,23 @@ public class Mirai extends PhenylBase {
      */
     public static void sendGroup(Group group, MessageChain message) {
         group.sendMessage(message);
+    }
+
+    public static void sendImage(Group group, BufferedImage image) throws NoSuchElementException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", stream);
+        } catch (IOException e) {
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
+        ExternalResource resource = ExternalResource.Companion.create(stream.toByteArray());
+        Image img = ExternalResource.uploadAsImage(resource, group);
+        MessageChain messageChain = new MessageChainBuilder().append(img).build();
+        sendGroup(group, messageChain);
+        try {
+            resource.close();
+        } catch (IOException e) {
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
     }
 }

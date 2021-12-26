@@ -6,12 +6,14 @@ import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 
 import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 import static live.turna.phenyl.utils.Message.altColor;
 import static live.turna.phenyl.utils.Message.broadcastMessage;
 
 import live.turna.phenyl.database.Database;
 
 import static live.turna.phenyl.utils.Mirai.sendGroup;
+import static live.turna.phenyl.utils.Mirai.sendImage;
 
 import live.turna.phenyl.database.Player;
 import live.turna.phenyl.message.parser.TencentMiniAppMessage;
@@ -22,6 +24,7 @@ import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,6 +158,20 @@ public class Forward extends PhenylBase {
         for (Player it : Phenyl.getMutedPlayer()) {
             if (uuid.equals(it.uuid())) return;
         }
+        if (PhenylConfiguration.save_message) Database.addMessage(message, uuid);
+        if (PhenylConfiguration.server_to_qq_format.equals("image")) {
+            for (Long id : PhenylConfiguration.enabled_groups) {
+                try {
+                    sendImage(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), drawImageMessage(message, userName, uuid));
+                } catch (NoSuchElementException ex) {
+                    LOGGER.error(i18n("noSuchGroup"));
+                    if (PhenylConfiguration.debug) ex.printStackTrace();
+                    return;
+                }
+            }
+            return;
+        }
+
         String format = PhenylConfiguration.server_to_qq_format
                 .replace("%sub_server%", subServer)
                 .replace("%username%", userName)

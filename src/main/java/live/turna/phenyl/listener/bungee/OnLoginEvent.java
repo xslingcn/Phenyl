@@ -15,6 +15,9 @@ import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Message.broadcastMessage;
 import static live.turna.phenyl.utils.Message.getServerName;
 import static live.turna.phenyl.utils.Mirai.sendGroup;
+import static live.turna.phenyl.utils.Avatar.downloadAvatar;
+import static live.turna.phenyl.utils.Mirai.sendImage;
+import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 
 /**
  * <b>OnLoginEvent</b><br>
@@ -28,21 +31,44 @@ public class OnLoginEvent extends PhenylListener {
     @EventHandler
     public void OnLogin(ServerConnectedEvent e) {
         if (!PhenylConfiguration.on_join.equals("disabled")) {
-            String joinFormat = PhenylConfiguration.on_join
-                    .replace("%sub_server%", getServerName(e.getServer()))
-                    .replace("%username%", e.getPlayer().getName());
-            CompletableFuture<Boolean> futureQQ = CompletableFuture.supplyAsync(() -> {
-                for (Long id : PhenylConfiguration.enabled_groups) {
-                    try {
-                        sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), joinFormat);
-                    } catch (NoSuchElementException ex) {
-                        LOGGER.error(i18n("noSuchGroup"));
-                        if (PhenylConfiguration.debug) ex.printStackTrace();
-                        return false;
+            if (PhenylConfiguration.on_join.startsWith("image:")) {
+                CompletableFuture<Boolean> futureAvatar = CompletableFuture.supplyAsync(() ->
+                        downloadAvatar(e.getPlayer().getUniqueId().toString())
+                ).orTimeout(3, TimeUnit.SECONDS);
+                CompletableFuture<Boolean> futureImage = futureAvatar.thenApplyAsync((succeeded) -> {
+                    if (!succeeded) return false;
+                    for (Long id : PhenylConfiguration.enabled_groups) {
+                        try {
+                            String joinFormat = PhenylConfiguration.on_join
+                                    .replace("image:", "")
+                                    .replace("%sub_server%", getServerName(e.getServer()))
+                                    .replace("%username%", "");
+                            sendImage(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), drawImageMessage(joinFormat, e.getPlayer().getName(), e.getPlayer().getUniqueId().toString()));
+                        } catch (NoSuchElementException ex) {
+                            LOGGER.error(i18n("noSuchGroup"));
+                            if (PhenylConfiguration.debug) ex.printStackTrace();
+                            return false;
+                        }
                     }
-                }
-                return true;
-            }).orTimeout(3, TimeUnit.SECONDS);
+                    return true;
+                }).orTimeout(3, TimeUnit.SECONDS);
+            } else {
+                String joinFormat = PhenylConfiguration.on_join
+                        .replace("%sub_server%", getServerName(e.getServer()))
+                        .replace("%username%", e.getPlayer().getName());
+                CompletableFuture<Boolean> futurePlain = CompletableFuture.supplyAsync(() -> {
+                    for (Long id : PhenylConfiguration.enabled_groups) {
+                        try {
+                            sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), joinFormat);
+                        } catch (NoSuchElementException ex) {
+                            LOGGER.error(i18n("noSuchGroup"));
+                            if (PhenylConfiguration.debug) ex.printStackTrace();
+                            return false;
+                        }
+                    }
+                    return true;
+                }).orTimeout(3, TimeUnit.SECONDS);
+            }
         }
         if (!PhenylConfiguration.on_join_broadcast.equals("disabled")) {
             String joinBroadcastFormat = PhenylConfiguration.on_join_broadcast

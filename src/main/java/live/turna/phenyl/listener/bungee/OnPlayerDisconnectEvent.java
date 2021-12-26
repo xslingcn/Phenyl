@@ -11,8 +11,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 import static live.turna.phenyl.utils.Message.broadcastMessage;
 import static live.turna.phenyl.utils.Mirai.sendGroup;
+import static live.turna.phenyl.utils.Mirai.sendImage;
 
 /**
  * <b>OnPlayerDisconnectEvent</b><br>
@@ -26,20 +28,38 @@ public class OnPlayerDisconnectEvent extends PhenylListener {
     @EventHandler
     public void OnPlayerDisconnect(PlayerDisconnectEvent e) {
         if (!PhenylConfiguration.on_leave.equals("disabled")) {
-            String leaveFormat = PhenylConfiguration.on_leave
-                    .replace("%username%", e.getPlayer().getName());
-            CompletableFuture<Boolean> futureQQ = CompletableFuture.supplyAsync(() -> {
-                for (Long id : PhenylConfiguration.enabled_groups) {
-                    try {
-                        sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), leaveFormat);
-                    } catch (NoSuchElementException ex) {
-                        LOGGER.error(i18n("noSuchGroup"));
-                        if (PhenylConfiguration.debug) ex.printStackTrace();
-                        return false;
+            if (PhenylConfiguration.on_join.startsWith("image:")) {
+                CompletableFuture<Boolean> futureImage = CompletableFuture.supplyAsync(() -> {
+                    for (Long id : PhenylConfiguration.enabled_groups) {
+                        try {
+                            String joinFormat = PhenylConfiguration.on_leave
+                                    .replace("image:", "")
+                                    .replace("%username%", "");
+                            sendImage(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), drawImageMessage(joinFormat, e.getPlayer().getName(), e.getPlayer().getUniqueId().toString()));
+                        } catch (NoSuchElementException ex) {
+                            LOGGER.error(i18n("noSuchGroup"));
+                            if (PhenylConfiguration.debug) ex.printStackTrace();
+                            return false;
+                        }
                     }
-                }
-                return true;
-            }).orTimeout(3, TimeUnit.SECONDS);
+                    return true;
+                }).orTimeout(3, TimeUnit.SECONDS);
+            } else {
+                String leaveFormat = PhenylConfiguration.on_leave
+                        .replace("%username%", e.getPlayer().getName());
+                CompletableFuture<Boolean> futurePlain = CompletableFuture.supplyAsync(() -> {
+                    for (Long id : PhenylConfiguration.enabled_groups) {
+                        try {
+                            sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), leaveFormat);
+                        } catch (NoSuchElementException ex) {
+                            LOGGER.error(i18n("noSuchGroup"));
+                            if (PhenylConfiguration.debug) ex.printStackTrace();
+                            return false;
+                        }
+                    }
+                    return true;
+                }).orTimeout(3, TimeUnit.SECONDS);
+            }
         }
         if (!PhenylConfiguration.on_leave_broadcast.equals("disabled")) {
             String leaveBroadcastFormat = PhenylConfiguration.on_leave_broadcast

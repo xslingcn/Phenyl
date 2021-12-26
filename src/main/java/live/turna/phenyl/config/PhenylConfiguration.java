@@ -79,6 +79,19 @@ public class PhenylConfiguration extends PhenylBase {
     public static String on_join_broadcast = "&e%username% joined the %sub_server%";
     public static String on_leave_broadcast = "&e%username% left the game";
 
+    // Image message configuration
+    public static String crafatar_url = "https://crafatar.com";
+    public static Integer avatar_size = 40;
+    public static Integer username_avatar_margin = 40;
+    public static Integer message_min_width = 230;
+    public static Integer message_max_width = 340;
+    public static Integer overall_padding = 25;
+    public static Integer message_offset = 10;
+    public static Integer username_offset = 15;
+    public static Integer username_size = 30;
+    public static Integer message_size = 30;
+    public static String font = "Sarasa Mono SC";
+
     // Bungee configuration
     public static HashMap<String, String> server_alias = new HashMap<>();
     public static List<String> enabled_servers = new ArrayList<>();
@@ -145,6 +158,19 @@ public class PhenylConfiguration extends PhenylBase {
         on_leave = config.getString("on_leave");
         on_join_broadcast = config.getString("on_join_broadcast");
         on_leave_broadcast = config.getString("on_leave_broadcast");
+
+        // Image message configuration
+        crafatar_url = config.getString("crafatar_url");
+        avatar_size = config.getInt("avatar_size");
+        username_avatar_margin = config.getInt("username_avatar_margin");
+        message_min_width = config.getInt("message_min_width");
+        message_max_width = config.getInt("message_max_width");
+        overall_padding = config.getInt("overall_padding");
+        username_offset = config.getInt("username_offset");
+        message_offset = config.getInt("message_offset");
+        username_size = config.getInt("username_size");
+        message_size = config.getInt("message_size");
+        font = config.getString("font");
 
         //Bungee configuration
         server_alias = getMap("server_alias");
