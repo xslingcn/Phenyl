@@ -6,10 +6,8 @@ import live.turna.phenyl.config.PhenylConfiguration;
 
 import static live.turna.phenyl.message.Forward.forwardToQQ;
 import static live.turna.phenyl.message.I18n.i18n;
-import static live.turna.phenyl.utils.Message.broadcastMessage;
-import static live.turna.phenyl.utils.Message.getServerName;
+import static live.turna.phenyl.utils.Message.*;
 
-import live.turna.phenyl.database.Player;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -52,8 +50,7 @@ public class OnChatEvent extends PhenylListener {
         }
 
         if (!PhenylConfiguration.cross_sever_format.equals("disabled")) {
-            for (Player it : Phenyl.getMutedPlayer())
-                if (player.getUniqueId().toString().equals(it.uuid())) return;
+            if (getMuted(player.getUniqueId().toString()).uuid() != null) return;
             String format = PhenylConfiguration.cross_sever_format
                     .replace("%sub_server%", getServerName((player.getServer())))
                     .replace("%username%", player.getName())

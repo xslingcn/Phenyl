@@ -13,6 +13,8 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * <b>MessageUtils</b><br>
  * Utils for message sending.
@@ -56,7 +58,6 @@ public class Message extends PhenylBase {
         }
     }
 
-
     /**
      * Send message to every player in enabled and not excluded servers.
      *
@@ -65,14 +66,11 @@ public class Message extends PhenylBase {
      */
     public static void broadcastMessage(String message, Server[] exclude) {
         TextComponent result = new TextComponent(altColor(message));
-        out:
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
                 for (Server server : exclude) {
                     if (server != player.getServer()) {
-                        for (Player it : Phenyl.getNoMessagePlayer()) {
-                            if (player.getUniqueId().toString().equals(it.uuid())) continue out;
-                        }
+                        if (getNoMessage(player.getUniqueId().toString()).uuid() != null) continue;
                         player.sendMessage(result);
                     }
                 }
@@ -86,15 +84,42 @@ public class Message extends PhenylBase {
      * @param message The message of {@link BaseComponent} type to be sent.
      */
     public static void broadcastMessage(BaseComponent[] message) {
-        out:
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
-                for (Player it : Phenyl.getNoMessagePlayer()) {
-                    if (player.getUniqueId().toString().equals(it.uuid())) continue out;
-                }
+                if (getNoMessage(player.getUniqueId().toString()).uuid() != null) continue;
                 player.sendMessage(message);
             }
         }
+    }
+
+    /**
+     * Check whether the player is muted.
+     *
+     * @param uuid The player's Minecraft UUID.
+     * @return The muted player instance if found, a player instance initialized with all null values if not.
+     */
+    public static Player getMuted(String uuid) {
+        AtomicReference<Player> found = new AtomicReference<>(new Player(null, null, null, null));
+        Phenyl.getMutedPlayer().forEach(muted -> {
+            if (muted.uuid() == null) return;
+            if (muted.uuid().equals(uuid)) found.set(muted);
+        });
+        return found.get();
+    }
+
+    /**
+     * Check whether the player is nomessaged.
+     *
+     * @param uuid The player's Minecraft UUID.
+     * @return The nomessaged player instance if found, a player instance initialized with all null values if not.
+     */
+    public static Player getNoMessage(String uuid) {
+        AtomicReference<Player> found = new AtomicReference<>(new Player(null, null, null, null));
+        Phenyl.getNoMessagePlayer().forEach(noMessaged -> {
+            if (noMessaged.uuid() == null) return;
+            if (noMessaged.uuid().equals(uuid)) found.set(noMessaged);
+        });
+        return found.get();
     }
 
     /**

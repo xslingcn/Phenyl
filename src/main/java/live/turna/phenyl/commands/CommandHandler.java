@@ -7,9 +7,8 @@ import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.message.Forward.forwardToQQ;
 import static live.turna.phenyl.utils.Bind.isValidQQID;
 import static live.turna.phenyl.utils.Bind.verifier;
-import static live.turna.phenyl.utils.Message.getServerName;
-import static live.turna.phenyl.utils.Message.sendMessage;
 import static live.turna.phenyl.bind.BindHandler.handleRequest;
+import static live.turna.phenyl.utils.Message.*;
 
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
@@ -106,16 +105,17 @@ public class CommandHandler extends PhenylCommand {
                             sendMessage(i18n("playerNotFound", args[1]), sender);
                             return;
                         }
-                        for (Player it : Phenyl.getMutedPlayer()) {
-                            if (target.getUniqueId().toString().equals(it.uuid())) {
-                                Database.updateMutedPlayer(it.uuid(), false);
-                                Phenyl.getMutedPlayer().remove(it);
-                                sendMessage(i18n("unMutedPlayer", args[1]), sender);
-                                return;
-                            }
+                        // check if the player is already muted
+                        Player muted = getMuted(target.getUniqueId().toString());
+                        if (muted.uuid() != null) {
+                            Database.updateMutedPlayer(muted.uuid(), false);
+                            Phenyl.getMutedPlayer().remove(muted);
+                            sendMessage(i18n("unMutedPlayer", args[1]), sender);
+                        } else {
+                            Database.updateMutedPlayer(target.getUniqueId().toString(), true);
+                            Phenyl.getMutedPlayer().add(Database.getBinding(target.getUniqueId().toString()));
+                            sendMessage(i18n("mutedPlayer", args[1]), sender);
                         }
-                        Phenyl.getMutedPlayer().add(Database.getBinding(target.getUniqueId().toString()));
-                        sendMessage(i18n("mutedPlayer", args[1]), sender);
                     } else sendMessage(i18n("illegalArgumentPhenyl"), sender);
                 } else sendMessage(i18n("noPermission"), sender);
             }
@@ -168,17 +168,17 @@ public class CommandHandler extends PhenylCommand {
                         case "nomessage" -> {
                             if (player.hasPermission("phenyl.use.nomessage")) {
                                 if (args.length == 1) {
-                                    for (Player it : Phenyl.getNoMessagePlayer()) {
-                                        if (player.getUniqueId().toString().equals(it.uuid())) {
-                                            Database.updateNoMessagePlayer(it.uuid(), false);
-                                            Phenyl.getNoMessagePlayer().remove(it);
-                                            sendMessage(i18n("receiveMessage"), player);
-                                            return;
-                                        }
+                                    // check if the player is already nomessaged
+                                    Player noMessaged = getNoMessage(player.getUniqueId().toString());
+                                    if (noMessaged.uuid() != null) {
+                                        Database.updateNoMessagePlayer(noMessaged.uuid(), false);
+                                        Phenyl.getNoMessagePlayer().remove(noMessaged);
+                                        sendMessage(i18n("receiveMessage"), player);
+                                    } else {
+                                        Database.updateNoMessagePlayer(player.getUniqueId().toString(), true);
+                                        Phenyl.getNoMessagePlayer().add(Database.getBinding(player.getUniqueId().toString()));
+                                        sendMessage(i18n("noMessage"), player);
                                     }
-                                    Phenyl.getNoMessagePlayer().add(Database.getBinding(player.getUniqueId().toString()));
-                                    Database.updateNoMessagePlayer(player.getUniqueId().toString(), true);
-                                    sendMessage(i18n("noMessage"), player);
                                 } else sendMessage(i18n("illegalArgumentPhenyl"), player);
                             } else sendMessage(i18n("noPermission"), player);
                         }
