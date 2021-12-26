@@ -56,7 +56,7 @@ public class OnChatEvent extends PhenylListener {
                     .replace("%username%", player.getName())
                     .replace("%message%", e.getMessage());
             CompletableFuture<Boolean> futureBind = CompletableFuture.supplyAsync(() -> {
-                broadcastMessage(format, new Server[]{player.getServer()});
+                broadcastMessage(format, new String[]{player.getServer().getInfo().getName()});
                 return true;
             }).orTimeout(3, TimeUnit.SECONDS);
         }

@@ -64,12 +64,12 @@ public class Message extends PhenylBase {
      * @param message The message content.
      * @param exclude Excluded servers.
      */
-    public static void broadcastMessage(String message, Server[] exclude) {
+    public static void broadcastMessage(String message, String[] exclude) {
         TextComponent result = new TextComponent(altColor(message));
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
-                for (Server server : exclude) {
-                    if (server != player.getServer()) {
+                for (String server : exclude) {
+                    if (!server.equals(player.getServer().getInfo().getName())) {
                         if (getNoMessage(player.getUniqueId().toString()).uuid() != null) continue;
                         player.sendMessage(result);
                     }
