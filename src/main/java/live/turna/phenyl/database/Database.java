@@ -97,9 +97,8 @@ public class Database extends PhenylBase {
     /**
      * Try to register a player.
      *
-     * @param uuid The player's UUID.
+     * @param uuid The player's Minecraft UUID.
      * @return Player instance;
-     * @see SQLite#registerPlayer(String, String)
      */
     public static boolean registerPlayer(String uuid, String mcname) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
@@ -110,6 +109,12 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Get if a player is registered.
+     *
+     * @param uuid The player's Minecraft UUID.
+     * @return True - player is registered; False - not registered.
+     */
     public static boolean getRegistered(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getRegistered(uuid);
@@ -135,6 +140,13 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Update the player's muted setting.
+     *
+     * @param uuid   The player's Minecraft UUID.
+     * @param toggle Whether is muted.
+     * @return Whether the query succeeded.
+     */
     public static boolean updateMutedPlayer(String uuid, Boolean toggle) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.updateMutedPlayer(uuid, toggle);
@@ -144,6 +156,13 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Update the player's nomessage setting.
+     *
+     * @param uuid   The player's Minecraft UUID.
+     * @param toggle Whether is muted.
+     * @return Whether the query succeeded.
+     */
     public static boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.updateNoMessagePlayer(uuid, toggle);
@@ -153,6 +172,11 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Get the list of muted players.
+     *
+     * @return An empty list if no player is muted, or a list of player instances.
+     */
     public static List<Player> getMutedPlayer() {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getMutedPlayer();
@@ -162,6 +186,11 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Get the list of nomessaged players.
+     *
+     * @return An empty list if no player is nomessaged, or a list of player instances.
+     */
     public static List<Player> getNoMessagePlayer() {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.getNoMessagePlayer();
@@ -174,7 +203,7 @@ public class Database extends PhenylBase {
     /**
      * Add a binding.
      *
-     * @param uuid The player's UUID.
+     * @param uuid The player's Minecraft UUID.
      * @param qqid The player's QQ ID.
      * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
      */
@@ -187,6 +216,12 @@ public class Database extends PhenylBase {
         };
     }
 
+    /**
+     * Remove a player's QQ-UUID binding by setting the qqid column to NULL.
+     *
+     * @param uuid The player's Minecraft UUID.
+     * @return True - The binding is successfully removed. False - query failed.
+     */
     public static boolean removeBinding(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> SQLite.removeBinding(uuid);
@@ -199,7 +234,7 @@ public class Database extends PhenylBase {
     /**
      * Get QQ ID by Minecraft UUID.
      *
-     * @param uuid The player's UUID.
+     * @param uuid The player's Minecraft UUID.
      * @return Corresponding QQ ID if found, null if not.
      */
     public static Player getBinding(String uuid) {

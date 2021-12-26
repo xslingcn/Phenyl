@@ -26,6 +26,13 @@ public class Bind {
         return userName.matches(pattern);
     }
 
+    /**
+     * Check whether the provided QQ ID or Group ID is valid.
+     * A valid QQ ID should be of 5-11 digits and not start with 0.
+     *
+     * @param qqid The QQ ID to be checked
+     * @return If the QQ ID is valid.
+     */
     public static Boolean isValidQQID(String qqid) {
         String pattern = "^[1-9]\\d{4,10}$";
         return qqid.matches(pattern);

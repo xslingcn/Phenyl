@@ -41,7 +41,10 @@ public class CommandHandler extends PhenylCommand {
     }
 
     /**
-     * Execute commands.
+     * Execute commands.<br>
+     * Command list:<br>
+     * {@code help, reload, login, logout, mute} - available for both console and players to perform, requires {@code phenyl.admin.*} permission node;<br>
+     * {@code bind, verify, say, nomessage} - only available for players, requires {@code phenyl.use.*} permission node.
      *
      * @param sender Command sender.
      * @param args   Command arguments.
@@ -53,7 +56,7 @@ public class CommandHandler extends PhenylCommand {
             sendMessage(i18n("welcomeVersionInfo", phenyl.getDescription().getVersion()), sender);
             return;
         }
-        // Commands executable for both CONSOLE and players.
+        // commands executable for both CONSOLE and players.
         switch (args[0].toLowerCase()) {
             case "help" -> sendMessage(i18n("welcomeMessage", phenyl.getDescription().getVersion()) + "\n"
                     + i18n("helpMessage") + "\n"
@@ -117,7 +120,7 @@ public class CommandHandler extends PhenylCommand {
                 } else sendMessage(i18n("noPermission"), sender);
             }
             default -> {
-                // Commands executable only for players
+                // commands executable only for players
                 if (sender instanceof ProxiedPlayer player) {
                     switch (args[0].toLowerCase()) {
                         case "bind" -> {

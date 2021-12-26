@@ -101,6 +101,13 @@ public class SQLite extends PhenylBase {
         return new Player(null, null, null, null);
     }
 
+    /**
+     * Get a list of players instances from database.
+     *
+     * @param selectColumn The column name of selecting.
+     * @param selectValue  The corresponding value.
+     * @return An empty list if not any player found, or a list of player instances.
+     */
     private static List<Player> getPlayerList(String selectColumn, String selectValue) {
         ResultSet resultSet;
         List<Player> result = new java.util.ArrayList<>();
@@ -194,9 +201,9 @@ public class SQLite extends PhenylBase {
      * <b>Below are methods for database operations.</b><br>
      * Try to register a player.
      *
-     * @param uuid   The player's UUID.
+     * @param uuid   The player's Minecraft UUID.
      * @param mcname The player's Minecraft username.
-     * @return Whether the queries succeeded;
+     * @return Whether the queries succeeded.
      */
     static boolean registerPlayer(String uuid, String mcname) {
         if (getPlayer("uuid", uuid).id() == null)
@@ -204,6 +211,12 @@ public class SQLite extends PhenylBase {
         return false;
     }
 
+    /**
+     * Get if a player is registered.
+     *
+     * @param uuid The player's Minecraft UUID.
+     * @return True - player is registered; False - not registered.
+     */
     static boolean getRegistered(String uuid) {
         return getPlayer("uuid", uuid).id() != null;
     }
@@ -223,18 +236,42 @@ public class SQLite extends PhenylBase {
         return false;
     }
 
+    /**
+     * Update the player's muted setting.
+     *
+     * @param uuid   The player's Minecraft UUID.
+     * @param toggle Whether is muted.
+     * @return Whether the query succeeded.
+     */
     static boolean updateMutedPlayer(String uuid, Boolean toggle) {
         return updatePlayer("muted", toggle ? "1" : "0", "uuid", uuid);
     }
 
+    /**
+     * Update the player's nomessage setting.
+     *
+     * @param uuid   The player's Minecraft UUID.
+     * @param toggle Whether is muted.
+     * @return Whether the query succeeded.
+     */
     static boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
         return updatePlayer("nomessage", toggle ? "1" : "0", "uuid", uuid);
     }
 
+    /**
+     * Get the list of muted players.
+     *
+     * @return An empty list if no player is muted, or a list of player instances.
+     */
     static List<Player> getMutedPlayer() {
         return getPlayerList("muted", "1");
     }
 
+    /**
+     * Get the list of nomessaged players.
+     *
+     * @return An empty list if no player is nomessaged, or a list of player instances.
+     */
     static List<Player> getNoMessagePlayer() {
         return getPlayerList("nomessage", "1");
     }
@@ -242,7 +279,7 @@ public class SQLite extends PhenylBase {
     /**
      * Add a binding.
      *
-     * @param uuid The player's UUID.
+     * @param uuid The player's Minecraft UUID.
      * @param qqid The player's QQ ID.
      * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
      */
@@ -250,6 +287,12 @@ public class SQLite extends PhenylBase {
         return updatePlayer("qqid", qqid.toString(), "uuid", uuid);
     }
 
+    /**
+     * Remove a player's QQ-UUID binding by setting the qqid column to NULL.
+     *
+     * @param uuid The player's Minecraft UUID.
+     * @return True - The binding is successfully removed. False - query failed.
+     */
     static boolean removeBinding(String uuid) {
         return updatePlayer("qqid", "NULL", "uuid", uuid);
     }
@@ -257,7 +300,7 @@ public class SQLite extends PhenylBase {
     /**
      * Get player by Minecraft UUID.
      *
-     * @param uuid The player's UUID.
+     * @param uuid The player's Minecraft UUID.
      * @return Player instance gotten from {@link #getPlayer(String, String)}.
      */
     static Player getBinding(String uuid) {

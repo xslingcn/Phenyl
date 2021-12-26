@@ -42,7 +42,6 @@ public class OnGroupMessageEvent extends PhenylListener {
 
     @EventHandler
     public void onGroupMessage(CGroupMessageEvent e) {
-
         event = e;
         group = event.getGroup();
         senderID = event.getSenderID();
@@ -52,7 +51,7 @@ public class OnGroupMessageEvent extends PhenylListener {
         if (group == null || senderID == null || message == null || messageString.isEmpty()) return;
         if (!PhenylConfiguration.enabled_groups.contains(group.getId())) return;
 
-        // Message is a command.
+        // message is a command
         if (messageString.startsWith(PhenylConfiguration.command_prefix)) {
             String command = messageString.substring(PhenylConfiguration.command_prefix.length());
             CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
@@ -71,7 +70,7 @@ public class OnGroupMessageEvent extends PhenylListener {
             }).orTimeout(3, TimeUnit.SECONDS);
             return;
         }
-        // Random message.
+        // random message
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             switch (PhenylConfiguration.forward_mode) {
                 case "sync" -> forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), null);
@@ -101,7 +100,7 @@ public class OnGroupMessageEvent extends PhenylListener {
     private void handleCommand(String command) throws IllegalArgumentException {
         String[] args = command.split(" ");
 
-        //Binding requests.
+        // binding requests
         if (args[0].equals(PhenylConfiguration.bind_command)) {
             if (args.length != 2) throw new IllegalArgumentException(i18n("illegalArgument"));
             if (!isValidUsername(args[1])) throw new IllegalArgumentException(i18n("invalidUserName"));
@@ -116,7 +115,7 @@ public class OnGroupMessageEvent extends PhenylListener {
             return;
         }
 
-        //Confirmation requests.
+        // confirmation requests
         if (args[0].equals(PhenylConfiguration.confirm_command)) {
             if (args.length != 2) throw new IllegalArgumentException(i18n("illegalArgument"));
             MessageChain reply = new MessageChainBuilder()
@@ -157,7 +156,7 @@ public class OnGroupMessageEvent extends PhenylListener {
             return;
         }
 
-        //Random message that needs to be forwarded in *command* mode.
+        // random message that needs to be forwarded in *command* mode.
         if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
             String userName = Database.getBinding(senderID).mcname();
             if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));

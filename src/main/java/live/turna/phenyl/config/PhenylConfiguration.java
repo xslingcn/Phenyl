@@ -158,8 +158,15 @@ public class PhenylConfiguration extends PhenylBase {
         verification = config.getInt("verification");
     }
 
+    /**
+     * Do validations on configuration.
+     *
+     * @throws IllegalArgumentException invalidForward: Forward mode not correctly set or used %username% under sync mode.
+     * @throws IllegalArgumentException invalidQQIDSetting: QQ ID not valid. Checked by {@link live.turna.phenyl.utils.Bind#isValidQQID(String)}.
+     * @throws IllegalArgumentException invalidGroupID: Group ID not valid. Checked by {@link live.turna.phenyl.utils.Bind#isValidQQID(String)}.
+     * @throws IllegalArgumentException invalidStorage: Database type not valid.
+     */
     public static void postConfiguration() throws IllegalArgumentException {
-
         if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
                 || ((!forward_mode.equals("bind")) && (!forward_mode.equals("sync")) && (!forward_mode.equals("command")))) {
             forward_mode = "invalid";
