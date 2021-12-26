@@ -37,7 +37,6 @@ public class Database extends PhenylBase {
                             LOGGER.error(i18n("databaseInitFail"));
 
                     } catch (Exception e) {
-                        LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
                         if (PhenylConfiguration.debug) e.printStackTrace();
                     }
                 }
@@ -47,7 +46,6 @@ public class Database extends PhenylBase {
                             if (!messageFile.createNewFile())
                                 LOGGER.error(i18n("databaseInitFail"));
                         } catch (Exception e) {
-                            LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
                             if (PhenylConfiguration.debug) e.printStackTrace();
                         }
                     }

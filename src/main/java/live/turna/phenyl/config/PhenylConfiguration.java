@@ -109,7 +109,7 @@ public class PhenylConfiguration extends PhenylBase {
     public static void loadPhenylConfiguration() {
         if (!phenyl.getDataFolder().exists())
             if (!phenyl.getDataFolder().mkdir()) {
-                LOGGER.error(i18n("createDataFolderFail"));
+                LOGGER.error(i18n("createDataFolderFail", phenyl.getDataFolder().toString()));
             }
         File configFile = new File(phenyl.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
@@ -127,17 +127,17 @@ public class PhenylConfiguration extends PhenylBase {
             if (PhenylConfiguration.debug) e.printStackTrace();
         }
 
-        //General configuration
+        // General configuration
         locale = config.getString("locale");
         debug = config.getBoolean("debug");
 
-        //Mirai configuration
+        // Mirai configuration
         user_id = config.getString("user_id");
         user_pass = config.getString("user_pass");
         login_protocol = config.getString("login_protocol");
         enabled_groups = config.getLongList("enabled_groups");
 
-        //Database configuration
+        // Database configuration
         storage = config.getString("storage");
         save_message = config.getBoolean("save_message");
         host = config.getString("host");
@@ -147,7 +147,7 @@ public class PhenylConfiguration extends PhenylBase {
         database = config.getString("database");
         table_prefix = config.getString("table_prefix");
 
-        //Message configuration
+        // Message configuration
         forward_mode = config.getString("forward_mode");
         cross_sever_format = config.getString("cross_sever_format");
         qq_to_server_format = config.getString("qq_to_server_format");
@@ -172,11 +172,11 @@ public class PhenylConfiguration extends PhenylBase {
         message_size = config.getInt("message_size");
         font = config.getString("font");
 
-        //Bungee configuration
+        // Bungee configuration
         server_alias = getMap("server_alias");
         enabled_servers = config.getStringList("enabled_servers");
 
-        //Binding configuration
+        // Binding configuration
         command_prefix = config.getString("command_prefix");
         bind_command = config.getString("bind_command");
         confirm_command = config.getString("confirm_command");

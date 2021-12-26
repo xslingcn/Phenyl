@@ -12,11 +12,11 @@ debug: false
 ################################
 
 # user_id: your bot's QQ number.
-user_id: "165420321"
+user_id: "your_qq_number"
 
 # user_pass: Your bot's QQ password.
 # If you select ANDROID_PHONE as protocol, make sure your password length is less than 16.
-user_pass: "12345654321"
+user_pass: "your_qq_pass"
 
 # login_protocol: the protocol used to log in.
 # Acceptable options: ANDROID_PHONE，ANDROID_PAD，ANDROID_WATCH. If meet problem logging in, try switch the protocol.

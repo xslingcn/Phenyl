@@ -177,8 +177,14 @@ public class Forward extends PhenylBase {
                 .replace("%username%", userName)
                 .replace("%message%", message);
         MessageChain messageChain = new MessageChainBuilder().append(format).build();
-        for (Long id : PhenylConfiguration.enabled_groups)
-            sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), messageChain);
-        if (PhenylConfiguration.save_message) Database.addMessage(message, uuid);
+        for (Long id : PhenylConfiguration.enabled_groups) {
+            try {
+                sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), messageChain);
+            } catch (NoSuchElementException ex) {
+                LOGGER.error(i18n("noSuchGroup"));
+                if (PhenylConfiguration.debug) ex.printStackTrace();
+                return;
+            }
+        }
     }
 }

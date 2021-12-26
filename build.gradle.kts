@@ -1,5 +1,5 @@
 group = "live.turna"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 
 plugins {
     java
@@ -41,6 +41,7 @@ tasks.jar {
         attributes("Main-Class" to "live.turna.phenyl.Phenyl")
     }
     from(configurations.runtimeClasspath.get().files.map { if (it.isDirectory) it else zipTree(it) })
+    exclude("META-INF/*.RSA", "META-INF/*.DSA", "META-INF/*.SF")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
