@@ -62,7 +62,7 @@ forward_mode: "bind"
 # forward_image: whether to get images from links sent by players and forward to QQ.
 forward_image: true
 
-# get_image_timeout: the time limit when retrieving a image from remote.
+# get_image_timeout: the time limit when retrieving an image from remote.
 get_image_timeout: 5
 
 # nomessage_with_cross_server: if a nomessaged player receives cross server messages.
@@ -70,11 +70,11 @@ get_image_timeout: 5
 nomessage_with_cross_server: true
 
 # Variables:
-#   %sub_server% - Sub-server where the message sent. *CROSS SERVER AND SERVER TO QQ MESSAGES ONLY.
-#   %group_id% - The id of the group. *QQ TO SERVER MESSAGES ONLY*
-#   %group_name% - The name of the group *QQ TO SERVER MESSAGES ONLY*
+#   %sub_server% - Server where the player who sent the message is at.
+#   %group_id% - The id of the group.
+#   %group_name% - The name of the group.
 #   %username% - Minecraft username.
-#   %nickname% - Nickname or name card if available in QQ group. *QQ TO SERVER MESSAGES ONLY*
+#   %nickname% - Nickname or name card if available in QQ group.
 #   %message% - Message content.
 
 # cross_sever_format: in-game cross server message format. Set to "disabled" to disable it.

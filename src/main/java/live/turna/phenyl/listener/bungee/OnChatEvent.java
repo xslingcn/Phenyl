@@ -1,6 +1,5 @@
 package live.turna.phenyl.listener.bungee;
 
-import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.config.PhenylConfiguration;
 
@@ -9,7 +8,6 @@ import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Message.*;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.event.EventHandler;
 

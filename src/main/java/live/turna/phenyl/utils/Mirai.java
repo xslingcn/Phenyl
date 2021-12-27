@@ -123,6 +123,12 @@ public class Mirai extends PhenylBase {
         }
     }
 
+    /**
+     * Send an image message.
+     *
+     * @param image The image to be sent.
+     * @throws NoSuchElementException Target group not found.
+     */
     public static void sendImage(BufferedImage image) throws NoSuchElementException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {

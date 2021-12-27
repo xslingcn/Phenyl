@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -198,9 +197,8 @@ public class Forward extends PhenylBase {
         String pattern = "https?:/(?:/[^/]+)+\\.(?:jpg|jpeg|gif|png)";
         Matcher matcher = Pattern.compile(pattern).matcher(message);
         if (matcher.matches() && PhenylConfiguration.forward_image) {
-
             if (PhenylConfiguration.server_to_qq_format.equals("image"))
-                forwardPlainMessage(i18n("imageMessage"), userName, uuid);
+                forwardImageMessage(i18n("imageMessage"), userName, uuid);
             else forwardPlainMessage(i18n("imageMessage"), userName, subServer);
 
             // retrieve and send image

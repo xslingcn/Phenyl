@@ -116,6 +116,4 @@ public class MiraiHandler extends PhenylBase {
         bot.close();
         return true;
     }
-
-
 }

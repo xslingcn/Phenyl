@@ -5,7 +5,6 @@ plugins {
     java
     kotlin("jvm") version "1.6.0"
     id("net.minecrell.plugin-yml.bungee") version "0.5.0"
-    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 repositories {
@@ -18,8 +17,8 @@ repositories {
 dependencies {
     compileOnly("net.md-5", "bungeecord-api", "1.16-R0.4")
     compileOnly("org.apache.logging.log4j", "log4j-core", "2.17.0")
-    api("net.mamoe", "mirai-core-api", "2.8.2")
-    runtimeOnly("net.mamoe", "mirai-core", "2.8.2")
+    api("net.mamoe", "mirai-core-api", "2.9.0")
+    runtimeOnly("net.mamoe", "mirai-core", "2.9.0")
     api("com.github.mifmif", "generex", "1.0.2")
     api("com.zaxxer", "HikariCP", "5.0.0")
     api("org.xerial", "sqlite-jdbc", "3.36.0.3")

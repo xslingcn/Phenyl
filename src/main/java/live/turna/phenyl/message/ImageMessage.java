@@ -15,7 +15,7 @@ import static live.turna.phenyl.message.I18n.i18n;
 
 /**
  * <b>ImageMessage</b><br>
- * *
+ * Produce image messages.
  *
  * @since 2021/12/27 3:17
  */
@@ -144,6 +144,12 @@ public class ImageMessage extends PhenylBase {
         return builder.toString();
     }
 
+    /**
+     * Get a image from giving URL.
+     *
+     * @param url The remote URL.
+     * @return The buffered image.
+     */
     public static BufferedImage getImageFromURL(String url) {
         try {
             return ImageIO.read(new URL(url));
