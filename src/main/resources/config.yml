@@ -19,7 +19,7 @@ user_id: "your_qq_number"
 user_pass: "your_qq_pass"
 
 # login_protocol: the protocol used to log in.
-# Acceptable options: ANDROID_PHONE，ANDROID_PAD，ANDROID_WATCH. If meet problem logging in, try switch the protocol.
+# Acceptable options: ANDROID_PHONE, ANDROID_PAD, ANDROID_WATCH. If meet problem logging in, try switch the protocol.
 login_protocol: "ANDROID_PHONE"
 
 # enabled_groups: the QQ groups you want to enable Phenyl.
@@ -58,6 +58,16 @@ table_prefix: "ph_"
 #   command - Use `/ph say ~` on server and prefix in QQ to send messages.
 #   bind - Only messages from users that bound username and QQ number would be forwarded.
 forward_mode: "bind"
+
+# forward_image: whether to get images from links sent by players and forward to QQ.
+forward_image: true
+
+# get_image_timeout: the time limit when retrieving a image from remote.
+get_image_timeout: 5
+
+# nomessage_with_cross_server: if a nomessaged player receives cross server messages.
+# True to not receive, false to receive.
+nomessage_with_cross_server: true
 
 # Variables:
 #   %sub_server% - Sub-server where the message sent. *CROSS SERVER AND SERVER TO QQ MESSAGES ONLY.

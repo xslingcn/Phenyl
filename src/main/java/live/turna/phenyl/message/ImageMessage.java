@@ -8,8 +8,10 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 
 import static live.turna.phenyl.utils.Avatar.getAvatar;
+import static live.turna.phenyl.message.I18n.i18n;
 
 /**
  * <b>ImageMessage</b><br>
@@ -33,7 +35,7 @@ public class ImageMessage extends PhenylBase {
         g.setFont(new Font(PhenylConfiguration.font, Font.PLAIN, PhenylConfiguration.message_size));
         FontMetrics fm = g.getFontMetrics();
         Rectangle2D rect = fm.getStringBounds("a", g);
-        int width = (int) Math.floor(getWidth(message, rect));
+        int width = (int) Math.floor(getWidth(userName, message, rect));
         message = handleString(message, width, rect);
         int height = (int) Math.floor(getHeight(message, rect));
 
@@ -48,6 +50,7 @@ public class ImageMessage extends PhenylBase {
         try {
             graphics2D.drawImage(ImageIO.read(getAvatar(uuid)), PhenylConfiguration.overall_padding, PhenylConfiguration.overall_padding, PhenylConfiguration.avatar_size, PhenylConfiguration.avatar_size, null);
         } catch (IOException e) {
+            LOGGER.error(i18n("getAvatarFail", e.getLocalizedMessage()));
             e.printStackTrace();
         }
 
@@ -77,10 +80,12 @@ public class ImageMessage extends PhenylBase {
      * @param rect    The font's rectangle instance.
      * @return The proper width.
      */
-    public static double getWidth(String message, Rectangle2D rect) {
+    public static double getWidth(String userName, String message, Rectangle2D rect) {
         String doubleRegex = "[^\\x00-\\xff]";
         message = message.replaceAll(doubleRegex, "aa");
+        double userNameLength = rect.getWidth() * userName.length() + PhenylConfiguration.avatar_size + PhenylConfiguration.overall_padding * 3;
         double result = rect.getWidth() * message.length() + PhenylConfiguration.overall_padding * 2;
+        result = Math.max(result, userNameLength);
         result = Math.min(result, PhenylConfiguration.message_max_width);
         result = Math.max(result, PhenylConfiguration.message_min_width);
         return result;
@@ -137,5 +142,15 @@ public class ImageMessage extends PhenylBase {
             builder.append(c);
         }
         return builder.toString();
+    }
+
+    public static BufferedImage getImageFromURL(String url) {
+        try {
+            return ImageIO.read(new URL(url));
+        } catch (Exception e) {
+            LOGGER.error(i18n("getImageFail", e.getLocalizedMessage()));
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
+        return null;
     }
 }

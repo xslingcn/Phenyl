@@ -7,6 +7,7 @@ import live.turna.phenyl.config.PhenylConfiguration;
 
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
+import static live.turna.phenyl.message.ImageMessage.getImageFromURL;
 import static live.turna.phenyl.utils.Message.altColor;
 import static live.turna.phenyl.utils.Message.broadcastMessage;
 
@@ -20,16 +21,20 @@ import live.turna.phenyl.message.parser.TencentMiniAppMessage;
 import live.turna.phenyl.message.parser.TencentStructMessage;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.message.data.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +57,7 @@ public class Forward extends PhenylBase {
      * @param userName The sender's Minecraft username, used for {@code bind/command} mode.
      * @see CGroupMessageEvent#getSenderNameCardOrNick()
      */
-    public static void forwardToBungee(Group group, Long senderID, String message, @Nullable String nickName, @Nullable String userName) {
+    public static void forwardToBungee(Group group, Long senderID, String message, @Nullable String nickName, @Nullable String userName, @Nullable List<SingleMessage> images) {
         for (Player it : Phenyl.getMutedPlayer()) {
             if (it == null || it.qqid() == null) break;
             if (senderID.equals(it.qqid())) return;
@@ -65,7 +70,7 @@ public class Forward extends PhenylBase {
                 .replace("%group_name%", group.getName())
                 .replace("%username%", userName != null ? userName : "")
                 .replace("%nickname%", nickName != null ? nickName : "");
-        broadcastMessage(formatter(message, format, color));
+        broadcastMessage(formatter(message, format, color, images));
         if (PhenylConfiguration.save_message) Database.addMessage(message, group.getId(), senderID);
     }
 
@@ -80,7 +85,8 @@ public class Forward extends PhenylBase {
      * @param color   The last color code found before %message%.
      * @return A built {@link BaseComponent} message
      */
-    private static BaseComponent[] formatter(String message, String[] format, String color) {
+    private static BaseComponent[] formatter(String message, String[] format, String color, @Nullable List<SingleMessage> images) {
+        // match QQ mini app messages
         if (message.contains("com.tencent.miniapp")) {
             TencentMiniAppMessage fromJson = new Gson().fromJson(message, TencentMiniAppMessage.class);
             TextComponent prompt = new TextComponent(fromJson.prompt + "-");
@@ -97,6 +103,7 @@ public class Forward extends PhenylBase {
                     .append(format.length > 1 ? altColor(color + format[1]) : "")
                     .create();
         }
+        // match QQ struct messages
         if (message.contains("com.tencent.structmsg")) {
             TencentStructMessage fromJson = new Gson().fromJson(message, TencentStructMessage.class);
             TextComponent prompt = new TextComponent(fromJson.prompt + "-");
@@ -113,7 +120,35 @@ public class Forward extends PhenylBase {
                     .append(format.length > 1 ? altColor(color + format[1]) : "")
                     .create();
         }
+        // match image messages
+        if (images != null && !images.isEmpty()) {
+            int matchCount = 0;
+            String pattern = "\\u56fe\\u7247";
+            Matcher match = Pattern.compile(pattern).matcher(message);
+            List<String> other = List.of(message.split(pattern));
+            ComponentBuilder result = new ComponentBuilder().append(altColor(format[0]));
+            while (match.find()) {
+                if (other.size() > matchCount) {
+                    result.append(altColor(color + other.get(matchCount)))
+                            .event((ClickEvent) null)
+                            .event((HoverEvent) null);
+                }
+                String url = net.mamoe.mirai.Mirai.getInstance().queryImageUrl(Phenyl.getMiraiInstance().getBot(), (Image) images.get(matchCount));
+                result.append(match.group())
+                        .color(ChatColor.DARK_AQUA)
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + i18n("clickToView") + url)));
+                matchCount++;
+            }
+            if (other.size() > matchCount) {
+                result.append(altColor(color + other.get(matchCount)))
+                        .event((ClickEvent) null)
+                        .event((HoverEvent) null);
+            }
+            return result.create();
+        }
 
+        // match links
         int matchCount = 0;
         String pattern = "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
         Matcher match = Pattern.compile(pattern).matcher(message);
@@ -139,6 +174,7 @@ public class Forward extends PhenylBase {
         if (matchCount != 0)
             return result.create();
 
+        // random message
         return new ComponentBuilder()
                 .append(altColor(format[0] + message + (format.length > 1 ? altColor(color + format[1]) : "")))
                 .create();
@@ -152,39 +188,56 @@ public class Forward extends PhenylBase {
      * @param userName  The sender's Minecraft username.
      * @param uuid      The sender's Minecraft UUID.
      * @param subServer In which sub server the message is sent.
-     * @throws NoSuchElementException The target group is not found in bot's group list.
      */
-    public static void forwardToQQ(String message, String userName, String uuid, String subServer) throws NoSuchElementException {
+    public static void forwardToQQ(String message, String userName, String uuid, String subServer) {
         for (Player it : Phenyl.getMutedPlayer()) {
             if (uuid.equals(it.uuid())) return;
         }
         if (PhenylConfiguration.save_message) Database.addMessage(message, uuid);
-        if (PhenylConfiguration.server_to_qq_format.equals("image")) {
-            for (Long id : PhenylConfiguration.enabled_groups) {
-                try {
-                    sendImage(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), drawImageMessage(message, userName, uuid));
-                } catch (NoSuchElementException ex) {
-                    LOGGER.error(i18n("noSuchGroup"));
-                    if (PhenylConfiguration.debug) ex.printStackTrace();
-                    return;
-                }
-            }
+
+        String pattern = "https?:/(?:/[^/]+)+\\.(?:jpg|jpeg|gif|png)";
+        Matcher matcher = Pattern.compile(pattern).matcher(message);
+        if (matcher.matches() && PhenylConfiguration.forward_image) {
+
+            if (PhenylConfiguration.server_to_qq_format.equals("image"))
+                forwardPlainMessage(i18n("imageMessage"), userName, uuid);
+            else forwardPlainMessage(i18n("imageMessage"), userName, subServer);
+
+            // retrieve and send image
+            CompletableFuture<Boolean> futureGet = CompletableFuture.supplyAsync(() -> getImageFromURL(matcher.group()))
+                    .orTimeout(5, TimeUnit.SECONDS).thenApplyAsync((@NotNull BufferedImage image) -> {
+                        sendImage(image);
+                        return true;
+                    }).orTimeout(3, TimeUnit.SECONDS);
             return;
         }
 
+        if (PhenylConfiguration.server_to_qq_format.equals("image"))
+            forwardImageMessage(message, userName, uuid);
+        else forwardPlainMessage(message, userName, subServer);
+
+    }
+
+    private static void forwardPlainMessage(String message, String userName, String subServer) {
         String format = PhenylConfiguration.server_to_qq_format
                 .replace("%sub_server%", subServer)
                 .replace("%username%", userName)
                 .replace("%message%", message);
         MessageChain messageChain = new MessageChainBuilder().append(format).build();
-        for (Long id : PhenylConfiguration.enabled_groups) {
-            try {
-                sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), messageChain);
-            } catch (NoSuchElementException ex) {
-                LOGGER.error(i18n("noSuchGroup"));
-                if (PhenylConfiguration.debug) ex.printStackTrace();
-                return;
-            }
+        try {
+            sendGroup(messageChain);
+        } catch (NoSuchElementException e) {
+            LOGGER.error(i18n("noSuchGroup"));
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
+    }
+
+    private static void forwardImageMessage(String message, String userName, String uuid) {
+        try {
+            sendImage(drawImageMessage(message, userName, uuid));
+        } catch (NoSuchElementException e) {
+            LOGGER.error(i18n("noSuchGroup"));
+            if (PhenylConfiguration.debug) e.printStackTrace();
         }
     }
 }

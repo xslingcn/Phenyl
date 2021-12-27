@@ -69,6 +69,9 @@ public class PhenylConfiguration extends PhenylBase {
 
     // Message configuration
     public static String forward_mode = "bind";
+    public static Boolean forward_image = true;
+    public static Integer get_image_timeout = 5;
+    public static Boolean nomessage_with_cross_server = true;
     public static String cross_sever_format = "&7[%sub_server%]%username%:%message%";
     public static String qq_to_server_format = "&7[QQ]%username%:%message%";
     public static String server_to_qq_format = "%username%:%message%";
@@ -149,6 +152,9 @@ public class PhenylConfiguration extends PhenylBase {
 
         // Message configuration
         forward_mode = config.getString("forward_mode");
+        forward_image = config.getBoolean("forward_image");
+        get_image_timeout = config.getInt("get_image_timeout");
+        nomessage_with_cross_server = config.getBoolean("nomessage_with_cross_server");
         cross_sever_format = config.getString("cross_sever_format");
         qq_to_server_format = config.getString("qq_to_server_format");
         online_total_format = config.getString("online_total_format");

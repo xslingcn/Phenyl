@@ -30,17 +30,15 @@ public class OnPlayerDisconnectEvent extends PhenylListener {
         if (!PhenylConfiguration.on_leave.equals("disabled")) {
             if (PhenylConfiguration.on_join.startsWith("image:")) {
                 CompletableFuture<Boolean> futureImage = CompletableFuture.supplyAsync(() -> {
-                    for (Long id : PhenylConfiguration.enabled_groups) {
-                        try {
-                            String joinFormat = PhenylConfiguration.on_leave
-                                    .replace("image:", "")
-                                    .replace("%username%", "");
-                            sendImage(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), drawImageMessage(joinFormat, e.getPlayer().getName(), e.getPlayer().getUniqueId().toString()));
-                        } catch (NoSuchElementException ex) {
-                            LOGGER.error(i18n("noSuchGroup"));
-                            if (PhenylConfiguration.debug) ex.printStackTrace();
-                            return false;
-                        }
+                    try {
+                        String joinFormat = PhenylConfiguration.on_leave
+                                .replace("image:", "")
+                                .replace("%username%", "");
+                        sendImage(drawImageMessage(joinFormat, e.getPlayer().getName(), e.getPlayer().getUniqueId().toString()));
+                    } catch (NoSuchElementException ex) {
+                        LOGGER.error(i18n("noSuchGroup"));
+                        if (PhenylConfiguration.debug) ex.printStackTrace();
+                        return false;
                     }
                     return true;
                 }).orTimeout(3, TimeUnit.SECONDS);

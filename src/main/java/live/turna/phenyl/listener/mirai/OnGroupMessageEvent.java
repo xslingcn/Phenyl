@@ -13,9 +13,7 @@ import static live.turna.phenyl.utils.Message.getServerName;
 import static live.turna.phenyl.bind.BindHandler.handleRequest;
 
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
+import net.mamoe.mirai.message.data.*;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.event.EventHandler;
 
@@ -25,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * <b>OnGroupMessageEvent</b><br>
@@ -39,6 +38,7 @@ public class OnGroupMessageEvent extends PhenylListener {
     private transient MessageChain message;
     private transient String messageString;
     private transient CGroupMessageEvent event;
+    private transient List<SingleMessage> images;
 
     @EventHandler
     public void onGroupMessage(CGroupMessageEvent e) {
@@ -50,6 +50,7 @@ public class OnGroupMessageEvent extends PhenylListener {
 
         if (group == null || senderID == null || message == null || messageString.isEmpty()) return;
         if (!PhenylConfiguration.enabled_groups.contains(group.getId())) return;
+        images = message.stream().filter(Image.class::isInstance).collect(Collectors.toList());
 
         // message is a command
         if (messageString.startsWith(PhenylConfiguration.command_prefix)) {
@@ -70,15 +71,16 @@ public class OnGroupMessageEvent extends PhenylListener {
             }).orTimeout(3, TimeUnit.SECONDS);
             return;
         }
+
         // random message
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             switch (PhenylConfiguration.forward_mode) {
-                case "sync" -> forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), null);
+                case "sync" -> forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), null, images);
                 case "bind" -> {
                     String userName = Database.getBinding(senderID).mcname();
                     // Check if is bound.
                     if (userName != null)
-                        forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), userName);
+                        forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), userName, images);
                 }
                 default -> {
                     if (PhenylConfiguration.debug) LOGGER.error(i18n("invalidForward"));
@@ -160,7 +162,7 @@ public class OnGroupMessageEvent extends PhenylListener {
         if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
             String userName = Database.getBinding(senderID).mcname();
             if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
-            forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), userName);
+            forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), userName, null);
             return;
         }
         throw new IllegalArgumentException(i18n("commandNotFound"));
