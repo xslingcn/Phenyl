@@ -1,6 +1,5 @@
 package live.turna.phenyl.listener.bungee;
 
-import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.config.PhenylConfiguration;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -46,14 +45,12 @@ public class OnPlayerDisconnectEvent extends PhenylListener {
                 String leaveFormat = PhenylConfiguration.on_leave
                         .replace("%username%", e.getPlayer().getName());
                 CompletableFuture<Boolean> futurePlain = CompletableFuture.supplyAsync(() -> {
-                    for (Long id : PhenylConfiguration.enabled_groups) {
-                        try {
-                            sendGroup(Phenyl.getMiraiInstance().getBot().getGroupOrFail(id), leaveFormat);
-                        } catch (NoSuchElementException ex) {
-                            LOGGER.error(i18n("noSuchGroup"));
-                            if (PhenylConfiguration.debug) ex.printStackTrace();
-                            return false;
-                        }
+                    try {
+                        sendGroup(leaveFormat);
+                    } catch (NoSuchElementException ex) {
+                        LOGGER.error(i18n("noSuchGroup"));
+                        if (PhenylConfiguration.debug) ex.printStackTrace();
+                        return false;
                     }
                     return true;
                 }).orTimeout(3, TimeUnit.SECONDS);

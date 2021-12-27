@@ -1,5 +1,6 @@
 package live.turna.phenyl.utils;
 
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 import net.mamoe.mirai.contact.Group;
@@ -80,7 +81,6 @@ public class Mirai extends PhenylBase {
         return protocol;
     }
 
-
     /**
      * Send group message.
      *
@@ -101,7 +101,29 @@ public class Mirai extends PhenylBase {
         group.sendMessage(message);
     }
 
-    public static void sendImage(Group group, BufferedImage image) throws NoSuchElementException {
+    /**
+     * Send all group the message.
+     *
+     * @param message The message in plain string type.
+     */
+    public static void sendGroup(String message) throws NoSuchElementException {
+        for (Long id : PhenylConfiguration.enabled_groups) {
+            Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
+        }
+    }
+
+    /**
+     * Send all group the message.
+     *
+     * @param message The message in {@link MessageChain} type.
+     */
+    public static void sendGroup(MessageChain message) throws NoSuchElementException {
+        for (Long id : PhenylConfiguration.enabled_groups) {
+            Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
+        }
+    }
+
+    public static void sendImage(BufferedImage image) throws NoSuchElementException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             ImageIO.write(image, "png", stream);
@@ -109,9 +131,12 @@ public class Mirai extends PhenylBase {
             if (PhenylConfiguration.debug) e.printStackTrace();
         }
         ExternalResource resource = ExternalResource.Companion.create(stream.toByteArray());
-        Image img = ExternalResource.uploadAsImage(resource, group);
-        MessageChain messageChain = new MessageChainBuilder().append(img).build();
-        sendGroup(group, messageChain);
+        for (Long id : PhenylConfiguration.enabled_groups) {
+            Group group = Phenyl.getMiraiInstance().getBot().getGroupOrFail(id);
+            Image img = ExternalResource.uploadAsImage(resource, group);
+            MessageChain message = new MessageChainBuilder().append(img).build();
+            group.sendMessage(message);
+        }
         try {
             resource.close();
         } catch (IOException e) {
