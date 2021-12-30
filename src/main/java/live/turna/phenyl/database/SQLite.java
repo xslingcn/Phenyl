@@ -1,6 +1,5 @@
 package live.turna.phenyl.database;
 
-import com.sun.tools.jconsole.JConsoleContext;
 import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 import org.jetbrains.annotations.Nullable;
