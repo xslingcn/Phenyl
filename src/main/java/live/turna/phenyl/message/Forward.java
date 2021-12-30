@@ -70,7 +70,10 @@ public class Forward extends PhenylBase {
                 .replace("%username%", userName != null ? userName : "")
                 .replace("%nickname%", nickName != null ? nickName : "");
         broadcastMessage(formatter(message, format, color, images));
-        if (PhenylConfiguration.save_message) Database.addMessage(message, group.getId(), senderID);
+        if (PhenylConfiguration.save_message) {
+            message = message.replaceAll("'", "''");
+            Database.addMessage(message, group.getId(), senderID);
+        }
     }
 
     /**
@@ -192,7 +195,10 @@ public class Forward extends PhenylBase {
         for (Player it : Phenyl.getMutedPlayer()) {
             if (uuid.equals(it.uuid())) return;
         }
-        if (PhenylConfiguration.save_message) Database.addMessage(message, uuid);
+        if (PhenylConfiguration.save_message) {
+            message = message.replaceAll("'", "''");
+            Database.addMessage(message, uuid);
+        }
 
         String pattern = "https?:/(?:/[^/]+)+\\.(?:jpg|jpeg|gif|png)";
         Matcher matcher = Pattern.compile(pattern).matcher(message);
