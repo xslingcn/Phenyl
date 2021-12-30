@@ -45,7 +45,7 @@ public class Message extends PhenylBase {
     }
 
     /**
-     * Send message to every player in enabled servers.
+     * Send message to every player in enabled servers. Used by join and leave servers.
      *
      * @param message The message content.
      */
@@ -59,7 +59,7 @@ public class Message extends PhenylBase {
     }
 
     /**
-     * Send message to every player in enabled and not excluded servers.
+     * Send message to every player in enabled and not excluded servers. Used by cross server messages.
      *
      * @param message The message content.
      * @param exclude Excluded servers.
@@ -70,7 +70,8 @@ public class Message extends PhenylBase {
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
                 for (String server : exclude) {
                     if (!server.equals(player.getServer().getInfo().getName())) {
-                        if (getNoMessage(player.getUniqueId().toString()).uuid() != null) continue;
+                        if (PhenylConfiguration.nomessage_with_cross_server && getNoMessage(player.getUniqueId().toString()).uuid() != null)
+                            continue;
                         player.sendMessage(result);
                     }
                 }
@@ -79,7 +80,7 @@ public class Message extends PhenylBase {
     }
 
     /**
-     * Send message to every player in enabled servers.
+     * Send message to every player in enabled servers. Used by complex messages.
      *
      * @param message The message of {@link BaseComponent} type to be sent.
      */
