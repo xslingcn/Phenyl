@@ -1,5 +1,5 @@
 
-package live.turna.phenyl.message.parser;
+package live.turna.phenyl.message.schema;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

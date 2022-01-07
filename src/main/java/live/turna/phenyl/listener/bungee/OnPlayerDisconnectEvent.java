@@ -26,6 +26,15 @@ import static live.turna.phenyl.utils.Mirai.sendImage;
 public class OnPlayerDisconnectEvent extends PhenylListener {
     @EventHandler
     public void OnPlayerDisconnect(PlayerDisconnectEvent e) {
+        if (!PhenylConfiguration.on_leave_broadcast.equals("disabled")) {
+            String leaveBroadcastFormat = PhenylConfiguration.on_leave_broadcast
+                    .replace("%username%", e.getPlayer().getName());
+            CompletableFuture<Boolean> futureBroadcast = CompletableFuture.supplyAsync(() -> {
+                broadcastMessage(leaveBroadcastFormat);
+                return true;
+            }).orTimeout(3, TimeUnit.SECONDS);
+        }
+
         if (!PhenylConfiguration.on_leave.equals("disabled")) {
             if (PhenylConfiguration.on_join.startsWith("image:")) {
                 CompletableFuture<Boolean> futureImage = CompletableFuture.supplyAsync(() -> {
@@ -56,14 +65,5 @@ public class OnPlayerDisconnectEvent extends PhenylListener {
                 }).orTimeout(3, TimeUnit.SECONDS);
             }
         }
-        if (!PhenylConfiguration.on_leave_broadcast.equals("disabled")) {
-            String leaveBroadcastFormat = PhenylConfiguration.on_leave_broadcast
-                    .replace("%username%", e.getPlayer().getName());
-            CompletableFuture<Boolean> futureBroadcast = CompletableFuture.supplyAsync(() -> {
-                broadcastMessage(leaveBroadcastFormat);
-                return true;
-            }).orTimeout(3, TimeUnit.SECONDS);
-        }
-
     }
 }

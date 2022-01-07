@@ -29,6 +29,16 @@ import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 public class OnLoginEvent extends PhenylListener {
     @EventHandler
     public void OnLogin(ServerConnectedEvent e) {
+        if (!PhenylConfiguration.on_join_broadcast.equals("disabled")) {
+            String joinBroadcastFormat = PhenylConfiguration.on_join_broadcast
+                    .replace("%sub_server%", getServerName(e.getServer()))
+                    .replace("%username%", e.getPlayer().getName());
+            CompletableFuture<Boolean> futureBroadcast = CompletableFuture.supplyAsync(() -> {
+                broadcastMessage(joinBroadcastFormat);
+                return true;
+            }).orTimeout(3, TimeUnit.SECONDS);
+        }
+
         if (!PhenylConfiguration.on_join.equals("disabled")) {
             if (PhenylConfiguration.on_join.startsWith("image:")) {
                 CompletableFuture<Boolean> futureAvatar = CompletableFuture.supplyAsync(() ->
@@ -66,17 +76,8 @@ public class OnLoginEvent extends PhenylListener {
                 }).orTimeout(3, TimeUnit.SECONDS);
             }
         }
-        if (!PhenylConfiguration.on_join_broadcast.equals("disabled")) {
-            String joinBroadcastFormat = PhenylConfiguration.on_join_broadcast
-                    .replace("%sub_server%", getServerName(e.getServer()))
-                    .replace("%username%", e.getPlayer().getName());
-            CompletableFuture<Boolean> futureBroadcast = CompletableFuture.supplyAsync(() -> {
-                broadcastMessage(joinBroadcastFormat);
-                return true;
-            }).orTimeout(3, TimeUnit.SECONDS);
-        }
 
-        // register a player if logging in for the first time. Updating the player's username if username not found.
+        // register a player if logging in for the first time and update the player's username.
         CompletableFuture<Boolean> futureRegister = CompletableFuture.supplyAsync(() -> {
             String uuid = e.getPlayer().getUniqueId().toString();
             String userName = e.getPlayer().getName();

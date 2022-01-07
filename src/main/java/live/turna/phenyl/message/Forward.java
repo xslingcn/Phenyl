@@ -17,8 +17,8 @@ import static live.turna.phenyl.utils.Mirai.sendGroup;
 import static live.turna.phenyl.utils.Mirai.sendImage;
 
 import live.turna.phenyl.database.Player;
-import live.turna.phenyl.message.parser.TencentMiniAppMessage;
-import live.turna.phenyl.message.parser.TencentStructMessage;
+import live.turna.phenyl.message.schema.TencentMiniAppMessage;
+import live.turna.phenyl.message.schema.TencentStructMessage;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.*;
