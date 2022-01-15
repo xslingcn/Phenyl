@@ -59,7 +59,7 @@ public class MiraiHandler extends PhenylBase {
     }
 
     /**
-     * Configures bot to login.
+     * Configure the bot to login.
      */
     private void configureBot() {
         bot = BotFactory.INSTANCE.newBot(userID, userPass, new BotConfiguration() {{

@@ -34,6 +34,7 @@ public class MiraiEvent extends PhenylBase {
         NudgeListener = eventChannel.subscribeAlways(NudgeEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CNudgeEvent(e)));
         UserMessageListener = eventChannel.subscribeAlways(UserMessageEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CUserMessageEvent(e)));
     }
+
     public static void removeListeners() {
         BotOfflineListener.complete();
         MemberJoinListener.complete();
@@ -43,6 +44,4 @@ public class MiraiEvent extends PhenylBase {
         NudgeListener.complete();
         UserMessageListener.complete();
     }
-
-
 }
