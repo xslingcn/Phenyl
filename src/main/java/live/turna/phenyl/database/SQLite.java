@@ -26,7 +26,7 @@ public class SQLite extends PhenylBase {
 
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS player (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, " +
-            "uuid CHAR(32), " +
+            "uuid CHAR(36), " +
             "qqid BIGINT, " +
             "mcname TINYTEXT," +
             "muted TINYINT(1)," +
@@ -36,7 +36,7 @@ public class SQLite extends PhenylBase {
             "fromid BIGINT, " +
             "fromgroup BIGINT, " +
             "fromqqid BIGINT, " +
-            "fromuuid CHAR(32), " +
+            "fromuuid CHAR(36), " +
             "senttime TIMESTAMP DEFAULT CURRENT_TIMESTAMP); ";
     private static final String selectPlayer = "SELECT * FROM player WHERE %s=%s LIMIT 1;";
     private static final String selectPlayerList = "SELECT * FROM player WHERE %s=%s;";

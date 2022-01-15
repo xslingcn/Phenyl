@@ -23,7 +23,7 @@ public class PostgreSQL extends PhenylBase {
 
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS %splayer (" +
             "id SERIAL PRIMARY KEY, " +
-            "uuid CHAR(32) UNIQUE, " +
+            "uuid CHAR(36) UNIQUE, " +
             "qqid BIGINT UNIQUE, " +
             "mcname TEXT, " +
             "muted BOOLEAN," +
@@ -33,7 +33,7 @@ public class PostgreSQL extends PhenylBase {
             "fromid BIGINT, " +
             "fromgroup BIGINT, " +
             "fromqqid BIGINT, " +
-            "fromuuid CHAR(32), " +
+            "fromuuid CHAR(36), " +
             "senttime TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP); ";
     private static final String selectPlayer = "SELECT * FROM %splayer WHERE %s=%s LIMIT 1;";
     private static final String selectPlayerList = "SELECT * FROM %splayer WHERE %s=%s;";
@@ -195,7 +195,7 @@ public class PostgreSQL extends PhenylBase {
      */
     boolean registerPlayer(String uuid, String mcname) {
         if (getPlayer("uuid", uuid).id() == null)
-            return insertPlayer("uuid", uuid) && insertPlayer("mcname", mcname);
+            return insertPlayer("uuid", uuid) && updatePlayer("mcname", mcname, "uuid", uuid);
         return false;
     }
 
@@ -345,7 +345,7 @@ public class PostgreSQL extends PhenylBase {
     boolean addMessage(String content, String fromuuid) {
         Player result = getPlayer("uuid", fromuuid);
         if (result.qqid() != null)
-            return insertMessage("content,fromid,fromqqid", String.format("'%s',%s,%s", content, result.id(), result.qqid()));
+            return insertMessage("content,fromid,fromqqid,fromuuid", String.format("'%s',%s,%s,'%s'", content, result.id(), result.qqid(), result.uuid()));
         return insertMessage("content,fromuuid", String.format("'%s','%s'", content, fromuuid));
     }
 
