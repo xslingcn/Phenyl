@@ -20,11 +20,14 @@ import java.util.List;
  * @since 2021/12/6 2:43
  */
 public class Database extends PhenylBase {
+    private static SQLite sqlite = null;
+    private static MySQL mysql = null;
+    private static PostgreSQL postgres = null;
 
     /**
      * Initialize database connection and/or files.
      */
-    public static void initialize() {
+    public static void onEnable() {
         switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> {
                 File playerFile = new File(phenyl.getDataFolder(), "player.db");
@@ -35,7 +38,6 @@ public class Database extends PhenylBase {
                     try {
                         if (!playerFile.createNewFile())
                             LOGGER.error(i18n("databaseInitFail"));
-
                     } catch (Exception e) {
                         if (PhenylConfiguration.debug) e.printStackTrace();
                     }
@@ -57,37 +59,54 @@ public class Database extends PhenylBase {
                         Class.forName("org.sqlite.JDBC");
                         messageConnection = DriverManager.getConnection("jdbc:sqlite:" + messageFile.getPath());
                     }
-                    new SQLite(playerConnection, messageConnection);
+                    sqlite = new SQLite(playerConnection, messageConnection);
                 } catch (Exception e) {
                     LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
                     if (PhenylConfiguration.debug) e.printStackTrace();
                 }
             }
             case "mysql" -> {
-                HikariConfig mysql = new HikariConfig();
+                HikariConfig mysqlConf = new HikariConfig();
                 HikariDataSource mysqlDataSource;
-                mysql.setDriverClassName("com.mysql.jdbc.Driver");
-                mysql.setJdbcUrl("jdbc:mysql://" + PhenylConfiguration.host + ":" + PhenylConfiguration.port + "/" + PhenylConfiguration.database);
-                mysql.setUsername(PhenylConfiguration.username);
-                mysql.setPassword(PhenylConfiguration.password);
-                mysql.addDataSourceProperty("cachePrepStmts", "true");
-                mysql.addDataSourceProperty("prepStmtCacheSize", "250");
-                mysql.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-                mysqlDataSource = new HikariDataSource(mysql);
-                new MySQL(mysqlDataSource);
+                mysqlConf.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                mysqlConf.setJdbcUrl("jdbc:mysql://" + PhenylConfiguration.host + ":" + PhenylConfiguration.port + "/" + PhenylConfiguration.database);
+                mysqlConf.setUsername(PhenylConfiguration.username);
+                mysqlConf.setPassword(PhenylConfiguration.password);
+                mysqlConf.addDataSourceProperty("cachePrepStmts", "true");
+                mysqlConf.addDataSourceProperty("prepStmtCacheSize", "250");
+                mysqlConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                mysqlDataSource = new HikariDataSource(mysqlConf);
+                mysql = new MySQL(mysqlDataSource);
             }
             case "postgresql" -> {
-                HikariConfig postgres = new HikariConfig();
+                HikariConfig postgresConf = new HikariConfig();
                 HikariDataSource postgresDataSource;
-                postgres.setDriverClassName("org.postgresql.Driver");
-                postgres.setJdbcUrl("jdbc:postgresql://" + PhenylConfiguration.host + ":" + PhenylConfiguration.port + "/" + PhenylConfiguration.database);
-                postgres.setUsername(PhenylConfiguration.username);
-                postgres.setPassword(PhenylConfiguration.password);
-                postgres.addDataSourceProperty("cachePrepStmts", "true");
-                postgres.addDataSourceProperty("prepStmtCacheSize", "250");
-                postgres.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-                postgresDataSource = new HikariDataSource(postgres);
-                new PostgreSQL(postgresDataSource);
+                postgresConf.setDriverClassName("org.postgresql.Driver");
+                postgresConf.setJdbcUrl("jdbc:postgresql://" + PhenylConfiguration.host + ":" + PhenylConfiguration.port + "/" + PhenylConfiguration.database);
+                postgresConf.setUsername(PhenylConfiguration.username);
+                postgresConf.setPassword(PhenylConfiguration.password);
+                postgresConf.addDataSourceProperty("cachePrepStmts", "true");
+                postgresConf.addDataSourceProperty("prepStmtCacheSize", "250");
+                postgresConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                postgresDataSource = new HikariDataSource(postgresConf);
+                postgres = new PostgreSQL(postgresDataSource);
+            }
+        }
+    }
+
+    public static void onDisable() {
+        switch (PhenylConfiguration.storage.toLowerCase()) {
+            case "sqlite" -> {
+                sqlite.onDisable();
+                sqlite = null;
+            }
+            case "mysql" -> {
+                mysql.onDisable();
+                mysql = null;
+            }
+            case "postgresql" -> {
+                postgres.onDisable();
+                postgres = null;
             }
         }
     }
@@ -100,9 +119,9 @@ public class Database extends PhenylBase {
      */
     public static boolean registerPlayer(String uuid, String mcname) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.registerPlayer(uuid, mcname);
-            case "mysql" -> MySQL.registerPlayer(uuid, mcname);
-            case "postgresql" -> PostgreSQL.registerPlayer(uuid, mcname);
+            case "sqlite" -> sqlite.registerPlayer(uuid, mcname);
+            case "mysql" -> mysql.registerPlayer(uuid, mcname);
+            case "postgresql" -> postgres.registerPlayer(uuid, mcname);
             default -> false;
         };
     }
@@ -115,9 +134,9 @@ public class Database extends PhenylBase {
      */
     public static boolean getRegistered(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.getRegistered(uuid);
-            case "mysql" -> MySQL.getRegistered(uuid);
-            case "postgresql" -> PostgreSQL.getRegistered(uuid);
+            case "sqlite" -> sqlite.getRegistered(uuid);
+            case "mysql" -> mysql.getRegistered(uuid);
+            case "postgresql" -> postgres.getRegistered(uuid);
             default -> false;
         };
     }
@@ -131,9 +150,9 @@ public class Database extends PhenylBase {
      */
     public static boolean updateUserName(String uuid, String userName) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.updateUserName(uuid, userName);
-            case "mysql" -> MySQL.updateUserName(uuid, userName);
-            case "postgresql" -> PostgreSQL.updateUserName(uuid, userName);
+            case "sqlite" -> sqlite.updateUserName(uuid, userName);
+            case "mysql" -> mysql.updateUserName(uuid, userName);
+            case "postgresql" -> postgres.updateUserName(uuid, userName);
             default -> false;
         };
     }
@@ -147,9 +166,9 @@ public class Database extends PhenylBase {
      */
     public static boolean updateMutedPlayer(String uuid, Boolean toggle) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.updateMutedPlayer(uuid, toggle);
-            case "mysql" -> MySQL.updateMutedPlayer(uuid, toggle);
-            case "postgresql" -> PostgreSQL.updateMutedPlayer(uuid, toggle);
+            case "sqlite" -> sqlite.updateMutedPlayer(uuid, toggle);
+            case "mysql" -> mysql.updateMutedPlayer(uuid, toggle);
+            case "postgresql" -> postgres.updateMutedPlayer(uuid, toggle);
             default -> false;
         };
     }
@@ -163,9 +182,9 @@ public class Database extends PhenylBase {
      */
     public static boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.updateNoMessagePlayer(uuid, toggle);
-            case "mysql" -> MySQL.updateNoMessagePlayer(uuid, toggle);
-            case "postgresql" -> PostgreSQL.updateNoMessagePlayer(uuid, toggle);
+            case "sqlite" -> sqlite.updateNoMessagePlayer(uuid, toggle);
+            case "mysql" -> mysql.updateNoMessagePlayer(uuid, toggle);
+            case "postgresql" -> postgres.updateNoMessagePlayer(uuid, toggle);
             default -> false;
         };
     }
@@ -177,9 +196,9 @@ public class Database extends PhenylBase {
      */
     public static List<Player> getMutedPlayer() {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.getMutedPlayer();
-            case "mysql" -> MySQL.getMutedPlayer();
-            case "postgresql" -> PostgreSQL.getMutedPlayer();
+            case "sqlite" -> sqlite.getMutedPlayer();
+            case "mysql" -> mysql.getMutedPlayer();
+            case "postgresql" -> postgres.getMutedPlayer();
             default -> new ArrayList<>();
         };
     }
@@ -191,9 +210,9 @@ public class Database extends PhenylBase {
      */
     public static List<Player> getNoMessagePlayer() {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.getNoMessagePlayer();
-            case "mysql" -> MySQL.getNoMessagePlayer();
-            case "postgresql" -> PostgreSQL.getNoMessagePlayer();
+            case "sqlite" -> sqlite.getNoMessagePlayer();
+            case "mysql" -> mysql.getNoMessagePlayer();
+            case "postgresql" -> postgres.getNoMessagePlayer();
             default -> new ArrayList<>();
         };
     }
@@ -207,9 +226,9 @@ public class Database extends PhenylBase {
      */
     public static boolean addBinding(String uuid, Long qqid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.addBinding(uuid, qqid);
-            case "mysql" -> MySQL.addBinding(uuid, qqid);
-            case "postgresql" -> PostgreSQL.addBinding(uuid, qqid);
+            case "sqlite" -> sqlite.addBinding(uuid, qqid);
+            case "mysql" -> mysql.addBinding(uuid, qqid);
+            case "postgresql" -> postgres.addBinding(uuid, qqid);
             default -> false;
         };
     }
@@ -222,9 +241,9 @@ public class Database extends PhenylBase {
      */
     public static boolean removeBinding(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.removeBinding(uuid);
-            case "mysql" -> MySQL.removeBinding(uuid);
-            case "postgresql" -> PostgreSQL.removeBinding(uuid);
+            case "sqlite" -> sqlite.removeBinding(uuid);
+            case "mysql" -> mysql.removeBinding(uuid);
+            case "postgresql" -> postgres.removeBinding(uuid);
             default -> false;
         };
     }
@@ -237,9 +256,9 @@ public class Database extends PhenylBase {
      */
     public static Player getBinding(String uuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.getBinding(uuid);
-            case "mysql" -> MySQL.getBinding(uuid);
-            case "postgresql" -> PostgreSQL.getBinding(uuid);
+            case "sqlite" -> sqlite.getBinding(uuid);
+            case "mysql" -> mysql.getBinding(uuid);
+            case "postgresql" -> postgres.getBinding(uuid);
             default -> null;
         };
     }
@@ -252,9 +271,9 @@ public class Database extends PhenylBase {
      */
     public static Player getBinding(Long qqid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.getBinding(qqid);
-            case "mysql" -> MySQL.getBinding(qqid);
-            case "postgresql" -> PostgreSQL.getBinding(qqid);
+            case "sqlite" -> sqlite.getBinding(qqid);
+            case "mysql" -> mysql.getBinding(qqid);
+            case "postgresql" -> postgres.getBinding(qqid);
             default -> null;
         };
     }
@@ -267,9 +286,9 @@ public class Database extends PhenylBase {
      */
     public static Integer getIDByUserName(String userName) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.getIDByUserName(userName);
-            case "mysql" -> MySQL.getIDByUserName(userName);
-            case "postgresql" -> PostgreSQL.getIDByUserName(userName);
+            case "sqlite" -> sqlite.getIDByUserName(userName);
+            case "mysql" -> mysql.getIDByUserName(userName);
+            case "postgresql" -> postgres.getIDByUserName(userName);
             default -> null;
         };
     }
@@ -286,9 +305,9 @@ public class Database extends PhenylBase {
      */
     public static boolean addMessage(String content, Long groupID, Long qqID) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.addMessage(content, groupID, qqID);
-            case "mysql" -> MySQL.addMessage(content, groupID, qqID);
-            case "postgresql" -> PostgreSQL.addMessage(content, groupID, qqID);
+            case "sqlite" -> sqlite.addMessage(content, groupID, qqID);
+            case "mysql" -> mysql.addMessage(content, groupID, qqID);
+            case "postgresql" -> postgres.addMessage(content, groupID, qqID);
             default -> false;
         };
     }
@@ -304,9 +323,9 @@ public class Database extends PhenylBase {
      */
     public static boolean addMessage(String content, String fromuuid) {
         return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> SQLite.addMessage(content, fromuuid);
-            case "mysql" -> MySQL.addMessage(content, fromuuid);
-            case "postgresql" -> PostgreSQL.addMessage(content, fromuuid);
+            case "sqlite" -> sqlite.addMessage(content, fromuuid);
+            case "mysql" -> mysql.addMessage(content, fromuuid);
+            case "postgresql" -> postgres.addMessage(content, fromuuid);
             default -> false;
         };
     }

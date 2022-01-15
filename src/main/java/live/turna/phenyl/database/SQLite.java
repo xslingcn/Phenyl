@@ -204,7 +204,7 @@ public class SQLite extends PhenylBase {
      * @param mcname The player's Minecraft username.
      * @return Whether the queries succeeded.
      */
-    static boolean registerPlayer(String uuid, String mcname) {
+    boolean registerPlayer(String uuid, String mcname) {
         if (getPlayer("uuid", uuid).id() == null)
             return insertPlayer("uuid", uuid) && updatePlayer("mcname", mcname, "uuid", uuid);
         return false;
@@ -216,7 +216,7 @@ public class SQLite extends PhenylBase {
      * @param uuid The player's Minecraft UUID.
      * @return True - player is registered; False - not registered.
      */
-    static boolean getRegistered(String uuid) {
+    boolean getRegistered(String uuid) {
         return getPlayer("uuid", uuid).id() != null;
     }
 
@@ -227,7 +227,7 @@ public class SQLite extends PhenylBase {
      * @param userName The player's Minecraft username.
      * @return True - the username needs to be updated and that is done successfully. False - no need to update username or query failed.
      */
-    static boolean updateUserName(String uuid, String userName) {
+    boolean updateUserName(String uuid, String userName) {
         Player result = getPlayer("uuid", uuid);
         if (result.mcname() == null || !result.mcname().equals(userName)) {
             return updatePlayer("mcname", userName, "uuid", uuid);
@@ -242,7 +242,7 @@ public class SQLite extends PhenylBase {
      * @param toggle Whether is muted.
      * @return Whether the query succeeded.
      */
-    static boolean updateMutedPlayer(String uuid, Boolean toggle) {
+    boolean updateMutedPlayer(String uuid, Boolean toggle) {
         return updatePlayer("muted", toggle ? "1" : "0", "uuid", uuid);
     }
 
@@ -253,7 +253,7 @@ public class SQLite extends PhenylBase {
      * @param toggle Whether is muted.
      * @return Whether the query succeeded.
      */
-    static boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
+    boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
         return updatePlayer("nomessage", toggle ? "1" : "0", "uuid", uuid);
     }
 
@@ -262,7 +262,7 @@ public class SQLite extends PhenylBase {
      *
      * @return An empty list if no player is muted, or a list of player instances.
      */
-    static List<Player> getMutedPlayer() {
+    List<Player> getMutedPlayer() {
         return getPlayerList("muted", "1");
     }
 
@@ -271,7 +271,7 @@ public class SQLite extends PhenylBase {
      *
      * @return An empty list if no player is nomessaged, or a list of player instances.
      */
-    static List<Player> getNoMessagePlayer() {
+    List<Player> getNoMessagePlayer() {
         return getPlayerList("nomessage", "1");
     }
 
@@ -282,7 +282,7 @@ public class SQLite extends PhenylBase {
      * @param qqid The player's QQ ID.
      * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
      */
-    static boolean addBinding(String uuid, Long qqid) {
+    boolean addBinding(String uuid, Long qqid) {
         return updatePlayer("qqid", qqid.toString(), "uuid", uuid);
     }
 
@@ -292,7 +292,7 @@ public class SQLite extends PhenylBase {
      * @param uuid The player's Minecraft UUID.
      * @return True - The binding is successfully removed. False - query failed.
      */
-    static boolean removeBinding(String uuid) {
+    boolean removeBinding(String uuid) {
         return updatePlayer("qqid", "NULL", "uuid", uuid);
     }
 
@@ -302,7 +302,7 @@ public class SQLite extends PhenylBase {
      * @param uuid The player's Minecraft UUID.
      * @return Player instance gotten from {@link #getPlayer(String, String)}.
      */
-    static Player getBinding(String uuid) {
+    Player getBinding(String uuid) {
         return getPlayer("uuid", uuid);
     }
 
@@ -312,7 +312,7 @@ public class SQLite extends PhenylBase {
      * @param qqid The player's QQ ID.
      * @return Player instance gotten from {@link #getPlayer(String, String)}.
      */
-    static Player getBinding(Long qqid) {
+    Player getBinding(Long qqid) {
         return getPlayer("qqid", qqid.toString());
     }
 
@@ -322,7 +322,7 @@ public class SQLite extends PhenylBase {
      * @param userName The player's Minecraft username.
      * @return Corresponding id if found, null if not.
      */
-    static Integer getIDByUserName(String userName) {
+    Integer getIDByUserName(String userName) {
         return getPlayer("mcname", userName).id();
     }
 
@@ -336,7 +336,7 @@ public class SQLite extends PhenylBase {
      * @param qqID    The sender's QQ ID.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    static boolean addMessage(String content, Long groupID, Long qqID) {
+    boolean addMessage(String content, Long groupID, Long qqID) {
         Player result = getPlayer("qqid", qqID.toString());
         if (result.uuid() != null)
             return insertMessage("content,fromid,fromuuid,fromgroup,fromqqid", String.format("'%s',%s,'%s',%s,%s", content, result.id(), result.uuid(), groupID.toString(), qqID));
@@ -353,10 +353,27 @@ public class SQLite extends PhenylBase {
      * @param fromuuid The sender's Minecraft UUID.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    static boolean addMessage(String content, String fromuuid) {
+    boolean addMessage(String content, String fromuuid) {
         Player result = getPlayer("uuid", fromuuid);
         if (result.qqid() != null)
             return insertMessage("content,fromid,fromqqid,fromuuid", String.format("'%s',%s,%s,'%s'", content, result.id(), result.qqid(), result.uuid()));
         return insertMessage("content,fromuuid", String.format("'%s','%s'", content, fromuuid));
+    }
+
+    /**
+     * Close all connections.
+     */
+    void onDisable() {
+        try {
+            player.close();
+            playerConnection.close();
+            if (messageConnection != null) {
+                messageConnection.close();
+                message.close();
+            }
+        } catch (SQLException e) {
+            LOGGER.error(i18n("databaseCloseFail"), e.getLocalizedMessage());
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
     }
 }

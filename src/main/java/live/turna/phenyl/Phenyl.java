@@ -65,12 +65,15 @@ public final class Phenyl extends Plugin {
         miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         miraiInstance.onEnable();
         ListenerRegisterer.registerListeners();
-        Database.initialize();
+        Database.onEnable();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
     }
 
     public boolean reload() {
+        mutedPlayer = new ArrayList<>();
+        noMessagePlayer = new ArrayList<>();
+        Database.onDisable();
         PhenylConfiguration.loadPhenylConfiguration();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
 
@@ -90,7 +93,7 @@ public final class Phenyl extends Plugin {
         miraiInstance.onEnable();
 
         ListenerRegisterer.registerListeners();
-        Database.initialize();
+        Database.onEnable();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
         return true;
@@ -98,6 +101,9 @@ public final class Phenyl extends Plugin {
 
     @Override
     public void onDisable() {
+        mutedPlayer = null;
+        noMessagePlayer = null;
+        Database.onDisable();
         ListenerRegisterer.unregisterListeners();
         if (miraiInstance != null) miraiInstance.onDisable();
         i18nInstance.onDisable();
