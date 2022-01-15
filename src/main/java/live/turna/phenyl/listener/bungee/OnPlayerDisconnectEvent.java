@@ -25,7 +25,7 @@ import static live.turna.phenyl.utils.Mirai.sendImage;
  */
 public class OnPlayerDisconnectEvent extends PhenylListener {
     @EventHandler
-    public void OnPlayerDisconnect(PlayerDisconnectEvent e) {
+    public void onPlayerDisconnect(PlayerDisconnectEvent e) {
         if (!PhenylConfiguration.on_leave_broadcast.equals("disabled")) {
             String leaveBroadcastFormat = PhenylConfiguration.on_leave_broadcast
                     .replace("%username%", e.getPlayer().getName());

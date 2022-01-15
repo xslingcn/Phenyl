@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class OnChatEvent extends PhenylListener {
 
     @EventHandler
-    public void onChatEvent(ChatEvent e) {
+    public void onChat(ChatEvent e) {
         if (e.isCommand() || e.isProxyCommand())
             return;
         ProxiedPlayer player = (ProxiedPlayer) e.getSender();

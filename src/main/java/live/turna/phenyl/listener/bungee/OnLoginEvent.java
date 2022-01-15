@@ -28,7 +28,7 @@ import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
  */
 public class OnLoginEvent extends PhenylListener {
     @EventHandler
-    public void OnLogin(ServerConnectedEvent e) {
+    public void onLogin(ServerConnectedEvent e) {
         if (!PhenylConfiguration.on_join_broadcast.equals("disabled")) {
             String joinBroadcastFormat = PhenylConfiguration.on_join_broadcast
                     .replace("%sub_server%", getServerName(e.getServer()))

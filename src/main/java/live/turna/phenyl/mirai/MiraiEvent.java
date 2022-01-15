@@ -19,8 +19,6 @@ public class MiraiEvent extends PhenylBase {
     private static Listener<MemberJoinEvent> MemberJoinListener;
     private static Listener<MemberLeaveEvent> MemberLeaveListener;
     private static Listener<GroupMessageEvent> GroupMessageListener;
-    private static Listener<ImageUploadEvent> ImageUploadListener;
-    private static Listener<NudgeEvent> NudgeListener;
     private static Listener<UserMessageEvent> UserMessageListener;
 
     public static void listenEvents(Bot bot) {
@@ -30,8 +28,6 @@ public class MiraiEvent extends PhenylBase {
         MemberJoinListener = eventChannel.subscribeAlways(MemberJoinEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CMemberJoinEvent(e)));
         MemberLeaveListener = eventChannel.subscribeAlways(MemberLeaveEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CMemberLeaveEvent(e)));
         GroupMessageListener = eventChannel.subscribeAlways(GroupMessageEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CGroupMessageEvent(e)));
-        ImageUploadListener = eventChannel.subscribeAlways(ImageUploadEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CImageUploadEvent(e)));
-        NudgeListener = eventChannel.subscribeAlways(NudgeEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CNudgeEvent(e)));
         UserMessageListener = eventChannel.subscribeAlways(UserMessageEvent.class, e -> ProxyServer.getInstance().getPluginManager().callEvent(new CUserMessageEvent(e)));
     }
 
@@ -40,8 +36,6 @@ public class MiraiEvent extends PhenylBase {
         MemberJoinListener.complete();
         MemberLeaveListener.complete();
         GroupMessageListener.complete();
-        ImageUploadListener.complete();
-        NudgeListener.complete();
         UserMessageListener.complete();
     }
 }

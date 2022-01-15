@@ -28,24 +28,7 @@ import java.util.List;
  * @since 2021/12/3 1:12
  */
 public class PhenylConfiguration extends PhenylBase {
-
     private static Configuration config;
-
-    /**
-     * Converting a YAML object to HashMap.
-     *
-     * @param path The keyword to locate YAML section.
-     * @return HashMap $map
-     */
-    private static HashMap<String, String> getMap(String path) {
-        Collection<String> keys;
-        HashMap<String, String> map = new HashMap<>();
-        keys = config.getSection(path).getKeys();
-        keys.forEach((key) ->
-                map.put(key, config.getSection(path).getString(key))
-        );
-        return map;
-    }
 
     // General configuration
     public static String locale = "en";
@@ -222,6 +205,21 @@ public class PhenylConfiguration extends PhenylBase {
         if (debug) LOGGER.warn(i18n("debugEnabled"));
 
         LOGGER.info(i18n("configLoaded"));
+    }
 
+    /**
+     * Converting a YAML object to HashMap.
+     *
+     * @param path The keyword to locate YAML section.
+     * @return HashMap $map
+     */
+    private static HashMap<String, String> getMap(String path) {
+        Collection<String> keys;
+        HashMap<String, String> map = new HashMap<>();
+        keys = config.getSection(path).getKeys();
+        keys.forEach((key) ->
+                map.put(key, config.getSection(path).getString(key))
+        );
+        return map;
     }
 }
