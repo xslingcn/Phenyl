@@ -52,14 +52,20 @@ public class Forward extends PhenylBase {
      * @param senderID The sender's QQ ID.
      * @param message  The message content.
      * @param nickName The sender's in-group name card or nickname, used for {@code sync} mode.
-     * @param userName The sender's Minecraft username, used for {@code bind/command} mode.
      * @see CGroupMessageEvent#getSenderNameCardOrNick()
      */
-    public static void forwardToBungee(Group group, Long senderID, String message, @Nullable String nickName, @Nullable String userName, @Nullable List<SingleMessage> images) {
+    public static void forwardToBungee(Group group, Long senderID, String message, @Nullable String nickName, @Nullable List<SingleMessage> images) {
         for (Player it : Phenyl.getMutedPlayer()) {
             if (it == null || it.qqid() == null) break;
             if (senderID.equals(it.qqid())) return;
         }
+        if (PhenylConfiguration.save_message) {
+            message = message.replaceAll("'", "''");
+            Database.addMessage(message, group.getId(), senderID);
+        }
+        String userName = Database.getBinding(senderID).mcname();
+        if (PhenylConfiguration.forward_mode.equals("bind") && userName == null) return;
+
         String[] format = PhenylConfiguration.qq_to_server_format.split("%message%");
         Matcher matcher = Pattern.compile("&(?![\\s\\S]*&)\\d{1}").matcher(PhenylConfiguration.qq_to_server_format); // match the last color code occurrence
         String color = matcher.find() ? matcher.group() : "&f"; // if no color specified, fallback to white
@@ -69,10 +75,6 @@ public class Forward extends PhenylBase {
                 .replace("%username%", userName != null ? userName : "")
                 .replace("%nickname%", nickName != null ? nickName : "");
         broadcastMessage(formatter(message, format, color, images));
-        if (PhenylConfiguration.save_message) {
-            message = message.replaceAll("'", "''");
-            Database.addMessage(message, group.getId(), senderID);
-        }
     }
 
     /**

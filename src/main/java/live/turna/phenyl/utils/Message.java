@@ -56,7 +56,6 @@ public class Message extends PhenylBase {
             if (player.getServer() == null) continue;
 
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
-                LOGGER.warn(player.getName() + ":" + message);
                 player.sendMessage(result);
             }
         }

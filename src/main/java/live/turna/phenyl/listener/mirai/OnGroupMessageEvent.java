@@ -75,13 +75,7 @@ public class OnGroupMessageEvent extends PhenylListener {
         // random message
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             switch (PhenylConfiguration.forward_mode) {
-                case "sync" -> forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), null, images);
-                case "bind" -> {
-                    String userName = Database.getBinding(senderID).mcname();
-                    // Check if is bound.
-                    if (userName != null)
-                        forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), userName, images);
-                }
+                case "sync", "bind" -> forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), images);
                 default -> {
                     if (PhenylConfiguration.debug) LOGGER.error(i18n("invalidForward"));
                     return false;
@@ -162,7 +156,7 @@ public class OnGroupMessageEvent extends PhenylListener {
         if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
             String userName = Database.getBinding(senderID).mcname();
             if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
-            forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), userName, null);
+            forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), null);
             return;
         }
         throw new IllegalArgumentException(i18n("commandNotFound"));
