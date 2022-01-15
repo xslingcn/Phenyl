@@ -1,8 +1,8 @@
 # Phenyl✨
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/xslingcn/phenyl)](https://github.com/xslingcn/Phenyl/releases)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xslingcn/phenyl/Build%20Phenyl)](https://github.com/xslingcn/Phenyl/actions)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/turnalive/phenyl)](https://github.com/TurnALive/Phenyl/releases)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/turnalive/phenyl/Build%20Phenyl)](https://github.com/TurnALive/Phenyl/actions)
 [![JDK Version](https://img.shields.io/badge/JDK-%3E%3D17-blue)](https://adoptium.net/)
-[![GitHub License](https://img.shields.io/github/license/xslingcn/phenyl)](https://github.com/xslingcn/Phenyl/blob/main/LICENSE)
+[![GitHub License](https://img.shields.io/github/license/turnalive/phenyl)](https://github.com/TurnALive/Phenyl/blob/main/LICENSE)
 
 `Phenyl` provides an out-of-the-box bridge between chat apps and Minecraft.
 
