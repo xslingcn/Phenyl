@@ -52,7 +52,11 @@ public class Message extends PhenylBase {
     public static void broadcastMessage(String message) {
         TextComponent result = new TextComponent(altColor(message));
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+            // a player hasn't joined any server yet
+            if (player.getServer() == null) continue;
+
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
+                LOGGER.warn(player.getName() + ":" + message);
                 player.sendMessage(result);
             }
         }
@@ -67,6 +71,9 @@ public class Message extends PhenylBase {
     public static void broadcastMessage(String message, String[] exclude) {
         TextComponent result = new TextComponent(altColor(message));
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+            // in case any player leaves the server while broadcasting messages
+            if (player.getServer() == null) continue;
+
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
                 for (String server : exclude) {
                     if (!server.equals(player.getServer().getInfo().getName())) {
@@ -86,6 +93,9 @@ public class Message extends PhenylBase {
      */
     public static void broadcastMessage(BaseComponent[] message) {
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+            // in case any player leaves the server while broadcasting messages
+            if (player.getServer() == null) continue;
+
             if (PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) {
                 if (getNoMessage(player.getUniqueId().toString()).uuid() != null) continue;
                 player.sendMessage(message);
