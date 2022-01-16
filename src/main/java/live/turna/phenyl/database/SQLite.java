@@ -32,7 +32,7 @@ public class SQLite extends PhenylBase {
             "muted TINYINT(1)," +
             "nomessage TINYINT(1));";
     private final String initMessagesTable = "CREATE TABLE IF NOT EXISTS message (" +
-            "content TINYTEXT, " +
+            "content TEXT, " +
             "fromid BIGINT, " +
             "fromgroup BIGINT, " +
             "fromqqid BIGINT, " +
