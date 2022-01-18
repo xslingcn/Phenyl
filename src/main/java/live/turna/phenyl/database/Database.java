@@ -60,6 +60,7 @@ public class Database extends PhenylBase {
                         messageConnection = DriverManager.getConnection("jdbc:sqlite:" + messageFile.getPath());
                     }
                     sqlite = new SQLite(playerConnection, messageConnection);
+                    LOGGER.info(i18n("databaseSucceeded", "SQLite"));
                 } catch (Exception e) {
                     LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
                     if (PhenylConfiguration.debug) e.printStackTrace();
@@ -78,6 +79,7 @@ public class Database extends PhenylBase {
                 mysqlConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
                 mysqlDataSource = new HikariDataSource(mysqlConf);
                 mysql = new MySQL(mysqlDataSource);
+                LOGGER.info(i18n("databaseSucceeded", "MySQL"));
             }
             case "postgresql" -> {
                 HikariConfig postgresConf = new HikariConfig();
@@ -92,6 +94,7 @@ public class Database extends PhenylBase {
                 postgresConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
                 postgresDataSource = new HikariDataSource(postgresConf);
                 postgres = new PostgreSQL(postgresDataSource);
+                LOGGER.info(i18n("databaseSucceeded", "PostgreSQL"));
             }
         }
     }
@@ -99,16 +102,16 @@ public class Database extends PhenylBase {
     public static void onDisable() {
         switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> {
-                sqlite.onDisable();
-                sqlite = null;
+                if (sqlite != null)
+                    sqlite.onDisable();
             }
             case "mysql" -> {
-                mysql.onDisable();
-                mysql = null;
+                if (mysql != null)
+                    mysql.onDisable();
             }
             case "postgresql" -> {
-                postgres.onDisable();
-                postgres = null;
+                if (postgres != null)
+                    postgres.onDisable();
             }
         }
     }

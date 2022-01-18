@@ -6,7 +6,7 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.utils.BotConfiguration;
 import net.mamoe.mirai.utils.LoggerAdapters;
-import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.LogManager;
 
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Mirai.*;
@@ -62,17 +62,13 @@ public class MiraiHandler extends PhenylBase {
      * Configure the bot to login.
      */
     private void configureBot() {
+        System.setProperty("mirai.no-desktop", "");
         bot = BotFactory.INSTANCE.newBot(userID, userPass, new BotConfiguration() {{
             setProtocol(protocol);
             setWorkingDir(workingDir);
             fileBasedDeviceInfo();
-            if (PhenylConfiguration.debug) {
-                setBotLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LOGGER, MarkerManager.getMarker("MIRAI")));
-                setNetworkLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LOGGER, MarkerManager.getMarker("MIRAI")));
-            } else {
-                noBotLog();
-                noNetworkLog();
-            }
+            setBotLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LogManager.getLogger("MIRAI")));
+            setNetworkLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LogManager.getLogger("MIRAI_NETWORK")));
         }});
     }
 
@@ -90,6 +86,7 @@ public class MiraiHandler extends PhenylBase {
             configureBot();
             bot.login();
             MiraiEvent.listenEvents(bot);
+            LOGGER.info(i18n("logInSuccessNoColor", bot.getNick()));
         } catch (Exception e) {
             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
             if (PhenylConfiguration.debug) e.printStackTrace();
@@ -98,7 +95,9 @@ public class MiraiHandler extends PhenylBase {
 
     public void onDisable() {
         MiraiEvent.removeListeners();
+        String nick = bot.getNick();
         bot.close();
+        LOGGER.info(i18n("logOutSuccessNoColor", nick));
     }
 
     public boolean logIn() {

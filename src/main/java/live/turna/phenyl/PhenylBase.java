@@ -10,6 +10,6 @@ import org.apache.logging.log4j.Logger;
  * @since 2021/12/3 22:18
  */
 public class PhenylBase {
-    public static final Logger LOGGER = LogManager.getLogger("Phenyl");
+    public static final Logger LOGGER = LogManager.getLogger("PhenylMain");
     public static Phenyl phenyl = Phenyl.getInstance();
 }

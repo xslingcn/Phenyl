@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
  * @since 2021/12/3 22:31
  */
 public class PhenylCommand extends Command implements TabExecutor {
-    public static final Logger LOGGER = LogManager.getLogger("Phenyl");
+    public static final Logger LOGGER = LogManager.getLogger("PhenylMain");
     public static Phenyl phenyl = Phenyl.getInstance();
 
     public PhenylCommand(String name) {

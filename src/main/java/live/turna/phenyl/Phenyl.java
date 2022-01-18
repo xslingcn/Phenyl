@@ -8,6 +8,7 @@ import live.turna.phenyl.listener.ListenerRegisterer;
 import live.turna.phenyl.message.I18n;
 import live.turna.phenyl.mirai.MiraiHandler;
 
+import live.turna.phenyl.utils.Logging;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.apache.logging.log4j.LogManager;
@@ -50,6 +51,7 @@ public final class Phenyl extends Plugin {
     public void onEnable() {
         instance = this;
         PhenylConfiguration.loadPhenylConfiguration();
+        Logging.onEnable();
         i18nInstance = new I18n();
         i18nInstance.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
@@ -75,6 +77,7 @@ public final class Phenyl extends Plugin {
         noMessagePlayer = new ArrayList<>();
         Database.onDisable();
         PhenylConfiguration.loadPhenylConfiguration();
+        Logging.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
 
         try {
