@@ -72,10 +72,10 @@ public class CommandHandler extends PhenylCommand {
                 if (sender.hasPermission("phenyl.admin.login")) {
                     if (args.length == 1) {
                         try {
-                            if (miraiInstance.logIn())
-                                sendMessage(i18n("logInSuccess", miraiInstance.getBot().getNick()), sender);
+                            if (Phenyl.getMiraiInstance().logIn())
+                                sendMessage(i18n("logInSuccess", Phenyl.getMiraiInstance().getBot().getNick()), sender);
                             else
-                                sendMessage(i18n("alreadyLoggedIn", String.valueOf(miraiInstance.getBot().getId())), sender);
+                                sendMessage(i18n("alreadyLoggedIn", String.valueOf(Phenyl.getMiraiInstance().getBot().getId())), sender);
                         } catch (Exception e) {
                             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
                             if (PhenylConfiguration.debug) e.printStackTrace();
@@ -87,8 +87,8 @@ public class CommandHandler extends PhenylCommand {
                 if (sender.hasPermission("phenyl.admin.logout")) {
                     if (args.length == 1) {
                         try {
-                            if (miraiInstance.logOut())
-                                sendMessage(i18n("logOutSuccess", miraiInstance.getBot().getNick()), sender);
+                            if (Phenyl.getMiraiInstance().logOut())
+                                sendMessage(i18n("logOutSuccess", Phenyl.getMiraiInstance().getBot().getNick()), sender);
                             else sendMessage(i18n("yetLoggedIn"), sender);
                         } catch (Exception e) {
                             LOGGER.warn(i18n("logOutFail", e.getLocalizedMessage()));
