@@ -19,7 +19,7 @@ import java.util.List;
 
 
 public final class Phenyl extends Plugin {
-    private final Logger LOGGER = LogManager.getLogger("Phenyl");
+    private final Logger LOGGER = LogManager.getLogger("PhenylMain");
 
     private static Phenyl instance;
     private static I18n i18nInstance;
