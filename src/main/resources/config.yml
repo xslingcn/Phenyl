@@ -203,3 +203,6 @@ online_command: "online"
 
 # verification: the length of verification code.
 verification: 6
+
+# Here lie dragons!
+version: 0

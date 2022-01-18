@@ -87,7 +87,9 @@ public class PhenylConfiguration extends PhenylBase {
     public static String bind_command = "bind";
     public static String confirm_command = "confirm";
     public static String online_command = "online";
-    public static int verification = 6;
+    public static Integer verification = 6;
+
+    public static Integer version = 0;
 
     /**
      * Load configurations.
@@ -171,6 +173,8 @@ public class PhenylConfiguration extends PhenylBase {
         confirm_command = config.getString("confirm_command");
         online_command = config.getString("online_command");
         verification = config.getInt("verification");
+
+        version = config.getInt("version");
     }
 
     /**
