@@ -1,5 +1,5 @@
 group = "live.turna"
-version = "1.1.0"
+version = "1.1.1"
 
 plugins {
     java
@@ -10,8 +10,6 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://oss.sonatype.org/content/groups/public/")
-    maven("https://jitpack.io")
-
 }
 
 dependencies {

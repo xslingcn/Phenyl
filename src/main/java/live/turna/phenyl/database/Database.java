@@ -72,6 +72,7 @@ public class Database extends PhenylBase {
                 mysqlConf.setJdbcUrl("jdbc:mysql://" + PhenylConfiguration.host + ":" + PhenylConfiguration.port + "/" + PhenylConfiguration.database);
                 mysqlConf.setUsername(PhenylConfiguration.username);
                 mysqlConf.setPassword(PhenylConfiguration.password);
+                mysqlConf.setLeakDetectionThreshold(10000);
                 mysqlConf.addDataSourceProperty("cachePrepStmts", "true");
                 mysqlConf.addDataSourceProperty("prepStmtCacheSize", "250");
                 mysqlConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -85,6 +86,7 @@ public class Database extends PhenylBase {
                 postgresConf.setJdbcUrl("jdbc:postgresql://" + PhenylConfiguration.host + ":" + PhenylConfiguration.port + "/" + PhenylConfiguration.database);
                 postgresConf.setUsername(PhenylConfiguration.username);
                 postgresConf.setPassword(PhenylConfiguration.password);
+                postgresConf.setLeakDetectionThreshold(10000);
                 postgresConf.addDataSourceProperty("cachePrepStmts", "true");
                 postgresConf.addDataSourceProperty("prepStmtCacheSize", "250");
                 postgresConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

@@ -18,8 +18,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  * @since 2021/12/6 1:53
  */
 public class MySQL extends PhenylBase {
-    private static HikariDataSource dataSource;
-    private static Connection connection;
+    private HikariDataSource dataSource;
 
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS %splayer (" +
             "id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, " +
@@ -53,7 +52,7 @@ public class MySQL extends PhenylBase {
      */
     private void initTables() {
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
             connection.prepareStatement(String.format(initPlayerTable, PhenylConfiguration.table_prefix)).executeUpdate();
             if (PhenylConfiguration.save_message)
                 connection.prepareStatement(String.format(initMessagesTable, PhenylConfiguration.table_prefix)).executeUpdate();
@@ -72,27 +71,28 @@ public class MySQL extends PhenylBase {
      * @return A Player instance in 3 circumstances. 1). Fully bound player, with valid id, uuid, qqid, mcname; 2). Registered but not bound
      * player, with valid id, uuid but <b>NULL qqid and mcname</b>. 3). Not registered player, all 4 columns are NULL.
      */
-    private static Player getPlayer(String selectColumn, String selectValue) {
+    private Player getPlayer(String selectColumn, String selectValue) {
         if (!selectColumn.equalsIgnoreCase("qqid")) selectValue = String.format("'%s'", selectValue);
 
         ResultSet resultSet;
+        Player result = new Player(null, null, null, null);
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
             resultSet = connection.prepareStatement(String.format(selectPlayer, PhenylConfiguration.table_prefix, selectColumn, selectValue)).executeQuery();
             if (resultSet.isBeforeFirst()) {
                 resultSet.next();
-                Player result = new Player(resultSet.getInt("id"),
+                result = new Player(resultSet.getInt("id"),
                         resultSet.getString("uuid"),
                         resultSet.getString("qqid") == null ? null : Long.parseLong(resultSet.getString("qqid")),
                         resultSet.getString("mcname"));
-                connection.close();
-                return result;
             }
+            connection.close();
+            return result;
         } catch (SQLException e) {
             LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
             if (PhenylConfiguration.debug) e.printStackTrace();
         }
-        return new Player(null, null, null, null);
+        return result;
     }
 
     /**
@@ -102,11 +102,11 @@ public class MySQL extends PhenylBase {
      * @param selectValue  The corresponding value.
      * @return An empty list if not any player found, or a list of player instances.
      */
-    private static List<Player> getPlayerList(String selectColumn, String selectValue) {
+    private List<Player> getPlayerList(String selectColumn, String selectValue) {
         ResultSet resultSet;
         List<Player> result = new java.util.ArrayList<>();
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
             resultSet = connection.prepareStatement(String.format(selectPlayerList, PhenylConfiguration.table_prefix, selectColumn, selectValue)).executeQuery();
             if (resultSet.isBeforeFirst()) {
                 while (resultSet.next()) {
@@ -115,9 +115,9 @@ public class MySQL extends PhenylBase {
                             resultSet.getString("qqid") == null ? null : Long.parseLong(resultSet.getString("qqid")),
                             resultSet.getString("mcname")));
                 }
-                connection.close();
-                return result;
             }
+            connection.close();
+            return result;
         } catch (SQLException e) {
             LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
             if (PhenylConfiguration.debug) e.printStackTrace();
@@ -134,12 +134,12 @@ public class MySQL extends PhenylBase {
      * @param selectValue  The selecting value.
      * @return True - the update done successfully. False - query failed.
      */
-    private static boolean updatePlayer(String setColumn, String setValue, String selectColumn, String selectValue) {
+    private boolean updatePlayer(String setColumn, String setValue, String selectColumn, String selectValue) {
         if (!setColumn.equalsIgnoreCase("qqid")) setValue = String.format("'%s'", setValue);
         if (!selectColumn.equalsIgnoreCase("qqid")) selectValue = String.format("'%s'", selectValue);
 
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
             boolean result = connection.prepareStatement(String.format(updatePlayer, PhenylConfiguration.table_prefix, setColumn, setValue, selectColumn, selectValue)).executeUpdate() != 0;
             connection.close();
             return result;
@@ -157,9 +157,9 @@ public class MySQL extends PhenylBase {
      * @param insertValues  The value to insert.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    private static boolean insertPlayer(String insertColumns, String insertValues) {
+    private boolean insertPlayer(String insertColumns, String insertValues) {
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
             boolean result = connection.prepareStatement(String.format(insertPlayer, PhenylConfiguration.table_prefix, insertColumns, insertValues)).executeUpdate() != 0;
             connection.close();
             return result;
@@ -177,9 +177,9 @@ public class MySQL extends PhenylBase {
      * @param insertValues  The value to insert.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    private static boolean insertMessage(String insertColumns, String insertValues) {
+    private boolean insertMessage(String insertColumns, String insertValues) {
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
             boolean result = connection.prepareStatement(String.format(insertMessage, PhenylConfiguration.table_prefix, insertColumns, insertValues)).executeUpdate() != 0;
             connection.close();
             return result;
@@ -358,12 +358,8 @@ public class MySQL extends PhenylBase {
      * Close all connections.
      */
     void onDisable() {
-        try {
-            connection.close();
+        if (dataSource != null)
             dataSource.close();
-        } catch (SQLException e) {
-            LOGGER.error(i18n("databaseCloseFail"), e.getLocalizedMessage());
-            if (PhenylConfiguration.debug) e.printStackTrace();
-        }
+        dataSource = null;
     }
 }
