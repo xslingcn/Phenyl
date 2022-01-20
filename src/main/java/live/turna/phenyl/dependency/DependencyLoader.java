@@ -68,6 +68,8 @@ public class DependencyLoader extends PhenylBase {
             }
         }
         dependencies.add(Dependency.GENEREX);
+        dependencies.add(Dependency.JACKSON);
+        dependencies.add(Dependency.AUTOMATON);
         dependencies.add(Dependency.MIRAI);
         return dependencies;
     }

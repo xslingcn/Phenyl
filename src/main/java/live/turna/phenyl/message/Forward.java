@@ -54,14 +54,16 @@ public class Forward extends PhenylBase {
      * @param nickName The sender's in-group name card or nickname, used for {@code sync} mode.
      * @see CGroupMessageEvent#getSenderNameCardOrNick()
      */
-    public static void forwardToBungee(Group group, Long senderID, String message, @Nullable String nickName, @Nullable List<SingleMessage> images) {
+    public static void forwardToBungee(Group group, Long senderID, MessageChain message, @Nullable String nickName, @Nullable List<SingleMessage> images) {
+        String messageString = message.contentToString();
+
         for (Player it : Phenyl.getMutedPlayer()) {
             if (it == null || it.qqid() == null) break;
             if (senderID.equals(it.qqid())) return;
         }
         if (PhenylConfiguration.save_message) {
-            message = message.replaceAll("'", "''");
-            Database.addMessage(message, group.getId(), senderID);
+            messageString = messageString.replaceAll("'", "''");
+            Database.addMessage(messageString, group.getId(), senderID);
         }
         String userName = Database.getBinding(senderID).mcname();
         if (PhenylConfiguration.forward_mode.equals("bind") && userName == null) return;
@@ -77,6 +79,10 @@ public class Forward extends PhenylBase {
         broadcastMessage(formatter(message, format, color, images));
     }
 
+    public static void forwardToBungee(Group group, Long senderID, String message, @Nullable String nickName, @Nullable List<SingleMessage> images) {
+        forwardToBungee(group, senderID, new MessageChainBuilder().append(message).build(), nickName, images);
+    }
+
     /**
      * Match QQ card messages or messages with links.<br>
      * Card messages would be parsed as {@code [beginning string + prompt-[description] + trailing string]},
@@ -88,10 +94,49 @@ public class Forward extends PhenylBase {
      * @param color   The last color code found before %message%.
      * @return A built {@link BaseComponent} message
      */
-    private static BaseComponent[] formatter(String message, String[] format, String color, @Nullable List<SingleMessage> images) {
+    private static BaseComponent[] formatter(MessageChain message, String[] format, String color, @Nullable List<SingleMessage> images) {
+        String messageString = message.contentToString();
+        // match QQ music share messages
+        if (message.size() == 3 && (message.get(2) instanceof MusicShare music)) {
+            TextComponent summary = new TextComponent(music.getSummary() + " - ");
+            summary.setColor(ChatColor.GRAY);
+            TextComponent title = new TextComponent(music.getTitle());
+            title.setColor(ChatColor.DARK_AQUA);
+            title.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, music.getJumpUrl()));
+            title.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + i18n("clickToView") + music.getJumpUrl())));
+
+            return new ComponentBuilder()
+                    .append(altColor(format[0]))
+                    .append(summary)
+                    .append(title)
+                    .append(format.length > 1 ? altColor(color + format[1]) : "")
+                    .create();
+        }
+        // match QQ XML messages
+        if (messageString.startsWith("<?xml")) {
+            XmlMapper xmlMapper = new XmlMapper();
+            try {
+                TencentXMLMessage.msg fromXML = xmlMapper.readValue(messageString, TencentXMLMessage.msg.class);
+                TextComponent prompt = new TextComponent(fromXML.brief + "-");
+                prompt.setColor(ChatColor.GRAY);
+                TextComponent title = new TextComponent("[" + fromXML.item.summary + "]");
+                title.setColor(ChatColor.DARK_AQUA);
+                title.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, fromXML.url));
+                title.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + i18n("clickToView") + fromXML.url)));
+
+                return new ComponentBuilder()
+                        .append(altColor(format[0]))
+                        .append(prompt)
+                        .append(title)
+                        .append(format.length > 1 ? altColor(color + format[1]) : "")
+                        .create();
+            } catch (JsonProcessingException e) {
+                if (PhenylConfiguration.debug) e.printStackTrace();
+            }
+        }
         // match QQ mini app messages
-        if (message.contains("com.tencent.miniapp")) {
-            TencentMiniAppMessage fromJson = new Gson().fromJson(message, TencentMiniAppMessage.class);
+        if (messageString.contains("com.tencent.miniapp")) {
+            TencentMiniAppMessage fromJson = new Gson().fromJson(messageString, TencentMiniAppMessage.class);
             TextComponent prompt = new TextComponent(fromJson.prompt + "-");
             prompt.setColor(ChatColor.GRAY);
             TextComponent title = new TextComponent("[" + fromJson.meta.detail1.desc + "]");
@@ -107,8 +152,8 @@ public class Forward extends PhenylBase {
                     .create();
         }
         // match QQ struct messages
-        if (message.contains("com.tencent.structmsg")) {
-            TencentStructMessage fromJson = new Gson().fromJson(message, TencentStructMessage.class);
+        if (messageString.contains("com.tencent.structmsg")) {
+            TencentStructMessage fromJson = new Gson().fromJson(messageString, TencentStructMessage.class);
             TextComponent prompt = new TextComponent(fromJson.prompt + "-");
             prompt.setColor(ChatColor.GRAY);
             TextComponent title = new TextComponent(fromJson.meta.news.desc);
@@ -127,8 +172,8 @@ public class Forward extends PhenylBase {
         if (images != null && !images.isEmpty()) {
             int matchCount = 0;
             String pattern = "\\u56fe\\u7247";
-            Matcher match = Pattern.compile(pattern).matcher(message);
-            List<String> other = List.of(message.split(pattern));
+            Matcher match = Pattern.compile(pattern).matcher(messageString);
+            List<String> other = List.of(messageString.split(pattern));
             ComponentBuilder result = new ComponentBuilder().append(altColor(format[0]));
             while (match.find()) {
                 if (other.size() > matchCount) {
@@ -150,12 +195,11 @@ public class Forward extends PhenylBase {
             }
             return result.create();
         }
-
         // match links
         int matchCount = 0;
         String pattern = "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-        Matcher match = Pattern.compile(pattern).matcher(message);
-        List<String> other = List.of(message.split(pattern));
+        Matcher match = Pattern.compile(pattern).matcher(messageString);
+        List<String> other = List.of(messageString.split(pattern));
         ComponentBuilder result = new ComponentBuilder().append(altColor(format[0]));
         while (match.find()) {
             if (other.size() > matchCount) {
@@ -176,10 +220,9 @@ public class Forward extends PhenylBase {
         }
         if (matchCount != 0)
             return result.create();
-
         // random message
         return new ComponentBuilder()
-                .append(altColor(format[0] + message + (format.length > 1 ? altColor(color + format[1]) : "")))
+                .append(altColor(format[0] + messageString + (format.length > 1 ? altColor(color + format[1]) : "")))
                 .create();
     }
 

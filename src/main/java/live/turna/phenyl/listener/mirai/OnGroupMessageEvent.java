@@ -75,7 +75,7 @@ public class OnGroupMessageEvent extends PhenylListener {
         // random message
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             switch (PhenylConfiguration.forward_mode) {
-                case "sync", "bind" -> forwardToBungee(group, senderID, messageString, event.getSenderNameCardOrNick(), images);
+                case "sync", "bind" -> forwardToBungee(group, senderID, message, event.getSenderNameCardOrNick(), images);
                 default -> {
                     if (PhenylConfiguration.debug) LOGGER.error(i18n("invalidForward"));
                     return false;

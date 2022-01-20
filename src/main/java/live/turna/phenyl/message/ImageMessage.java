@@ -49,7 +49,7 @@ public class ImageMessage extends PhenylBase {
         // draw avatar
         try {
             graphics2D.drawImage(ImageIO.read(getAvatar(uuid)), PhenylConfiguration.overall_padding, PhenylConfiguration.overall_padding, PhenylConfiguration.avatar_size, PhenylConfiguration.avatar_size, null);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error(i18n("getAvatarFail", e.getLocalizedMessage()));
             e.printStackTrace();
         }
