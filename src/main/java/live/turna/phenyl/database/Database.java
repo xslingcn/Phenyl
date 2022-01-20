@@ -5,13 +5,13 @@ import com.zaxxer.hikari.HikariDataSource;
 import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 
-import static live.turna.phenyl.message.I18n.i18n;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
+
+import static live.turna.phenyl.message.I18n.i18n;
 
 /**
  * <b>Database</b><br>

@@ -7,11 +7,10 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URL;
 
-import static live.turna.phenyl.utils.Avatar.getAvatar;
 import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.utils.Avatar.getAvatar;
 
 /**
  * <b>ImageMessage</b><br>

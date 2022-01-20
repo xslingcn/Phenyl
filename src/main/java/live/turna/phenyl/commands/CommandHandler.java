@@ -2,19 +2,16 @@ package live.turna.phenyl.commands;
 
 import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.PhenylCommand;
-
-import static live.turna.phenyl.message.I18n.i18n;
-import static live.turna.phenyl.message.Forward.forwardToQQ;
-import static live.turna.phenyl.utils.Bind.isValidQQID;
-import static live.turna.phenyl.utils.Bind.verifier;
-import static live.turna.phenyl.bind.BindHandler.handleRequest;
-import static live.turna.phenyl.utils.Message.*;
-
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.database.Player;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
@@ -23,6 +20,13 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static live.turna.phenyl.bind.BindHandler.handleRequest;
+import static live.turna.phenyl.message.Forward.forwardToQQ;
+import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.utils.Bind.isValidQQID;
+import static live.turna.phenyl.utils.Bind.verifier;
+import static live.turna.phenyl.utils.Message.*;
 
 /**
  * <b>CommandHandler</b><br>

@@ -19,10 +19,10 @@ import static live.turna.phenyl.message.I18n.i18n;
  * @since 2021/12/5 21:08
  */
 public class SQLite extends PhenylBase {
-    private static Connection playerConnection;
-    private static Connection messageConnection;
-    private static Statement player;
-    private static Statement message;
+    private Connection playerConnection;
+    private Connection messageConnection;
+    private Statement player;
+    private Statement message;
 
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS player (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, " +
@@ -77,7 +77,7 @@ public class SQLite extends PhenylBase {
      * @return A Player instance in 3 circumstances. 1). Fully bound player, with valid id, uuid, qqid, mcname; 2). Registered but not bound
      * player, with valid id, uuid but <b>NULL qqid and mcname</b>. 3). Not registered player, all 4 columns are NULL.
      */
-    private static Player getPlayer(String selectColumn, String selectValue) {
+    private Player getPlayer(String selectColumn, String selectValue) {
         if (!selectColumn.equalsIgnoreCase("qqid")) selectValue = String.format("'%s'", selectValue);
 
         ResultSet resultSet;
@@ -107,7 +107,7 @@ public class SQLite extends PhenylBase {
      * @param selectValue  The corresponding value.
      * @return An empty list if not any player found, or a list of player instances.
      */
-    private static List<Player> getPlayerList(String selectColumn, String selectValue) {
+    private List<Player> getPlayerList(String selectColumn, String selectValue) {
         ResultSet resultSet;
         List<Player> result = new java.util.ArrayList<>();
         try {
@@ -139,7 +139,7 @@ public class SQLite extends PhenylBase {
      * @param selectValue  The selecting value.
      * @return True - the update done successfully. False - query failed.
      */
-    private static boolean updatePlayer(String setColumn, String setValue, String selectColumn, String selectValue) {
+    private boolean updatePlayer(String setColumn, String setValue, String selectColumn, String selectValue) {
         if (!setColumn.equalsIgnoreCase("qqid")) setValue = String.format("'%s'", setValue);
         if (!selectColumn.equalsIgnoreCase("qqid") && !selectValue.equalsIgnoreCase("null"))
             selectValue = String.format("'%s'", selectValue);
@@ -163,7 +163,7 @@ public class SQLite extends PhenylBase {
      * @param insertValues  The value to insert.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    private static boolean insertPlayer(String insertColumns, String insertValues) {
+    private boolean insertPlayer(String insertColumns, String insertValues) {
         try {
             player = playerConnection.createStatement();
             boolean result = (player.executeUpdate(String.format(insertPlayer, insertColumns, insertValues)) != 0);
@@ -183,7 +183,7 @@ public class SQLite extends PhenylBase {
      * @param insertValues  The value to insert.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    private static boolean insertMessage(String insertColumns, String insertValues) {
+    private boolean insertMessage(String insertColumns, String insertValues) {
         try {
             message = messageConnection.createStatement();
             boolean result = message.executeUpdate(String.format(insertMessage, insertColumns, insertValues)) != 0;

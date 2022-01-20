@@ -1,8 +1,6 @@
 package live.turna.phenyl.listener;
 
 import live.turna.phenyl.PhenylBase;
-import live.turna.phenyl.PhenylListener;
-import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.listener.bungee.OnChatEvent;
 import live.turna.phenyl.listener.bungee.OnLoginEvent;
 import live.turna.phenyl.listener.bungee.OnPlayerDisconnectEvent;

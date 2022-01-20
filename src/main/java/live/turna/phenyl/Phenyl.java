@@ -8,7 +8,6 @@ import live.turna.phenyl.dependency.DependencyLoader;
 import live.turna.phenyl.listener.ListenerRegisterer;
 import live.turna.phenyl.message.I18n;
 import live.turna.phenyl.mirai.MiraiHandler;
-
 import live.turna.phenyl.utils.Logging;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -56,9 +55,14 @@ public final class Phenyl extends Plugin {
         i18nInstance = new I18n();
         i18nInstance.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
-        PhenylConfiguration.postConfiguration();
         DependencyLoader.onEnable();
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
+        try {
+            PhenylConfiguration.postConfiguration();
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getLocalizedMessage());
+            return;
+        }
 
         miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         miraiInstance.onEnable();
@@ -78,7 +82,12 @@ public final class Phenyl extends Plugin {
         i18nInstance.updateLocale(PhenylConfiguration.locale);
         ListenerRegisterer.unregisterListeners();
 
-        if (!PhenylConfiguration.postConfiguration()) return false;
+        try {
+            PhenylConfiguration.postConfiguration();
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getLocalizedMessage());
+            return false;
+        }
         if (!DependencyLoader.onEnable()) return false;
         if (miraiInstance == null)
             miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);

@@ -8,12 +8,12 @@ import net.mamoe.mirai.utils.BotConfiguration;
 import net.mamoe.mirai.utils.LoggerAdapters;
 import org.apache.logging.log4j.LogManager;
 
-import static live.turna.phenyl.message.I18n.i18n;
-import static live.turna.phenyl.utils.Mirai.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+
+import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.utils.Mirai.*;
 
 /**
  * <b>MiraiHandler</b><br>

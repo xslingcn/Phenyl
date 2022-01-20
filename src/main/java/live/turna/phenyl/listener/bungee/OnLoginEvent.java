@@ -11,12 +11,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
+import static live.turna.phenyl.utils.Avatar.downloadAvatar;
 import static live.turna.phenyl.utils.Message.broadcastMessage;
 import static live.turna.phenyl.utils.Message.getServerName;
 import static live.turna.phenyl.utils.Mirai.sendGroup;
-import static live.turna.phenyl.utils.Avatar.downloadAvatar;
 import static live.turna.phenyl.utils.Mirai.sendImage;
-import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 
 /**
  * <b>OnLoginEvent</b><br>

@@ -4,14 +4,6 @@ import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
-
-import static live.turna.phenyl.message.Forward.forwardToBungee;
-import static live.turna.phenyl.message.I18n.i18n;
-import static live.turna.phenyl.utils.Bind.*;
-import static live.turna.phenyl.utils.Mirai.sendGroup;
-import static live.turna.phenyl.utils.Message.getServerName;
-import static live.turna.phenyl.bind.BindHandler.handleRequest;
-
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.*;
 import net.md_5.bungee.api.ProxyServer;
@@ -24,6 +16,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static live.turna.phenyl.bind.BindHandler.handleRequest;
+import static live.turna.phenyl.message.Forward.forwardToBungee;
+import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.utils.Bind.isValidUsername;
+import static live.turna.phenyl.utils.Bind.verifier;
+import static live.turna.phenyl.utils.Message.getServerName;
+import static live.turna.phenyl.utils.Mirai.sendGroup;
 
 /**
  * <b>OnGroupMessageEvent</b><br>

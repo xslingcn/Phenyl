@@ -1,7 +1,7 @@
 ################################
 #     General configuration    #
 ################################
-# locale: localization of your server
+# locale: localization of your server.
 locale: en
 
 # debug: whether to print debug info.
@@ -19,13 +19,30 @@ user_id: "your_qq_number"
 user_pass: "your_qq_pass"
 
 # login_protocol: the protocol used to log in.
-# Acceptable options: ANDROID_PHONE, ANDROID_PAD, ANDROID_WATCH. If meet problem logging in, try switch the protocol.
+# Acceptable options: ANDROID_PHONE, ANDROID_PAD, ANDROID_WATCH. If meet problem logging in, try switching the protocol.
 login_protocol: "ANDROID_WATCH"
 
 # enabled_groups: the QQ groups you want to enable Phenyl.
 enabled_groups:
   - 797717041
   - 958173932
+
+################################
+#   Bungeecord configuration   #
+################################
+
+# server_alias: the alias of your bungee servers.
+# If not set, Phenyl will use the server name.
+server_alias:
+  lobby: "Lobby"
+  survival: "survival"
+  test: "Test"
+
+# enabled_servers: the servers you want to enable message forwarding.
+enabled_servers:
+  - lobby
+  - survival
+  - test
 
 ################################
 #   Database configuration     #
@@ -93,12 +110,12 @@ qq_to_server_format: "&7[QQ]%username%:%message%"
 #   %sub_server%, %username%, %message%
 server_to_qq_format: "image"
 
-# online_total_format: get how many players are online. Set to "disabled" to disable it.
+# online_total_format: get how many players are online.
 # Available variables:
 #   %player_count%
 online_total_format: "Total players: %player_count%"
 
-# online_total_format: get player list in each sub-server. Set to "disabled" to disable it.
+# online_total_format: get player list in each sub-server.
 # Available variables:
 #   %sub_server%, %username%
 online_list_format: "[%sub_server%]%username%"
@@ -165,31 +182,14 @@ username_size: 30
 message_size: 30
 
 # font: the font you want to use.
+# Please make sure your device has installed the required font already.
 font: "Sarasa Mono SC"
-
-################################
-#   Bungeecord configuration   #
-################################
-
-# server_alias: the alias of your bungee servers.
-# If not set, Phenyl will use the server name.
-server_alias:
-  survival: "Survival"
-  flat: "Flat"
-  test: "Test"
-
-# enabled_servers: the servers you want to enable message forwarding.
-enabled_servers:
-  - survival
-  - flat
-  - test
 
 ################################
 #    Binding configuration     #
 ################################
 
 # command_prefix: prefix of group messages to be produced as commands.
-# This should have only one letter, or it may produce unexpected results.
 command_prefix: "#"
 
 # group_command: command sent in QQ groups to bind.
@@ -198,7 +198,7 @@ bind_command: "bind"
 # confirm_command: command sent in QQ groups to confirm binding.
 confirm_command: "confirm"
 
-# player_command: command to get a list of online players.
+# online_command: command to get a list of online players.
 online_command: "online"
 
 # verification: the pattern of generating verification code.

@@ -1,15 +1,12 @@
 package live.turna.phenyl.config;
 
 import live.turna.phenyl.PhenylBase;
-import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
-
-import static live.turna.phenyl.message.I18n.i18n;
-import static live.turna.phenyl.utils.Bind.isValidQQID;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+
+import static live.turna.phenyl.message.I18n.i18n;
+import static live.turna.phenyl.utils.Bind.isValidQQID;
 
 /**
  * Configures phenyl.
@@ -185,7 +185,7 @@ public class PhenylConfiguration extends PhenylBase {
      * @throws IllegalArgumentException invalidGroupID: Group ID not valid. Checked by {@link live.turna.phenyl.utils.Bind#isValidQQID(String)}.
      * @throws IllegalArgumentException invalidStorage: Database type not valid.
      */
-    public static boolean postConfiguration() throws IllegalArgumentException {
+    public static void postConfiguration() throws IllegalArgumentException {
         if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
                 || ((!forward_mode.equals("bind")) && (!forward_mode.equals("sync")) && (!forward_mode.equals("command")))) {
             forward_mode = "invalid";
@@ -209,7 +209,6 @@ public class PhenylConfiguration extends PhenylBase {
         if (debug) LOGGER.warn(i18n("debugEnabled"));
 
         LOGGER.info(i18n("configLoaded"));
-        return true;
     }
 
     /**
