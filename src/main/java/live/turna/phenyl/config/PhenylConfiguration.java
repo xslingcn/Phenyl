@@ -185,7 +185,7 @@ public class PhenylConfiguration extends PhenylBase {
      * @throws IllegalArgumentException invalidGroupID: Group ID not valid. Checked by {@link live.turna.phenyl.utils.Bind#isValidQQID(String)}.
      * @throws IllegalArgumentException invalidStorage: Database type not valid.
      */
-    public static void postConfiguration() throws IllegalArgumentException {
+    public static boolean postConfiguration() throws IllegalArgumentException {
         if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
                 || ((!forward_mode.equals("bind")) && (!forward_mode.equals("sync")) && (!forward_mode.equals("command")))) {
             forward_mode = "invalid";
@@ -209,6 +209,7 @@ public class PhenylConfiguration extends PhenylBase {
         if (debug) LOGGER.warn(i18n("debugEnabled"));
 
         LOGGER.info(i18n("configLoaded"));
+        return true;
     }
 
     /**

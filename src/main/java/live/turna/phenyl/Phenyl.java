@@ -4,6 +4,7 @@ import live.turna.phenyl.commands.CommandHandler;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.database.Player;
+import live.turna.phenyl.dependency.DependencyLoader;
 import live.turna.phenyl.listener.ListenerRegisterer;
 import live.turna.phenyl.message.I18n;
 import live.turna.phenyl.mirai.MiraiHandler;
@@ -55,14 +56,9 @@ public final class Phenyl extends Plugin {
         i18nInstance = new I18n();
         i18nInstance.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
+        PhenylConfiguration.postConfiguration();
+        DependencyLoader.onEnable();
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
-
-        try {
-            PhenylConfiguration.postConfiguration();
-        } catch (IllegalArgumentException e) {
-            LOGGER.error(e.getMessage());
-            return;
-        }
 
         miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         miraiInstance.onEnable();
@@ -76,19 +72,14 @@ public final class Phenyl extends Plugin {
         mutedPlayer = new ArrayList<>();
         noMessagePlayer = new ArrayList<>();
         Database.onDisable();
+
         PhenylConfiguration.loadPhenylConfiguration();
         Logging.onEnable();
         i18nInstance.updateLocale(PhenylConfiguration.locale);
-
-        try {
-            PhenylConfiguration.postConfiguration();
-        } catch (IllegalArgumentException e) {
-            LOGGER.error(e.getMessage());
-            return false;
-        }
-
         ListenerRegisterer.unregisterListeners();
 
+        if (!PhenylConfiguration.postConfiguration()) return false;
+        if (!DependencyLoader.onEnable()) return false;
         if (miraiInstance == null)
             miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         else

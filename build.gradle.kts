@@ -15,13 +15,14 @@ repositories {
 dependencies {
     compileOnly("net.md-5", "bungeecord-api", "1.16-R0.4")
     compileOnly("org.apache.logging.log4j", "log4j-core", "2.17.0")
-    api("net.mamoe", "mirai-core-api", "2.9.0")
-    runtimeOnly("net.mamoe", "mirai-core", "2.9.0")
-    api("com.github.mifmif", "generex", "1.0.2")
-    api("com.zaxxer", "HikariCP", "5.0.0")
-    api("org.xerial", "sqlite-jdbc", "3.36.0.3")
-    api("mysql", "mysql-connector-java", "8.0.27")
-    api("org.postgresql", "postgresql", "42.3.1")
+    // load below at runtime
+    compileOnly("com.github.mifmif", "generex", "1.0.2")
+    compileOnly("com.zaxxer", "HikariCP", "5.0.0")
+    compileOnly("net.mamoe", "mirai-core-api", "2.9.0")
+    compileOnly("net.mamoe", "mirai-core", "2.9.0")
+    compileOnly("org.xerial", "sqlite-jdbc", "3.36.0.3")
+    compileOnly("mysql", "mysql-connector-java", "8.0.27")
+    compileOnly("org.postgresql", "postgresql", "42.3.1")
 }
 
 java {
