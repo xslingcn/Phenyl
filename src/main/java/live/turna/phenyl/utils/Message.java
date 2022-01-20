@@ -45,6 +45,20 @@ public class Message extends PhenylBase {
     }
 
     /**
+     * Easily send message component to players.
+     *
+     * @param message The message component needs to be sent.
+     * @param sender  The receiver of the message.
+     */
+    public static void sendMessage(BaseComponent message, CommandSender sender) {
+        BaseComponent[] result = new ComponentBuilder()
+                .append(altColor("&7[Phenyl] "))
+                .append(message)
+                .create();
+        sender.sendMessage(result);
+    }
+
+    /**
      * Send message to every player in enabled servers. Used by join and leave servers.
      *
      * @param message The message content.

@@ -132,7 +132,12 @@ public class CommandHandler extends PhenylCommand {
                                     }
                                     String code = handleRequest(player.getName(), Long.parseLong(args[1]));
                                     sendMessage(i18n("completeBindInGroup"), player);
-                                    sendMessage(PhenylConfiguration.command_prefix + PhenylConfiguration.confirm_command + " " + code, player);
+                                    TextComponent bind = new TextComponent(PhenylConfiguration.command_prefix + PhenylConfiguration.confirm_command + " " + code);
+                                    bind.setColor(ChatColor.DARK_AQUA);
+                                    bind.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, PhenylConfiguration.command_prefix + PhenylConfiguration.confirm_command + " " + code));
+                                    bind.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + i18n("clickToCopy"))));
+
+                                    sendMessage(bind, player);
                                 } else sendMessage(i18n("illegalArgumentPhenyl"), player);
                             } else sendMessage(i18n("noPermission"), player);
                         }
