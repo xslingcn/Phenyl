@@ -36,7 +36,7 @@ public class OnPlayerDisconnectEvent extends PhenylListener {
         }
 
         if (!PhenylConfiguration.on_leave.equals("disabled")) {
-            if (PhenylConfiguration.on_join.startsWith("image:")) {
+            if (PhenylConfiguration.on_leave.startsWith("image:")) {
                 CompletableFuture<Boolean> futureImage = CompletableFuture.supplyAsync(() -> {
                     try {
                         String joinFormat = PhenylConfiguration.on_leave

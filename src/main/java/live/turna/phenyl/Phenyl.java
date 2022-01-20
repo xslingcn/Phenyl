@@ -9,6 +9,7 @@ import live.turna.phenyl.listener.ListenerRegisterer;
 import live.turna.phenyl.message.I18n;
 import live.turna.phenyl.mirai.MiraiHandler;
 import live.turna.phenyl.utils.Logging;
+import live.turna.phenyl.utils.Metrics;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.apache.logging.log4j.LogManager;
@@ -70,6 +71,7 @@ public final class Phenyl extends Plugin {
         Database.onEnable();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
+        Metrics metrics = new Metrics(this, 13893);
     }
 
     public boolean reload() {
