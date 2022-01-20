@@ -201,8 +201,9 @@ confirm_command: "confirm"
 # player_command: command to get a list of online players.
 online_command: "online"
 
-# verification: the length of verification code.
-verification: 6
+# verification: the pattern of generating verification code.
+# If you want to change the length of the code, just change the `6` to other numbers.
+verification: "[0-9]{6}"
 
 # Here lie dragons!
 version: 0
