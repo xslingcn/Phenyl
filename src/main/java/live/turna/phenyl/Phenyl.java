@@ -87,10 +87,10 @@ public final class Phenyl extends Plugin {
 
         if (!PhenylConfiguration.postConfiguration()) return false;
         if (!DependencyLoader.onEnable()) return false;
-        if (miraiInstance == null)
-            miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-        else
-            miraiInstance.onDisable();
+        if (miraiInstance != null) miraiInstance.onDisable();
+        miraiInstance = null;
+
+        miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
         miraiInstance.onEnable();
         ListenerRegisterer.registerListeners();
         Database.onEnable();

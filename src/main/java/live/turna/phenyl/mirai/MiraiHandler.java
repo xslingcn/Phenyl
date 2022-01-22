@@ -66,6 +66,7 @@ public class MiraiHandler extends PhenylBase {
         bot = BotFactory.INSTANCE.newBot(userID, userPass, new BotConfiguration() {{
             setProtocol(protocol);
             setWorkingDir(workingDir);
+            setLoginSolver(new MiraiLoginSolver());
             fileBasedDeviceInfo();
             setBotLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LogManager.getLogger("MIRAI")));
             setNetworkLoggerSupplier(bot -> LoggerAdapters.asMiraiLogger(LogManager.getLogger("MIRAI_NETWORK")));

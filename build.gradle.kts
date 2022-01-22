@@ -1,5 +1,5 @@
 group = "live.turna"
-version = "1.1.4"
+version = "1.1.5"
 
 plugins {
     java
@@ -14,8 +14,8 @@ repositories {
 
 dependencies {
     compileOnly("net.md-5", "bungeecord-api", "1.16-R0.4")
-    compileOnly("org.apache.logging.log4j", "log4j-core", "2.17.0")
     // load below at runtime
+    compileOnly("org.apache.logging.log4j", "log4j-core", "2.17.0")
     compileOnly("com.fasterxml.jackson.dataformat", "jackson-dataformat-xml", "2.13.1")
     compileOnly("com.github.mifmif", "generex", "1.0.2")
     compileOnly("com.zaxxer", "HikariCP", "5.0.0")
