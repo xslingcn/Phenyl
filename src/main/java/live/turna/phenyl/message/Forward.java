@@ -1,6 +1,5 @@
 package live.turna.phenyl.message;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import live.turna.phenyl.Phenyl;
@@ -114,8 +113,8 @@ public class Forward extends PhenylBase {
         }
         // match QQ XML messages
         if (messageString.startsWith("<?xml")) {
-            XmlMapper xmlMapper = new XmlMapper();
             try {
+                XmlMapper xmlMapper = new XmlMapper();
                 TencentXMLMessage.msg fromXML = xmlMapper.readValue(messageString, TencentXMLMessage.msg.class);
                 TextComponent prompt = new TextComponent(fromXML.brief + "-");
                 prompt.setColor(ChatColor.GRAY);
@@ -130,7 +129,7 @@ public class Forward extends PhenylBase {
                         .append(title)
                         .append(format.length > 1 ? altColor(color + format[1]) : "")
                         .create();
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 if (PhenylConfiguration.debug) e.printStackTrace();
             }
         }
