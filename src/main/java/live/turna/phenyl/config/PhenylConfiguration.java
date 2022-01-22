@@ -4,9 +4,6 @@ import live.turna.phenyl.PhenylBase;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,10 +92,6 @@ public class PhenylConfiguration extends PhenylBase {
      * Load configurations.
      */
     public static void loadPhenylConfiguration() {
-        if (!phenyl.getDataFolder().exists())
-            if (!phenyl.getDataFolder().mkdir()) {
-                LOGGER.error(i18n("createDataFolderFail", phenyl.getDataFolder().toString()));
-            }
         File configFile = new File(phenyl.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             try (InputStream in = phenyl.getResourceAsStream("config.yml")) {
@@ -185,30 +178,30 @@ public class PhenylConfiguration extends PhenylBase {
      * @throws IllegalArgumentException invalidGroupID: Group ID not valid. Checked by {@link live.turna.phenyl.utils.Bind#isValidQQID(String)}.
      * @throws IllegalArgumentException invalidStorage: Database type not valid.
      */
-    public static void postConfiguration() throws IllegalArgumentException {
+    public static boolean postConfiguration() {
         if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
                 || ((!forward_mode.equals("bind")) && (!forward_mode.equals("sync")) && (!forward_mode.equals("command")))) {
             forward_mode = "invalid";
-            throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidForward")));
+            LOGGER.error(i18n("invalidSettings", i18n("invalidForward")));
+            return false;
         }
-
         if (!isValidQQID(user_id)) {
-            throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidQQIDSetting")));
+            LOGGER.error(i18n("invalidSettings", i18n("invalidQQIDSetting")));
+            return false;
         }
-
-        enabled_groups.forEach(group -> {
-            if (!isValidQQID(group.toString()))
-                throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidGroupID")));
-        });
-
+        for (Long group : enabled_groups) {
+            if (!isValidQQID(group.toString())) {
+                LOGGER.error(i18n("invalidSettings", i18n("invalidGroupID")));
+                return false;
+            }
+        }
         if ((!storage.equals("sqlite")) && (!storage.equals("mysql")) && (!storage.equals("postgresql"))) {
-            throw new IllegalArgumentException(i18n("invalidSettings", i18n("invalidStorage")));
+            LOGGER.error(i18n("invalidSettings", i18n("invalidStorage")));
+            return false;
         }
-
-        Configurator.setLevel(LogManager.getLogger("Phenyl").getName(), debug ? Level.DEBUG : Level.INFO);
         if (debug) LOGGER.warn(i18n("debugEnabled"));
-
         LOGGER.info(i18n("configLoaded"));
+        return true;
     }
 
     /**

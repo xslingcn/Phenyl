@@ -50,4 +50,8 @@ public enum DependencyRepository {
     public boolean download(String mavenPath, File file) throws IOException {
         return this.download(new URL(this.url + mavenPath), file);
     }
+
+    public String getUrl() {
+        return this.url;
+    }
 }

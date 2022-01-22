@@ -137,7 +137,7 @@ public class CommandHandler extends PhenylCommand {
                                     String code = handleRequest(player.getName(), Long.parseLong(args[1]));
                                     sendMessage(i18n("completeBindInGroup"), player);
                                     TextComponent bind = new TextComponent(PhenylConfiguration.command_prefix + PhenylConfiguration.confirm_command + " " + code);
-                                    bind.setColor(ChatColor.DARK_AQUA);
+                                    bind.setColor(ChatColor.YELLOW);
                                     bind.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, PhenylConfiguration.command_prefix + PhenylConfiguration.confirm_command + " " + code));
                                     bind.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + i18n("clickToCopy"))));
 

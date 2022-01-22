@@ -7,6 +7,8 @@ package live.turna.phenyl.dependency;
  * @since 2022/1/19 20:54
  */
 public enum Dependency {
+    LOG4JCORE("org.apache.logging.log4j", "log4j-core", "2.17.0"),
+    LOG4JAPI("org.apache.logging.log4j", "log4j-api", "2.17.0"),
     MIRAI("net.mamoe", "mirai-core-all", "2.9.0", "all"),
     GENEREX("com.github.mifmif", "generex", "1.0.2"),
     JACKSON("com.fasterxml.jackson.dataformat", "jackson-dataformat-xml", "2.13.1"),
@@ -35,15 +37,15 @@ public enum Dependency {
         this(groupID, artifactID, version, "");
     }
 
-    String getFileName() {
+    public String getFileName() {
         return fileName;
     }
 
-    String getMavenRepoPath() {
+    public String getMavenRepoPath() {
         return this.mavenRepoPath;
     }
 
-    String getVersion() {
+    public String getVersion() {
         return this.version;
     }
 }

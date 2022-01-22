@@ -30,13 +30,7 @@ public class DependencyLoader extends PhenylBase {
      * @return Whether succeeded loading the dependencies.
      */
     public static boolean onEnable() {
-        File libs = new File(phenyl.getDataFolder(), "libs");
-        if (!libs.exists()) {
-            if (!libs.mkdir()) LOGGER.error(i18n("libDirFail"));
-            else LOGGER.info(i18n("libDirSuccess"));
-        }
         Set<Dependency> dependencies = getDependencies();
-
         try {
             loadDependencies(dependencies);
         } catch (IOException e) {
@@ -48,7 +42,7 @@ public class DependencyLoader extends PhenylBase {
     }
 
     /**
-     * Tell what dependencies to use.
+     * Get the list of dependencies to load.
      *
      * @return A set of dependencies.
      */
