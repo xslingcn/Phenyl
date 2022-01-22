@@ -26,6 +26,7 @@ public class MiraiLoginSolver extends LoginSolver {
     @Override
     public Object onSolvePicCaptcha(@NotNull Bot bot, @NotNull byte[] bytes, @NotNull Continuation<? super String> continuation) {
         LOGGER.warn(i18n("miraiPic"));
+        String input = new Scanner(System.in).nextLine();
         return null;
     }
 
@@ -33,6 +34,7 @@ public class MiraiLoginSolver extends LoginSolver {
     @Override
     public Object onSolveSliderCaptcha(@NotNull Bot bot, @NotNull String url, @NotNull Continuation<? super String> continuation) {
         LOGGER.warn(i18n("miraiSlider"));
+        String input = new Scanner(System.in).nextLine();
         return null;
     }
 
