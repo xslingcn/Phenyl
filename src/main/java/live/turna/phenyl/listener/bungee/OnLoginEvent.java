@@ -15,6 +15,7 @@ import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 import static live.turna.phenyl.utils.Avatar.downloadAvatar;
 import static live.turna.phenyl.utils.Message.broadcastMessage;
 import static live.turna.phenyl.utils.Message.getServerName;
+import static live.turna.phenyl.utils.Message.sendMessage;
 import static live.turna.phenyl.utils.Mirai.sendGroup;
 import static live.turna.phenyl.utils.Mirai.sendImage;
 
@@ -81,8 +82,10 @@ public class OnLoginEvent extends PhenylListener {
         CompletableFuture<Boolean> futureRegister = CompletableFuture.supplyAsync(() -> {
             String uuid = e.getPlayer().getUniqueId().toString();
             String userName = e.getPlayer().getName();
-            if (!Database.getRegistered(uuid))
+            if (!Database.getRegistered(uuid)) {
                 Database.registerPlayer(uuid, userName);
+                sendMessage(i18n("newPlayer", userName), e.getPlayer());
+            }
             return Database.updateUserName(uuid, e.getPlayer().getName());
         }).orTimeout(3, TimeUnit.SECONDS);
     }
