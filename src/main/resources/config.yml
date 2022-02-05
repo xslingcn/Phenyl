@@ -20,7 +20,7 @@ user_pass: "your_qq_pass"
 
 # login_protocol: the protocol used to log in.
 # Acceptable options: ANDROID_PHONE, ANDROID_PAD, ANDROID_WATCH. If meet problem logging in, try switching the protocol.
-login_protocol: "ANDROID_WATCH"
+login_protocol: "ANDROID_PHONE"
 
 # enabled_groups: the QQ groups you want to enable Phenyl.
 enabled_groups:

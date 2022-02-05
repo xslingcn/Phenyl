@@ -17,6 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 
 public final class Phenyl extends Plugin {
@@ -66,12 +67,15 @@ public final class Phenyl extends Plugin {
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
         if (!PhenylConfiguration.postConfiguration()) return;
 
-        miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-        miraiInstance.onEnable();
-        ListenerRegisterer.registerListeners();
         Database.onEnable();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
+        CompletableFuture<Boolean> futureMirai = CompletableFuture.supplyAsync(() -> {
+            miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+            miraiInstance.onEnable();
+            ListenerRegisterer.registerListeners();
+            return true;
+        });
         Metrics metrics = new Metrics(this, 13893);
     }
 
@@ -90,12 +94,15 @@ public final class Phenyl extends Plugin {
         if (miraiInstance != null) miraiInstance.onDisable();
         miraiInstance = null;
 
-        miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-        miraiInstance.onEnable();
-        ListenerRegisterer.registerListeners();
         Database.onEnable();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
+        CompletableFuture<Boolean> futureMirai = CompletableFuture.supplyAsync(() -> {
+            miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+            miraiInstance.onEnable();
+            ListenerRegisterer.registerListeners();
+            return true;
+        });
         return true;
     }
 

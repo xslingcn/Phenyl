@@ -84,6 +84,7 @@ public class MiraiHandler extends PhenylBase {
 
     public void onEnable() {
         try {
+            LOGGER.info(i18n("loggingIn"));
             configureBot();
             bot.login();
             MiraiEvent.listenEvents(bot);

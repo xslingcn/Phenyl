@@ -5,6 +5,7 @@ import live.turna.phenyl.PhenylCommand;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.database.Player;
+import live.turna.phenyl.mirai.MiraiLoginSolver;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -69,6 +70,13 @@ public class CommandHandler extends PhenylCommand {
                     if (args.length == 1) {
                         if (phenyl.reload())
                             sendMessage(i18n("reloadSuccessful", phenyl.getDescription().getVersion()), sender);
+                    } else sendMessage(i18n("illegalArgumentPhenyl"), sender);
+                } else sendMessage(i18n("noPermission"), sender);
+            }
+            case "slider" -> {
+                if (sender.hasPermission("phenyl.admin.login")) {
+                    if (args.length == 2) {
+                        MiraiLoginSolver.addTicket(args[1]);
                     } else sendMessage(i18n("illegalArgumentPhenyl"), sender);
                 } else sendMessage(i18n("noPermission"), sender);
             }

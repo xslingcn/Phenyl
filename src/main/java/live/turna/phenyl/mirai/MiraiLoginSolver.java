@@ -1,6 +1,7 @@
 package live.turna.phenyl.mirai;
 
 import kotlin.coroutines.Continuation;
+import live.turna.phenyl.config.PhenylConfiguration;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.utils.LoginSolver;
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import static live.turna.phenyl.message.I18n.i18n;
 
@@ -21,12 +24,17 @@ import static live.turna.phenyl.message.I18n.i18n;
  */
 public class MiraiLoginSolver extends LoginSolver {
     private final Logger LOGGER = LogManager.getLogger("MIRAI");
+    private final static BlockingQueue<String> ticketQueue = new ArrayBlockingQueue<>(1);
+
+    @Override
+    public boolean isSliderCaptchaSupported() {
+        return true;
+    }
 
     @Nullable
     @Override
     public Object onSolvePicCaptcha(@NotNull Bot bot, @NotNull byte[] bytes, @NotNull Continuation<? super String> continuation) {
         LOGGER.warn(i18n("miraiPic"));
-        String input = new Scanner(System.in).nextLine();
         return null;
     }
 
@@ -34,7 +42,13 @@ public class MiraiLoginSolver extends LoginSolver {
     @Override
     public Object onSolveSliderCaptcha(@NotNull Bot bot, @NotNull String url, @NotNull Continuation<? super String> continuation) {
         LOGGER.warn(i18n("miraiSlider"));
-        String input = new Scanner(System.in).nextLine();
+        LOGGER.warn(url);
+
+        try {
+            return ticketQueue.take();
+        } catch (InterruptedException e) {
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
         return null;
     }
 
@@ -43,8 +57,16 @@ public class MiraiLoginSolver extends LoginSolver {
     public Object onSolveUnsafeDeviceLoginVerify(@NotNull Bot bot, @NotNull String url, @NotNull Continuation<? super String> continuation) {
         LOGGER.warn(i18n("miraiVerify", url));
         String input = new Scanner(System.in).nextLine();
-        if (input.equals("cancel")) return null;
         LOGGER.info(i18n("miraiSubmit"));
         return input;
+    }
+
+    public static void addTicket(String ticket) {
+        ticketQueue.clear();
+        try {
+            ticketQueue.put(ticket);
+        } catch (InterruptedException e) {
+            if (PhenylConfiguration.debug) e.printStackTrace();
+        }
     }
 }
