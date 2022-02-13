@@ -7,16 +7,16 @@ package live.turna.phenyl.dependency;
  * @since 2022/1/19 20:54
  */
 public enum Dependency {
-    LOG4JCORE("org.apache.logging.log4j", "log4j-core", "2.17.0"),
-    LOG4JAPI("org.apache.logging.log4j", "log4j-api", "2.17.0"),
-    MIRAI("net.mamoe", "mirai-core-all", "2.9.0", "all"),
+    LOG4JCORE("org.apache.logging.log4j", "log4j-core", "2.17.1"),
+    LOG4JAPI("org.apache.logging.log4j", "log4j-api", "2.17.1"),
+    MIRAI("net.mamoe", "mirai-core-all", "2.10.0", "all"),
     GENEREX("com.github.mifmif", "generex", "1.0.2"),
     JACKSON("com.fasterxml.jackson.dataformat", "jackson-dataformat-xml", "2.13.1"),
     AUTOMATON("dk.brics.automaton", "automaton", "1.11-8"),
-    HIKARI("com.zaxxer", "HikariCP", "5.0.0"),
+    HIKARI("com.zaxxer", "HikariCP", "5.0.1"),
     SQLITE("org.xerial", "sqlite-jdbc", "3.36.0.3"),
-    MYSQL("mysql", "mysql-connector-java", "8.0.27"),
-    POSTGRESQL("org.postgresql", "postgresql", "42.3.1");
+    MYSQL("mysql", "mysql-connector-java", "8.0.28"),
+    POSTGRESQL("org.postgresql", "postgresql", "42.3.2");
 
     private final String mavenRepoPath;
     private final String fileName;
@@ -29,7 +29,7 @@ public enum Dependency {
                 + artifactID
                 + "-" + version
                 + (flag.isEmpty() ? "" : ("-" + flag)) + ".jar";
-        this.fileName = artifactID + ".jar";
+        this.fileName = artifactID + "-" + version + ".jar";
         this.version = version;
     }
 
