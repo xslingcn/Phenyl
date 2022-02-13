@@ -64,7 +64,7 @@ public final class Phenyl extends Plugin {
         i18nInstance.updateLocale(PhenylConfiguration.locale);
         Logging.onEnable();
         DependencyLoader.onEnable();
-        ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl"));
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl", "", "ph"));
         if (!PhenylConfiguration.postConfiguration()) return;
 
         Database.onEnable();

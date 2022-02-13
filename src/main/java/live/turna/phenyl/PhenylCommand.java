@@ -16,8 +16,8 @@ public class PhenylCommand extends Command implements TabExecutor {
     public static final Logger LOGGER = LogManager.getLogger("PhenylMain");
     public static Phenyl phenyl = Phenyl.getInstance();
 
-    public PhenylCommand(String name) {
-        super(name);
+    public PhenylCommand(String name, String permission, String... aliases) {
+        super(name, permission, aliases);
     }
 
     public void execute(CommandSender sender, String[] args) {

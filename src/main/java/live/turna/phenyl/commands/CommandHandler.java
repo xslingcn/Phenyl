@@ -40,8 +40,8 @@ public class CommandHandler extends PhenylCommand {
     /**
      * @param name Command name
      */
-    public CommandHandler(String name) {
-        super(name);
+    public CommandHandler(String name, String permission, String... aliases) {
+        super(name, permission, aliases);
     }
 
     /**
@@ -64,7 +64,9 @@ public class CommandHandler extends PhenylCommand {
         switch (args[0].toLowerCase()) {
             case "help" -> sendMessage(i18n("welcomeMessage", phenyl.getDescription().getVersion()) + "\n"
                     + i18n("helpMessage") + "\n"
-                    + i18n("commandHelp"), sender);
+                    + i18n("commandHelp") + "\n"
+                    + (sender instanceof ProxiedPlayer ? i18n("commandHelpPlayer") + "\n" : "")
+                    + (sender.hasPermission("phenyl.admin.reload") ? i18n("commandHelpAdmin") : ""), sender);
             case "reload" -> {
                 if (sender.hasPermission("phenyl.admin.reload")) {
                     if (args.length == 1) {
