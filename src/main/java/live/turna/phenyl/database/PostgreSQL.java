@@ -345,7 +345,7 @@ public class PostgreSQL extends PhenylBase {
         Player result = getPlayer("uuid", fromuuid);
         if (result.qqid() != null)
             return insertMessage("content,fromid,fromqqid,fromuuid", String.format("'%s',%s,%s,'%s'", content, result.id(), result.qqid(), result.uuid()));
-        return insertMessage("content,fromuuid", String.format("'%s','%s'", content, fromuuid));
+        return insertMessage("content,fromid,fromuuid", String.format("'%s',%s,'%s'", content, result.id(), fromuuid));
     }
 
     /**
