@@ -32,10 +32,10 @@ public class MiraiEvent extends PhenylBase {
     }
 
     public static void removeListeners() {
-        BotOfflineListener.complete();
-        MemberJoinListener.complete();
-        MemberLeaveListener.complete();
-        GroupMessageListener.complete();
-        UserMessageListener.complete();
+        if (BotOfflineListener != null) BotOfflineListener.complete();
+        if (MemberJoinListener != null) MemberJoinListener.complete();
+        if (MemberLeaveListener != null) MemberLeaveListener.complete();
+        if (GroupMessageListener != null) GroupMessageListener.complete();
+        if (UserMessageListener != null) UserMessageListener.complete();
     }
 }

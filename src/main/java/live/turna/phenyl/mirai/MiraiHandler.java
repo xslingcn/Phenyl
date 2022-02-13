@@ -99,7 +99,7 @@ public class MiraiHandler extends PhenylBase {
         MiraiEvent.removeListeners();
         String nick = bot.getNick();
         bot.close();
-        LOGGER.info(i18n("logOutSuccessNoColor", nick));
+        if (!nick.isEmpty()) LOGGER.info(i18n("logOutSuccessNoColor", nick));
     }
 
     public boolean logIn() {

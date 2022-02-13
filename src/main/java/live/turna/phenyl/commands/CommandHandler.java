@@ -86,10 +86,10 @@ public class CommandHandler extends PhenylCommand {
                 if (sender.hasPermission("phenyl.admin.login")) {
                     if (args.length == 1) {
                         try {
-                            if (Phenyl.getMiraiInstance().logIn())
-                                sendMessage(i18n("logInSuccess", Phenyl.getMiraiInstance().getBot().getNick()), sender);
-                            else
-                                sendMessage(i18n("alreadyLoggedIn", String.valueOf(Phenyl.getMiraiInstance().getBot().getId())), sender);
+                            CompletableFuture<Boolean> futureMirai = CompletableFuture.supplyAsync(() -> Phenyl.getMiraiInstance().logIn());
+                            futureMirai.thenAccept((result) -> sendMessage(result ?
+                                    i18n("logInSuccess", Phenyl.getMiraiInstance().getBot().getNick()) :
+                                    i18n("alreadyLoggedIn", String.valueOf(Phenyl.getMiraiInstance().getBot().getId())), sender));
                         } catch (Exception e) {
                             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
                             if (PhenylConfiguration.debug) e.printStackTrace();
