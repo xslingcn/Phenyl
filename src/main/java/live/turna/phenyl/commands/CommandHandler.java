@@ -203,7 +203,7 @@ public class CommandHandler extends PhenylCommand {
                         }
                         default -> sendMessage(i18n("commandNotFoundPhenyl"), player);
                     }
-                }
+                } else sendMessage(i18n("commandNotFoundPhenyl"), sender);
             }
         }
     }
