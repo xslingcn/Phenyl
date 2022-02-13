@@ -86,8 +86,8 @@ public class MiraiHandler extends PhenylBase {
         try {
             LOGGER.info(i18n("loggingIn"));
             configureBot();
-            bot.login();
             MiraiEvent.listenEvents(bot);
+            bot.login();
             LOGGER.info(i18n("logInSuccessNoColor", bot.getNick()));
         } catch (Exception e) {
             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
