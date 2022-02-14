@@ -76,7 +76,7 @@ public final class Phenyl extends Plugin {
             ListenerRegisterer.registerListeners();
             return true;
         });
-        Metrics metrics = new Metrics(this, 13893);
+        Metrics metrics = new Metrics(this, 14309);
     }
 
     public boolean reload() {
