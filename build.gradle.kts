@@ -32,17 +32,6 @@ java {
     }
 }
 
-tasks.jar {
-    manifest {
-        attributes("Implementation-Title" to project.name)
-        attributes("Implementation-Version" to project.version)
-        attributes("Main-Class" to "live.turna.phenyl.Phenyl")
-    }
-    from(configurations.runtimeClasspath.get().files.map { if (it.isDirectory) it else zipTree(it) })
-    exclude("META-INF/*.RSA", "META-INF/*.DSA", "META-INF/*.SF")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
 bungee {
     name = "Phenyl"
     version = version
