@@ -108,7 +108,11 @@ public class Mirai extends PhenylBase {
      */
     public static void sendGroup(String message) throws NoSuchElementException {
         for (Long id : PhenylConfiguration.enabled_groups) {
-            Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
+            try {
+                Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
+            } catch (NoSuchElementException e) {
+                throw new NoSuchElementException(String.valueOf(id));
+            }
         }
     }
 
@@ -119,7 +123,11 @@ public class Mirai extends PhenylBase {
      */
     public static void sendGroup(MessageChain message) throws NoSuchElementException {
         for (Long id : PhenylConfiguration.enabled_groups) {
-            Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
+            try {
+                Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
+            } catch (NoSuchElementException e) {
+                throw new NoSuchElementException(String.valueOf(id));
+            }
         }
     }
 
@@ -138,10 +146,14 @@ public class Mirai extends PhenylBase {
         }
         ExternalResource resource = ExternalResource.Companion.create(stream.toByteArray());
         for (Long id : PhenylConfiguration.enabled_groups) {
-            Group group = Phenyl.getMiraiInstance().getBot().getGroupOrFail(id);
-            Image img = ExternalResource.uploadAsImage(resource, group);
-            MessageChain message = new MessageChainBuilder().append(img).build();
-            group.sendMessage(message);
+            try {
+                Group group = Phenyl.getMiraiInstance().getBot().getGroupOrFail(id);
+                Image img = ExternalResource.uploadAsImage(resource, group);
+                MessageChain message = new MessageChainBuilder().append(img).build();
+                group.sendMessage(message);
+            } catch (NoSuchElementException e) {
+                throw new NoSuchElementException(String.valueOf(id));
+            }
         }
         try {
             resource.close();

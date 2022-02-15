@@ -43,12 +43,12 @@ public class OnPlayerDisconnectEvent extends PhenylListener {
                                 .replace("image:", "")
                                 .replace("%username%", "");
                         sendImage(drawImageMessage(joinFormat, e.getPlayer().getName(), e.getPlayer().getUniqueId().toString()));
+                        return true;
                     } catch (NoSuchElementException ex) {
-                        LOGGER.error(i18n("noSuchGroup"));
+                        LOGGER.error(i18n("noSuchGroup", ex.getLocalizedMessage()));
                         if (PhenylConfiguration.debug) ex.printStackTrace();
                         return false;
                     }
-                    return true;
                 }).orTimeout(3, TimeUnit.SECONDS);
             } else {
                 String leaveFormat = PhenylConfiguration.on_leave
@@ -56,12 +56,12 @@ public class OnPlayerDisconnectEvent extends PhenylListener {
                 CompletableFuture<Boolean> futurePlain = CompletableFuture.supplyAsync(() -> {
                     try {
                         sendGroup(leaveFormat);
+                        return true;
                     } catch (NoSuchElementException ex) {
-                        LOGGER.error(i18n("noSuchGroup"));
+                        LOGGER.error(i18n("noSuchGroup", ex.getLocalizedMessage()));
                         if (PhenylConfiguration.debug) ex.printStackTrace();
                         return false;
                     }
-                    return true;
                 }).orTimeout(3, TimeUnit.SECONDS);
             }
         }

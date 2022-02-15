@@ -17,7 +17,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -170,17 +169,8 @@ public class CommandHandler extends PhenylCommand {
                             if (player.hasPermission("phenyl.use.say")) {
                                 if (args.length == 2) {
                                     if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
-                                        CompletableFuture<Boolean> futureBind = CompletableFuture.supplyAsync(() -> {
-                                            try {
-                                                forwardToQQ(args[1], player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()));
-                                            } catch (NoSuchElementException e) {
-                                                LOGGER.error(i18n("noSuchGroup"));
-                                                if (PhenylConfiguration.debug) e.printStackTrace();
-                                                return false;
-                                            }
-                                            return true;
-                                        }).orTimeout(3, TimeUnit.SECONDS);
-                                    }
+                                        CompletableFuture<Boolean> futureBind = CompletableFuture.supplyAsync(() -> forwardToQQ(args[1], player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()))).orTimeout(3, TimeUnit.SECONDS);
+                                    } else sendMessage(i18n("notCommandMode"), player);
                                 } else sendMessage(i18n("illegalArgumentPhenyl"), player);
                             } else sendMessage(i18n("noPermission"), player);
                         }

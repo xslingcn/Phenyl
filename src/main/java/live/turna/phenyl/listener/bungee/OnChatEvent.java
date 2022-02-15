@@ -6,12 +6,10 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.event.EventHandler;
 
-import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static live.turna.phenyl.message.Forward.forwardToQQ;
-import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Message.*;
 
 /**
@@ -33,16 +31,7 @@ public class OnChatEvent extends PhenylListener {
         switch (PhenylConfiguration.forward_mode) {
             // always forward message from in-game players.
             case "sync", "bind" -> {
-                CompletableFuture<Boolean> futureSync = CompletableFuture.supplyAsync(() -> {
-                    try {
-                        forwardToQQ(e.getMessage(), player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()));
-                    } catch (NoSuchElementException ex) {
-                        LOGGER.error(i18n("noSuchGroup"));
-                        if (PhenylConfiguration.debug) ex.printStackTrace();
-                        return false;
-                    }
-                    return true;
-                }).orTimeout(3, TimeUnit.SECONDS);
+                CompletableFuture<Boolean> futureForward = CompletableFuture.supplyAsync(() -> forwardToQQ(e.getMessage(), player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()))).orTimeout(3, TimeUnit.SECONDS);
             }
         }
 

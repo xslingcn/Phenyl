@@ -53,13 +53,12 @@ public class OnLoginEvent extends PhenylListener {
                                 .replace("%sub_server%", getServerName(e.getServer()))
                                 .replace("%username%", "");
                         sendImage(drawImageMessage(joinFormat, e.getPlayer().getName(), e.getPlayer().getUniqueId().toString()));
+                        return true;
                     } catch (NoSuchElementException ex) {
-                        LOGGER.error(i18n("noSuchGroup"));
+                        LOGGER.error(i18n("noSuchGroup", ex.getLocalizedMessage()));
                         if (PhenylConfiguration.debug) ex.printStackTrace();
                         return false;
                     }
-
-                    return true;
                 }).orTimeout(3, TimeUnit.SECONDS);
             } else {
                 String joinFormat = PhenylConfiguration.on_join
@@ -68,12 +67,12 @@ public class OnLoginEvent extends PhenylListener {
                 CompletableFuture<Boolean> futurePlain = CompletableFuture.supplyAsync(() -> {
                     try {
                         sendGroup(joinFormat);
+                        return true;
                     } catch (NoSuchElementException ex) {
-                        LOGGER.error(i18n("noSuchGroup"));
+                        LOGGER.error(i18n("noSuchGroup", ex.getLocalizedMessage()));
                         if (PhenylConfiguration.debug) ex.printStackTrace();
                         return false;
                     }
-                    return true;
                 }).orTimeout(3, TimeUnit.SECONDS);
             }
         }

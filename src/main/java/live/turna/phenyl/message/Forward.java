@@ -234,38 +234,47 @@ public class Forward extends PhenylBase {
      * @param uuid      The sender's Minecraft UUID.
      * @param subServer In which sub server the message is sent.
      */
-    public static void forwardToQQ(String message, String userName, String uuid, String subServer) {
+    public static boolean forwardToQQ(String message, String userName, String uuid, String subServer) {
         for (Player it : Phenyl.getMutedPlayer()) {
-            if (uuid.equals(it.uuid())) return;
+            if (uuid.equals(it.uuid())) return false;
         }
         if (PhenylConfiguration.save_message) {
             message = message.replaceAll("'", "''");
             Database.addMessage(message, uuid);
         }
 
+        // if matches an image url
         String pattern = "https?:/(?:/[^/]+)+\\.(?:jpg|jpeg|gif|png)";
         Matcher matcher = Pattern.compile(pattern).matcher(message);
-        if (matcher.matches() && PhenylConfiguration.forward_image) {
-            if (PhenylConfiguration.server_to_qq_format.equals("image"))
-                forwardImageMessage(i18n("imageMessage"), userName, uuid);
-            else forwardPlainMessage(i18n("imageMessage"), userName, subServer);
-
-            // retrieve and send image
-            CompletableFuture<Boolean> futureGet = CompletableFuture.supplyAsync(() -> getImageFromURL(matcher.group()))
-                    .orTimeout(5, TimeUnit.SECONDS).thenApplyAsync((@NotNull BufferedImage image) -> {
-                        sendImage(image);
-                        return true;
-                    }).orTimeout(3, TimeUnit.SECONDS);
-            return;
-        }
+        if (matcher.matches() && PhenylConfiguration.forward_image)
+            return forwardSingleImage(matcher.group(), userName, uuid, subServer);
 
         if (PhenylConfiguration.server_to_qq_format.equals("image"))
-            forwardImageMessage(message, userName, uuid);
-        else forwardPlainMessage(message, userName, subServer);
-
+            return forwardImageMessage(message, userName, uuid);
+        else return forwardPlainMessage(message, userName, subServer);
     }
 
-    private static void forwardPlainMessage(String message, String userName, String subServer) {
+    private static boolean forwardSingleImage(String url, String userName, String uuid, String subServer) {
+        if (PhenylConfiguration.server_to_qq_format.equals("image"))
+            forwardImageMessage(i18n("imageMessage"), userName, uuid);
+        else forwardPlainMessage(i18n("imageMessage"), userName, subServer);
+
+        // retrieve and send image
+        CompletableFuture<Boolean> futureGet = CompletableFuture.supplyAsync(() -> getImageFromURL(url))
+                .orTimeout(5, TimeUnit.SECONDS).thenApplyAsync((@NotNull BufferedImage image) -> {
+                    try {
+                        sendImage(image);
+                        return true;
+                    } catch (NoSuchElementException e) {
+                        LOGGER.error(i18n("noSuchGroup", e.getLocalizedMessage()));
+                        if (PhenylConfiguration.debug) e.printStackTrace();
+                        return false;
+                    }
+                }).orTimeout(3, TimeUnit.SECONDS);
+        return !futureGet.isCompletedExceptionally();
+    }
+
+    private static boolean forwardPlainMessage(String message, String userName, String subServer) {
         String format = PhenylConfiguration.server_to_qq_format
                 .replace("%sub_server%", subServer)
                 .replace("%username%", userName)
@@ -273,18 +282,22 @@ public class Forward extends PhenylBase {
         MessageChain messageChain = new MessageChainBuilder().append(format).build();
         try {
             sendGroup(messageChain);
+            return true;
         } catch (NoSuchElementException e) {
-            LOGGER.error(i18n("noSuchGroup"));
+            LOGGER.error(i18n("noSuchGroup", e.getLocalizedMessage()));
             if (PhenylConfiguration.debug) e.printStackTrace();
+            return false;
         }
     }
 
-    private static void forwardImageMessage(String message, String userName, String uuid) {
+    private static boolean forwardImageMessage(String message, String userName, String uuid) {
         try {
             sendImage(drawImageMessage(message, userName, uuid));
+            return true;
         } catch (NoSuchElementException e) {
-            LOGGER.error(i18n("noSuchGroup"));
+            LOGGER.error(i18n("noSuchGroup", e.getLocalizedMessage()));
             if (PhenylConfiguration.debug) e.printStackTrace();
+            return false;
         }
     }
 }
