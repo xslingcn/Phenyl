@@ -9,7 +9,7 @@ import live.turna.phenyl.dependency.Log4jLoader;
 import live.turna.phenyl.listener.ListenerRegisterer;
 import live.turna.phenyl.message.I18n;
 import live.turna.phenyl.mirai.MiraiHandler;
-import live.turna.phenyl.utils.Logging;
+import live.turna.phenyl.logger.Logging;
 import live.turna.phenyl.utils.Metrics;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;

@@ -1,4 +1,4 @@
-package live.turna.phenyl.utils;
+package live.turna.phenyl.logger;
 
 import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;

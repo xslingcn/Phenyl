@@ -1,4 +1,4 @@
-package live.turna.phenyl.utils;
+package live.turna.phenyl.logger;
 
 import live.turna.phenyl.config.PhenylConfiguration;
 import org.apache.logging.log4j.Level;
