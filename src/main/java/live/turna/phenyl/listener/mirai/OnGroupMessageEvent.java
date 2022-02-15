@@ -144,11 +144,37 @@ public class OnGroupMessageEvent extends PhenylListener {
                     .replace("%sub_server%", key)
                     .replace("%username%", value)));
             MessageChainBuilder reply = new MessageChainBuilder()
-                    .append(new QuoteReply(message))
-                    .append(totalFormat)
-                    .append("\n");
-            listFormat.forEach(reply::append);
-            sendGroup(group, reply.build());
+                    .append(new QuoteReply(message));
+            StringBuilder listContent = new StringBuilder();
+            listFormat.forEach(listContent::append);
+            sendGroup(group, reply.append((totalFormat + "\n" + listContent).trim()).build());
+            return;
+        }
+
+        // server status
+        if (args[0].equals(PhenylConfiguration.status_command)) {
+            HashMap<String, Boolean> serverStatus = new HashMap<>();
+            PhenylConfiguration.enabled_servers.forEach(server -> {
+                if (!ProxyServer.getInstance().getServers().containsKey(server)) {
+                    serverStatus.put(getServerName(server), false);
+                    return;
+                }
+                ProxyServer.getInstance().getServers().get(server).ping((result, error) -> {
+                    if (error == null)
+                        serverStatus.put(getServerName(server), true);
+                    else
+                        serverStatus.put(getServerName(server), false);
+                    if (serverStatus.size() == PhenylConfiguration.enabled_servers.size()) {
+                        List<String> listFormat = new ArrayList<>();
+                        serverStatus.forEach((serverName, status) -> listFormat.add(serverName + " - " + "[" + (status ? "√" : "×") + "]" + "\n"));
+                        MessageChainBuilder reply = new MessageChainBuilder()
+                                .append(new QuoteReply(message));
+                        StringBuilder listContent = new StringBuilder();
+                        listFormat.forEach(listContent::append);
+                        sendGroup(group, reply.append(listContent.toString().trim()).build());
+                    }
+                });
+            });
             return;
         }
 

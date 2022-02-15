@@ -155,13 +155,15 @@ public class Message extends PhenylBase {
      */
     public static String getServerName(Server server) {
         String serverName = server.getInfo().getName();
-        String alia = PhenylConfiguration.server_alias.get(serverName);
-        if (alia == null || alia.isEmpty()) return serverName;
-        return alia;
+        return getServerName(serverName);
     }
 
     public static String getServerName(ServerInfo serverInfo) {
         String serverName = serverInfo.getName();
+        return getServerName(serverName);
+    }
+
+    public static String getServerName(String serverName) {
         String alia = PhenylConfiguration.server_alias.get(serverName);
         if (alia == null || alia.isEmpty()) return serverName;
         return alia;

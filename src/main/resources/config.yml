@@ -201,9 +201,12 @@ confirm_command: "confirm"
 # online_command: command to get a list of online players.
 online_command: "online"
 
+# status_command: command to show the status of each enabled sub-servers.
+status_command: "status"
+
 # verification: the pattern of generating verification code.
 # If you want to change the length of the code, just change the `6` to other numbers.
 verification: "[0-9]{6}"
 
 # Here lie dragons!
-version: 0
+version: 1

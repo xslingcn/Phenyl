@@ -84,9 +84,10 @@ public class PhenylConfiguration extends PhenylBase {
     public static String bind_command = "bind";
     public static String confirm_command = "confirm";
     public static String online_command = "online";
+    public static String status_command = "status";
     public static String verification = "[0-9]{6}";
 
-    public static Integer version = 0;
+    public static Integer version = 1;
 
     /**
      * Load configurations.
@@ -165,6 +166,7 @@ public class PhenylConfiguration extends PhenylBase {
         bind_command = config.getString("bind_command");
         confirm_command = config.getString("confirm_command");
         online_command = config.getString("online_command");
+        status_command = config.getString("status_command");
         verification = config.getString("verification");
 
         version = config.getInt("version");
@@ -179,6 +181,8 @@ public class PhenylConfiguration extends PhenylBase {
      * @throws IllegalArgumentException invalidStorage: Database type not valid.
      */
     public static boolean postConfiguration() {
+        Integer latestVersion = 1;
+
         if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
                 || ((!forward_mode.equals("bind")) && (!forward_mode.equals("sync")) && (!forward_mode.equals("command")))) {
             forward_mode = "invalid";
@@ -199,6 +203,7 @@ public class PhenylConfiguration extends PhenylBase {
             LOGGER.error(i18n("invalidSettings", i18n("invalidStorage")));
             return false;
         }
+        if (!version.equals(latestVersion)) LOGGER.warn(i18n("updateConfig", version, latestVersion));
         if (debug) LOGGER.warn(i18n("debugEnabled"));
         LOGGER.info(i18n("configLoaded"));
         return true;
