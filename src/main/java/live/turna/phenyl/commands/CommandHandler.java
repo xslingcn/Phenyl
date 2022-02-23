@@ -88,10 +88,10 @@ public class CommandHandler extends Command implements TabExecutor {
                 if (sender.hasPermission("phenyl.admin.login")) {
                     if (args.length == 1) {
                         try {
-                            CompletableFuture<Boolean> futureMirai = CompletableFuture.supplyAsync(() -> Phenyl.getMiraiInstance().logIn());
-                            futureMirai.thenAccept((result) -> sendMessage(result ?
-                                    i18n("logInSuccess", Phenyl.getMiraiInstance().getBot().getNick()) :
-                                    i18n("alreadyLoggedIn", String.valueOf(Phenyl.getMiraiInstance().getBot().getId())), sender));
+                            CompletableFuture.supplyAsync(() -> Phenyl.getMiraiInstance().logIn())
+                                    .thenAccept((result) -> sendMessage(result ?
+                                            i18n("logInSuccess", Phenyl.getMiraiInstance().getBot().getNick()) :
+                                            i18n("alreadyLoggedIn", String.valueOf(Phenyl.getMiraiInstance().getBot().getId())), sender));
                         } catch (Exception e) {
                             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
                             if (PhenylConfiguration.debug) e.printStackTrace();
@@ -172,7 +172,7 @@ public class CommandHandler extends Command implements TabExecutor {
                             if (player.hasPermission("phenyl.use.say")) {
                                 if (args.length == 2) {
                                     if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
-                                        CompletableFuture<Boolean> futureBind = CompletableFuture.supplyAsync(() -> forwardToQQ(args[1], player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()))).orTimeout(3, TimeUnit.SECONDS);
+                                        CompletableFuture.supplyAsync(() -> forwardToQQ(args[1], player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()))).orTimeout(3, TimeUnit.SECONDS);
                                     } else sendMessage(i18n("notCommandMode"), player);
                                 } else sendMessage(i18n("illegalArgumentPhenyl"), player);
                             } else sendMessage(i18n("noPermission"), player);

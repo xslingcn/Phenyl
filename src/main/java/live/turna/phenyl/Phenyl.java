@@ -74,13 +74,13 @@ public final class Phenyl extends Plugin {
         Database.onEnable();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
-        CompletableFuture<Boolean> futureMirai = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.supplyAsync(() -> {
             miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
             miraiInstance.onEnable();
             ListenerRegisterer.registerListeners();
             return true;
         });
-        Metrics metrics = new Metrics(this, 14309);
+        new Metrics(this, 14309);
     }
 
     public boolean reload() {
@@ -101,7 +101,7 @@ public final class Phenyl extends Plugin {
         Database.onEnable();
         mutedPlayer = Database.getMutedPlayer();
         noMessagePlayer = Database.getNoMessagePlayer();
-        CompletableFuture<Boolean> futureMirai = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.supplyAsync(() -> {
             miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
             miraiInstance.onEnable();
             ListenerRegisterer.registerListeners();

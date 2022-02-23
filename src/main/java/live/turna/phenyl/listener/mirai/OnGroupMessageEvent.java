@@ -55,7 +55,7 @@ public class OnGroupMessageEvent implements Listener {
         // message is a command
         if (messageString.startsWith(PhenylConfiguration.command_prefix)) {
             String command = messageString.substring(PhenylConfiguration.command_prefix.length());
-            CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+            CompletableFuture.supplyAsync(() -> {
                 try {
                     handleCommand(command);
                     return true;
@@ -73,7 +73,7 @@ public class OnGroupMessageEvent implements Listener {
         }
 
         // random message
-        CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.supplyAsync(() -> {
             switch (PhenylConfiguration.forward_mode) {
                 case "sync", "bind" -> forwardToBungee(group, senderID, message, event.getSenderNameCardOrNick(), images);
                 default -> {

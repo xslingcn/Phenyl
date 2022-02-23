@@ -35,7 +35,7 @@ public class OnLoginEvent implements Listener {
             String joinBroadcastFormat = PhenylConfiguration.on_join_broadcast
                     .replace("%sub_server%", getServerName(e.getServer()))
                     .replace("%username%", e.getPlayer().getName());
-            CompletableFuture<Boolean> futureBroadcast = CompletableFuture.supplyAsync(() -> {
+            CompletableFuture.supplyAsync(() -> {
                 broadcastMessage(joinBroadcastFormat);
                 return true;
             }).orTimeout(3, TimeUnit.SECONDS);
@@ -43,10 +43,9 @@ public class OnLoginEvent implements Listener {
 
         if (!PhenylConfiguration.on_join.equals("disabled")) {
             if (PhenylConfiguration.on_join.startsWith("image:")) {
-                CompletableFuture<Boolean> futureAvatar = CompletableFuture.supplyAsync(() ->
+                CompletableFuture.supplyAsync(() ->
                         downloadAvatar(e.getPlayer().getUniqueId().toString())
-                ).orTimeout(3, TimeUnit.SECONDS);
-                CompletableFuture<Boolean> futureImage = futureAvatar.thenApplyAsync((succeeded) -> {
+                ).orTimeout(3, TimeUnit.SECONDS).thenApplyAsync((succeeded) -> {
                     if (!succeeded) return false;
                     try {
                         String joinFormat = PhenylConfiguration.on_join
@@ -65,7 +64,7 @@ public class OnLoginEvent implements Listener {
                 String joinFormat = PhenylConfiguration.on_join
                         .replace("%sub_server%", getServerName(e.getServer()))
                         .replace("%username%", e.getPlayer().getName());
-                CompletableFuture<Boolean> futurePlain = CompletableFuture.supplyAsync(() -> {
+                CompletableFuture.supplyAsync(() -> {
                     try {
                         sendGroup(joinFormat);
                         return true;
@@ -79,7 +78,7 @@ public class OnLoginEvent implements Listener {
         }
 
         // register a player if logging in for the first time and update the player's username.
-        CompletableFuture<Boolean> futureRegister = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.supplyAsync(() -> {
             String uuid = e.getPlayer().getUniqueId().toString();
             String userName = e.getPlayer().getName();
             if (!Database.getRegistered(uuid)) {

@@ -30,7 +30,7 @@ public class OnPlayerDisconnectEvent implements Listener {
         if (!PhenylConfiguration.on_leave_broadcast.equals("disabled")) {
             String leaveBroadcastFormat = PhenylConfiguration.on_leave_broadcast
                     .replace("%username%", e.getPlayer().getName());
-            CompletableFuture<Boolean> futureBroadcast = CompletableFuture.supplyAsync(() -> {
+            CompletableFuture.supplyAsync(() -> {
                 broadcastMessage(leaveBroadcastFormat);
                 return true;
             }).orTimeout(3, TimeUnit.SECONDS);
@@ -38,7 +38,7 @@ public class OnPlayerDisconnectEvent implements Listener {
 
         if (!PhenylConfiguration.on_leave.equals("disabled")) {
             if (PhenylConfiguration.on_leave.startsWith("image:")) {
-                CompletableFuture<Boolean> futureImage = CompletableFuture.supplyAsync(() -> {
+                CompletableFuture.supplyAsync(() -> {
                     try {
                         String joinFormat = PhenylConfiguration.on_leave
                                 .replace("image:", "")
@@ -54,7 +54,7 @@ public class OnPlayerDisconnectEvent implements Listener {
             } else {
                 String leaveFormat = PhenylConfiguration.on_leave
                         .replace("%username%", e.getPlayer().getName());
-                CompletableFuture<Boolean> futurePlain = CompletableFuture.supplyAsync(() -> {
+                CompletableFuture.supplyAsync(() -> {
                     try {
                         sendGroup(leaveFormat);
                         return true;

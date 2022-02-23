@@ -30,9 +30,7 @@ public class OnChatEvent implements Listener {
         if (!PhenylConfiguration.enabled_servers.contains(player.getServer().getInfo().getName())) return;
         switch (PhenylConfiguration.forward_mode) {
             // always forward message from in-game players.
-            case "sync", "bind" -> {
-                CompletableFuture<Boolean> futureForward = CompletableFuture.supplyAsync(() -> forwardToQQ(e.getMessage(), player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()))).orTimeout(3, TimeUnit.SECONDS);
-            }
+            case "sync", "bind" -> CompletableFuture.supplyAsync(() -> forwardToQQ(e.getMessage(), player.getName(), player.getUniqueId().toString(), getServerName(player.getServer()))).orTimeout(3, TimeUnit.SECONDS);
         }
 
         if (!PhenylConfiguration.cross_sever_format.equals("disabled")) {
@@ -41,7 +39,7 @@ public class OnChatEvent implements Listener {
                     .replace("%sub_server%", getServerName((player.getServer())))
                     .replace("%username%", player.getName())
                     .replace("%message%", e.getMessage());
-            CompletableFuture<Boolean> futureBind = CompletableFuture.supplyAsync(() -> {
+            CompletableFuture.supplyAsync(() -> {
                 broadcastMessage(format, new String[]{player.getServer().getInfo().getName()});
                 return true;
             }).orTimeout(3, TimeUnit.SECONDS);
