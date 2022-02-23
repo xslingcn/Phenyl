@@ -107,13 +107,7 @@ public class Mirai {
      * @param message The message in plain string type.
      */
     public static void sendGroup(String message) throws NoSuchElementException {
-        for (Long id : PhenylConfiguration.enabled_groups) {
-            try {
-                Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
-            } catch (NoSuchElementException e) {
-                throw new NoSuchElementException(String.valueOf(id));
-            }
-        }
+        sendGroup(new MessageChainBuilder().append(message).build());
     }
 
     /**
