@@ -53,6 +53,7 @@ public class PhenylConfiguration {
     public static Boolean forward_image = true;
     public static Integer get_image_timeout = 5;
     public static Boolean nomessage_with_cross_server = true;
+    public static Boolean new_player_greeting = true;
     public static String cross_sever_format = "&7[%sub_server%]%username%:%message%";
     public static String qq_to_server_format = "&7[QQ]%username%:%message%";
     public static String server_to_qq_format = "%username%:%message%";
@@ -88,7 +89,7 @@ public class PhenylConfiguration {
     public static String status_command = "status";
     public static String verification = "[0-9]{6}";
 
-    public static Integer version = 1;
+    public static Integer version = 2;
 
     /**
      * Load configurations.
@@ -135,6 +136,7 @@ public class PhenylConfiguration {
         forward_image = config.getBoolean("forward_image");
         get_image_timeout = config.getInt("get_image_timeout");
         nomessage_with_cross_server = config.getBoolean("nomessage_with_cross_server");
+        new_player_greeting = config.getBoolean("new_player_greeting");
         cross_sever_format = config.getString("cross_sever_format");
         qq_to_server_format = config.getString("qq_to_server_format");
         online_total_format = config.getString("online_total_format");
@@ -182,7 +184,7 @@ public class PhenylConfiguration {
      * @throws IllegalArgumentException invalidStorage: Database type not valid.
      */
     public static boolean postConfiguration() {
-        Integer latestVersion = 1;
+        Integer latestVersion = 2;
 
         if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
                 || ((!forward_mode.equals("bind")) && (!forward_mode.equals("sync")) && (!forward_mode.equals("command")))) {

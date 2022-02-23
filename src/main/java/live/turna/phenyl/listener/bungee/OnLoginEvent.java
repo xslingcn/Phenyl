@@ -83,7 +83,8 @@ public class OnLoginEvent implements Listener {
             String userName = e.getPlayer().getName();
             if (!Database.getRegistered(uuid)) {
                 Database.registerPlayer(uuid, userName);
-                sendMessage(i18n("newPlayer", userName), e.getPlayer());
+                if (PhenylConfiguration.new_player_greeting)
+                    sendMessage(i18n("newPlayer", userName), e.getPlayer());
             }
             return Database.updateUserName(uuid, e.getPlayer().getName());
         }).orTimeout(3, TimeUnit.SECONDS);

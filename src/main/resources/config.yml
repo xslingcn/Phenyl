@@ -86,6 +86,9 @@ get_image_timeout: 5
 # True to not receive, false to receive.
 nomessage_with_cross_server: true
 
+# new_player_greeting: whether to send a greeting message when a player joins for the first time.
+new_player_greeting: true
+
 # Variables:
 #   %sub_server% - Server where the player who sent the message is at.
 #   %group_id% - The id of the group.
@@ -209,4 +212,4 @@ status_command: "status"
 verification: "[0-9]{6}"
 
 # Here lie dragons!
-version: 1
+version: 2
