@@ -95,6 +95,21 @@ record Formatter(String[] format, String color, String message) {
         }
         return new BaseComponent[]{};
     }
+    
+    BaseComponent[] GroupCardFallback() {
+        GroupCardFallbackMessage fromJson = new Gson().fromJson(message, GroupCardFallbackMessage.class);
+        TextComponent prompt = new TextComponent(fromJson.prompt + "-");
+        prompt.setColor(ChatColor.GRAY);
+        TextComponent title = new TextComponent(fromJson.desc);
+        title.setColor(ChatColor.DARK_AQUA);
+
+        return new ComponentBuilder()
+                .append(altColor(format[0]))
+                .append(prompt)
+                .append(title)
+                .append(format.length > 1 ? altColor(color + format[1]) : "")
+                .create();
+    }
 
     BaseComponent[] GroupMusicShare(MusicShare music) {
         TextComponent summary = new TextComponent(music.getSummary() + " - ");

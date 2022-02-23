@@ -112,6 +112,7 @@ public class Forward {
             // QQ group announcement
             if (messageString.contains("com.tencent.mannounce"))
                 return formatter.GroupAnnounce();
+            return formatter.GroupCardFallback();
         }
 
         // match messages with images
