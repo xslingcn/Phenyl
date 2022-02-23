@@ -1,7 +1,6 @@
 package live.turna.phenyl.database;
 
 import com.zaxxer.hikari.HikariDataSource;
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 
 import java.sql.Connection;
@@ -9,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -17,7 +17,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  *
  * @since 2021/12/6 1:53
  */
-public class PostgreSQL extends PhenylBase {
+public class PostgreSQL {
     private HikariDataSource dataSource;
 
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS %splayer (" +

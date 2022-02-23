@@ -1,7 +1,6 @@
 package live.turna.phenyl.utils;
 
 import live.turna.phenyl.Phenyl;
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Player;
 import net.md_5.bungee.api.ChatColor;
@@ -22,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @since 2021/12/3 20:27
  */
-public class Message extends PhenylBase {
+public class Message {
 
     /**
      * Make messages with color codes translatable.

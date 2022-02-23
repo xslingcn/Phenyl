@@ -1,7 +1,6 @@
 package live.turna.phenyl.commands;
 
 import live.turna.phenyl.Phenyl;
-import live.turna.phenyl.PhenylCommand;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.database.Player;
@@ -14,6 +13,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.bind.BindHandler.handleRequest;
 import static live.turna.phenyl.message.Forward.forwardToQQ;
 import static live.turna.phenyl.message.I18n.i18n;
@@ -34,7 +36,8 @@ import static live.turna.phenyl.utils.Message.*;
  *
  * @since 2021/12/3 4:28
  */
-public class CommandHandler extends PhenylCommand {
+public class CommandHandler extends Command implements TabExecutor {
+    private final Phenyl phenyl = Phenyl.getInstance();
 
     /**
      * @param name Command name

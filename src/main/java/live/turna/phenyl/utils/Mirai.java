@@ -1,7 +1,6 @@
 package live.turna.phenyl.utils;
 
 import live.turna.phenyl.Phenyl;
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.Image;
@@ -20,6 +19,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -28,7 +28,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  *
  * @since 2021/12/3 23:44
  */
-public class Mirai extends PhenylBase {
+public class Mirai {
 
     /**
      * Digest QQ password.

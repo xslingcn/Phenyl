@@ -1,11 +1,12 @@
 package live.turna.phenyl.message;
 
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static live.turna.phenyl.Phenyl.LOGGER;
 
 /**
  * <b>I18n</b><br>
@@ -15,7 +16,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since 2021/12/3 17:45
  */
-public class I18n extends PhenylBase {
+public class I18n {
     private static final String MESSAGES = "messages";
     private static final Pattern NODOUBLEMARK = Pattern.compile("''");
     private static final ResourceBundle NULL_BUNDLE = new ResourceBundle() {

@@ -1,6 +1,6 @@
 package live.turna.phenyl.listener;
 
-import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.listener.bungee.OnChatEvent;
 import live.turna.phenyl.listener.bungee.OnLoginEvent;
 import live.turna.phenyl.listener.bungee.OnPlayerDisconnectEvent;
@@ -14,19 +14,19 @@ import net.md_5.bungee.api.ProxyServer;
  *
  * @since 2021/12/4 22:42
  */
-public class ListenerRegisterer extends PhenylBase {
+public class ListenerRegisterer {
     public static void registerListeners() {
         // Mirai
-        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnBotOfflineEvent());
-        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnGroupMessageEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnBotOfflineEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnGroupMessageEvent());
 
         // Bungee
-        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnChatEvent());
-        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnLoginEvent());
-        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnPlayerDisconnectEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnChatEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnLoginEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnPlayerDisconnectEvent());
     }
 
     public static void unregisterListeners() {
-        ProxyServer.getInstance().getPluginManager().unregisterListeners(phenyl);
+        ProxyServer.getInstance().getPluginManager().unregisterListeners(Phenyl.getInstance());
     }
 }

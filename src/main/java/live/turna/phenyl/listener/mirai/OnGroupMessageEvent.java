@@ -1,12 +1,12 @@
 package live.turna.phenyl.listener.mirai;
 
-import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.*;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import static live.turna.phenyl.utils.Mirai.sendGroup;
  *
  * @since 2021/12/4 18:55
  */
-public class OnGroupMessageEvent extends PhenylListener {
+public class OnGroupMessageEvent implements Listener {
     private transient Group group;
     private transient Long senderID;
     private transient MessageChain message;
@@ -77,7 +77,6 @@ public class OnGroupMessageEvent extends PhenylListener {
             switch (PhenylConfiguration.forward_mode) {
                 case "sync", "bind" -> forwardToBungee(group, senderID, message, event.getSenderNameCardOrNick(), images);
                 default -> {
-                    if (PhenylConfiguration.debug) LOGGER.error(i18n("invalidForward"));
                     return false;
                 }
             }

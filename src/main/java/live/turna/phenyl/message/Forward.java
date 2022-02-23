@@ -3,7 +3,6 @@ package live.turna.phenyl.message;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import live.turna.phenyl.Phenyl;
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import live.turna.phenyl.database.Player;
@@ -27,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 import static live.turna.phenyl.message.ImageMessage.getImageFromURL;
@@ -41,7 +41,7 @@ import static live.turna.phenyl.utils.Mirai.sendImage;
  *
  * @since 2021/12/23 18:34
  */
-public class Forward extends PhenylBase {
+public class Forward {
     /**
      * Forward a message to bungee.<br>
      * Phenyl will replace all format-variables to corresponding value except %message%;

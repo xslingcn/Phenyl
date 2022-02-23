@@ -1,6 +1,6 @@
 package live.turna.phenyl.config;
 
-import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.Phenyl;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Bind.isValidQQID;
 
@@ -24,7 +25,7 @@ import static live.turna.phenyl.utils.Bind.isValidQQID;
  * @version 1.0
  * @since 2021/12/3 1:12
  */
-public class PhenylConfiguration extends PhenylBase {
+public class PhenylConfiguration {
     private static Configuration config;
 
     // General configuration
@@ -93,9 +94,9 @@ public class PhenylConfiguration extends PhenylBase {
      * Load configurations.
      */
     public static void loadPhenylConfiguration() {
-        File configFile = new File(phenyl.getDataFolder(), "config.yml");
+        File configFile = new File(Phenyl.getInstance().getDataFolder(), "config.yml");
         if (!configFile.exists()) {
-            try (InputStream in = phenyl.getResourceAsStream("config.yml")) {
+            try (InputStream in = Phenyl.getInstance().getResourceAsStream("config.yml")) {
                 Files.copy(in, configFile.toPath());
             } catch (IOException e) {
                 LOGGER.error(i18n("createConfigFail", e.getLocalizedMessage()));
@@ -103,7 +104,7 @@ public class PhenylConfiguration extends PhenylBase {
             }
         }
         try {
-            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(phenyl.getDataFolder(), "config.yml"));
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(Phenyl.getInstance().getDataFolder(), "config.yml"));
         } catch (IOException e) {
             LOGGER.error(i18n("readConfigFail", e.getLocalizedMessage()));
             if (PhenylConfiguration.debug) e.printStackTrace();

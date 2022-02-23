@@ -1,6 +1,5 @@
 package live.turna.phenyl.database;
 
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -18,7 +18,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  *
  * @since 2021/12/5 21:08
  */
-public class SQLite extends PhenylBase {
+public class SQLite {
     private Connection playerConnection;
     private Connection messageConnection;
     private Statement player;

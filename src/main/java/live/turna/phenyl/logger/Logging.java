@@ -1,6 +1,6 @@
 package live.turna.phenyl.logger;
 
-import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +22,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  *
  * @since 2021/12/4 14:29
  */
-public class Logging extends PhenylBase {
+public class Logging {
     /**
      * Register custom filter to root logger.
      */
@@ -45,7 +45,7 @@ public class Logging extends PhenylBase {
      */
     private static void setFileLog() {
         Logger logger = (Logger) LogManager.getLogger("Phenyl");
-        File file = new File(phenyl.getDataFolder(), "phenyl.log");
+        File file = new File(Phenyl.getInstance().getDataFolder(), "phenyl.log");
         if (!file.exists()) {
             try {
                 if (!file.createNewFile())

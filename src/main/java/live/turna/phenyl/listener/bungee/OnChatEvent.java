@@ -1,9 +1,9 @@
 package live.turna.phenyl.listener.bungee;
 
-import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.config.PhenylConfiguration;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +20,7 @@ import static live.turna.phenyl.utils.Message.*;
  *
  * @since 2021/12/4 21:54
  */
-public class OnChatEvent extends PhenylListener {
+public class OnChatEvent implements Listener {
 
     @EventHandler
     public void onChat(ChatEvent e) {

@@ -1,14 +1,15 @@
 package live.turna.phenyl.listener.bungee;
 
-import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.config.PhenylConfiguration;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 import static live.turna.phenyl.utils.Message.broadcastMessage;
@@ -23,7 +24,7 @@ import static live.turna.phenyl.utils.Mirai.sendImage;
  *
  * @since 2021/12/4 21:51
  */
-public class OnPlayerDisconnectEvent extends PhenylListener {
+public class OnPlayerDisconnectEvent implements Listener {
     @EventHandler
     public void onPlayerDisconnect(PlayerDisconnectEvent e) {
         if (!PhenylConfiguration.on_leave_broadcast.equals("disabled")) {

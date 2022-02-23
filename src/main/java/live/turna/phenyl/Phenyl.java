@@ -13,6 +13,8 @@ import live.turna.phenyl.logger.Logging;
 import live.turna.phenyl.utils.Metrics;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ public final class Phenyl extends Plugin {
     private static MiraiHandler miraiInstance;
     private static List<Player> mutedPlayer = new ArrayList<>();
     private static List<Player> noMessagePlayer = new ArrayList<>();
+
+    public static final Logger LOGGER = LogManager.getLogger("PhenylMain");
 
     public static Phenyl getInstance() {
         return instance;

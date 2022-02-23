@@ -1,6 +1,6 @@
 package live.turna.phenyl.utils;
 
-import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
 
 import javax.imageio.ImageIO;
@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -18,7 +19,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  *
  * @since 2021/12/26 19:20
  */
-public class Avatar extends PhenylBase {
+public class Avatar {
     /**
      * Create the avatar file if not exists, update it otherwise.
      *
@@ -27,7 +28,7 @@ public class Avatar extends PhenylBase {
      * @throws IOException File operation failed.
      */
     private static File createAvatarFile(String uuid) throws IOException {
-        File storageDir = new File(phenyl.getDataFolder(), "storage");
+        File storageDir = new File(Phenyl.getInstance().getDataFolder(), "storage");
         if (!storageDir.exists()) {
             if (!storageDir.mkdir()) {
                 throw new IOException(i18n("createAvatarFail", storageDir.toString()));
@@ -85,6 +86,6 @@ public class Avatar extends PhenylBase {
      * @return The avatar file instance. Notice that it can be null.
      */
     public static File getAvatar(String uuid) {
-        return new File(phenyl.getDataFolder() + "/storage/" + uuid + "/avatar.png");
+        return new File(Phenyl.getInstance().getDataFolder() + "/storage/" + uuid + "/avatar.png");
     }
 }

@@ -1,6 +1,6 @@
 package live.turna.phenyl.mirai;
 
-import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Mirai.*;
 
@@ -21,7 +22,7 @@ import static live.turna.phenyl.utils.Mirai.*;
  *
  * @since 2021/12/3 22:52
  */
-public class MiraiHandler extends PhenylBase {
+public class MiraiHandler {
 
     private static Bot bot;
     private static Long userID;
@@ -39,7 +40,7 @@ public class MiraiHandler extends PhenylBase {
     public MiraiHandler(String user_id, String user_pass, String pro) {
         userID = Long.parseLong(user_id);
         try {
-            workingDir = checkMiraiDir(new File(phenyl.getDataFolder(), "mirai"));
+            workingDir = checkMiraiDir(new File(Phenyl.getInstance().getDataFolder(), "mirai"));
         } catch (IOException e) {
             LOGGER.error(i18n("createMiraiDirFail"));
             if (PhenylConfiguration.debug) e.printStackTrace();

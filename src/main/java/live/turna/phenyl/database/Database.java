@@ -2,7 +2,7 @@ package live.turna.phenyl.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
 
 import java.io.File;
@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -19,7 +20,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  *
  * @since 2021/12/6 2:43
  */
-public class Database extends PhenylBase {
+public class Database {
     private static SQLite sqlite = null;
     private static MySQL mysql = null;
     private static PostgreSQL postgres = null;
@@ -30,9 +31,9 @@ public class Database extends PhenylBase {
     public static void onEnable() {
         switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> {
-                File playerFile = new File(phenyl.getDataFolder(), "player.db");
+                File playerFile = new File(Phenyl.getInstance().getDataFolder(), "player.db");
                 Connection playerConnection;
-                File messageFile = PhenylConfiguration.save_message ? new File(phenyl.getDataFolder(), "message.db") : null;
+                File messageFile = PhenylConfiguration.save_message ? new File(Phenyl.getInstance().getDataFolder(), "message.db") : null;
                 Connection messageConnection = null;
                 if (!playerFile.exists()) {
                     try {

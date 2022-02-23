@@ -1,7 +1,7 @@
 package live.turna.phenyl.dependency;
 
 import com.google.common.base.Suppliers;
-import live.turna.phenyl.PhenylBase;
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
 
 import java.io.File;
@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -22,7 +23,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  *
  * @since 2022/1/19 19:44
  */
-public class DependencyLoader extends PhenylBase {
+public class DependencyLoader {
 
     /**
      * Get and load all dependencies.
@@ -76,7 +77,7 @@ public class DependencyLoader extends PhenylBase {
      */
     private static void loadDependencies(Set<Dependency> dependencies) throws IOException {
         for (Dependency dependency : dependencies) {
-            Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) phenyl.getClass().getClassLoader()))
+            Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) Phenyl.getInstance().getClass().getClassLoader()))
                     .get().addURL(getDependency(dependency).toURI().toURL());
             LOGGER.info(i18n("libLoaded", dependency.getFileName()));
         }
@@ -90,8 +91,8 @@ public class DependencyLoader extends PhenylBase {
      * @throws IOException Failed while processing files.
      */
     private static File getDependency(Dependency dependency) throws IOException {
-        File jarFile = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName());
-        File md5File = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
+        File jarFile = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName());
+        File md5File = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
         if (jarFile.exists() && checkDependency(dependency)) return jarFile;
         for (DependencyRepository repo : DependencyRepository.values()) {
             if (jarFile.exists() && !jarFile.delete())
@@ -124,8 +125,8 @@ public class DependencyLoader extends PhenylBase {
      * @throws IOException Failed reading jar or md5 file.
      */
     private static boolean checkDependency(Dependency dependency) throws IOException {
-        File jarFile = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName());
-        File md5File = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
+        File jarFile = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName());
+        File md5File = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
         if (!jarFile.exists() || !md5File.exists()) return false;
         try {
             String jarDigest = toHex(MessageDigest.getInstance("md5").digest(Files.readAllBytes(jarFile.toPath())));

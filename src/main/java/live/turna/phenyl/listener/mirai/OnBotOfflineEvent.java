@@ -1,10 +1,11 @@
 package live.turna.phenyl.listener.mirai;
 
-import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.mirai.event.CBotOfflineEvent;
 import net.mamoe.mirai.event.events.BotOfflineEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -15,7 +16,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  * @see BotOfflineEvent
  * @since 2021/12/4 18:55
  */
-public class OnBotOfflineEvent extends PhenylListener {
+public class OnBotOfflineEvent implements Listener {
 
     @EventHandler
     public void onBotOffline(CBotOfflineEvent event) {

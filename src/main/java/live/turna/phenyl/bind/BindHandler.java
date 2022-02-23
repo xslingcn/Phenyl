@@ -31,6 +31,7 @@ public class BindHandler {
 
     /**
      * Complete the verification and proceed binding and remove the binding request from array.
+     * Called when a player attempts to verify in game.
      *
      * @param userName The username to bind.
      * @param code     The verification code.
@@ -63,6 +64,7 @@ public class BindHandler {
 
     /**
      * Complete the verification and proceed binding and remove the binding request from array.
+     * Called when a player attempts to verify in QQ.
      *
      * @param userID The userID to bind.
      * @param code   The verification code.

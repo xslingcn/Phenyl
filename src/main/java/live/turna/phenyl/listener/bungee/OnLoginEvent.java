@@ -1,15 +1,16 @@
 package live.turna.phenyl.listener.bungee;
 
-import live.turna.phenyl.PhenylListener;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Database;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.message.ImageMessage.drawImageMessage;
 import static live.turna.phenyl.utils.Avatar.downloadAvatar;
@@ -27,7 +28,7 @@ import static live.turna.phenyl.utils.Mirai.sendImage;
  *
  * @since 2021/12/4 21:52
  */
-public class OnLoginEvent extends PhenylListener {
+public class OnLoginEvent implements Listener {
     @EventHandler
     public void onLogin(ServerConnectedEvent e) {
         if (!PhenylConfiguration.on_join_broadcast.equals("disabled")) {

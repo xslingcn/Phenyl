@@ -1,6 +1,5 @@
 package live.turna.phenyl.message;
 
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.config.PhenylConfiguration;
 
 import javax.imageio.ImageIO;
@@ -9,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
+import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 import static live.turna.phenyl.utils.Avatar.getAvatar;
 
@@ -18,7 +18,7 @@ import static live.turna.phenyl.utils.Avatar.getAvatar;
  *
  * @since 2021/12/27 3:17
  */
-public class ImageMessage extends PhenylBase {
+public class ImageMessage {
     /**
      * Draw an image message.
      *

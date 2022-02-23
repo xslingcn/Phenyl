@@ -1,6 +1,5 @@
 package live.turna.phenyl.mirai;
 
-import live.turna.phenyl.PhenylBase;
 import live.turna.phenyl.mirai.event.*;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.EventChannel;
@@ -14,7 +13,7 @@ import net.md_5.bungee.api.ProxyServer;
  *
  * @since 2021/12/4 4:20
  */
-public class MiraiEvent extends PhenylBase {
+public class MiraiEvent {
     private static Listener<BotOfflineEvent> BotOfflineListener;
     private static Listener<MemberJoinEvent> MemberJoinListener;
     private static Listener<MemberLeaveEvent> MemberLeaveListener;
