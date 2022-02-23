@@ -27,7 +27,7 @@ import static live.turna.phenyl.utils.Message.altColor;
  */
 record Formatter(String[] format, String color, String message) {
 
-    BaseComponent[] GroupMiniApp() {
+    BaseComponent[] groupMiniApp() {
         GroupMiniAppMessage fromJson = new Gson().fromJson(message, GroupMiniAppMessage.class);
         TextComponent prompt = new TextComponent(fromJson.prompt + "-");
         prompt.setColor(ChatColor.GRAY);
@@ -44,7 +44,7 @@ record Formatter(String[] format, String color, String message) {
                 .create();
     }
 
-    BaseComponent[] GroupAnnounce() {
+    BaseComponent[] groupAnnounce() {
         GroupAnnounceMessage fromJson = new Gson().fromJson(message, GroupAnnounceMessage.class);
         TextComponent prompt = new TextComponent(fromJson.prompt);
         prompt.setColor(ChatColor.GRAY);
@@ -56,7 +56,7 @@ record Formatter(String[] format, String color, String message) {
                 .create();
     }
 
-    BaseComponent[] GroupStruct() {
+    BaseComponent[] groupStruct() {
         GroupStructMessage fromJson = new Gson().fromJson(message, GroupStructMessage.class);
         TextComponent prompt = new TextComponent(fromJson.prompt + "-");
         prompt.setColor(ChatColor.GRAY);
@@ -73,7 +73,7 @@ record Formatter(String[] format, String color, String message) {
                 .create();
     }
 
-    BaseComponent[] GroupXML() {
+    BaseComponent[] groupXML() {
         try {
             XmlMapper xmlMapper = new XmlMapper();
             GroupXMLMessage.msg fromXML = xmlMapper.readValue(message, GroupXMLMessage.msg.class);
@@ -95,8 +95,8 @@ record Formatter(String[] format, String color, String message) {
         }
         return new BaseComponent[]{};
     }
-    
-    BaseComponent[] GroupCardFallback() {
+
+    BaseComponent[] groupCardFallback() {
         GroupCardFallbackMessage fromJson = new Gson().fromJson(message, GroupCardFallbackMessage.class);
         TextComponent prompt = new TextComponent(fromJson.prompt + "-");
         prompt.setColor(ChatColor.GRAY);
@@ -111,7 +111,7 @@ record Formatter(String[] format, String color, String message) {
                 .create();
     }
 
-    BaseComponent[] GroupMusicShare(MusicShare music) {
+    BaseComponent[] groupMusicShare(MusicShare music) {
         TextComponent summary = new TextComponent(music.getSummary() + " - ");
         summary.setColor(ChatColor.GRAY);
         TextComponent title = new TextComponent(music.getTitle());
@@ -127,7 +127,7 @@ record Formatter(String[] format, String color, String message) {
                 .create();
     }
 
-    BaseComponent[] GroupImage(List<SingleMessage> images) {
+    BaseComponent[] groupImage(List<SingleMessage> images) {
         int matchCount = 0;
         String pattern = "\\u56fe\\u7247";
         Matcher match = Pattern.compile(pattern).matcher(message);
@@ -154,7 +154,7 @@ record Formatter(String[] format, String color, String message) {
         return result.create();
     }
 
-    BaseComponent[] GroupLink() {
+    BaseComponent[] groupLink() {
         int linkCount = 0;
         String pattern = "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
         Matcher match = Pattern.compile(pattern).matcher(message);

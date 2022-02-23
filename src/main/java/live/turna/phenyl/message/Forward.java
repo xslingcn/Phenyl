@@ -95,32 +95,32 @@ public class Forward {
         Formatter formatter = new Formatter(format, color, messageString);
         // match QQ music share messages
         if (message.size() == 3 && (message.get(2) instanceof MusicShare music)) {
-            return formatter.GroupMusicShare(music);
+            return formatter.groupMusicShare(music);
         }
 
         // match card messages
         if (message.size() == 2 && (message.get(1) instanceof LightApp || message.get(1) instanceof SimpleServiceMessage)) {
             // QQ XML messages
             if (messageString.startsWith("<?xml"))
-                return formatter.GroupXML();
+                return formatter.groupXML();
             // QQ mini app messages
             if (messageString.contains("com.tencent.miniapp"))
-                return formatter.GroupMiniApp();
+                return formatter.groupMiniApp();
             // QQ struct messages
             if (messageString.contains("com.tencent.structmsg"))
-                return formatter.GroupStruct();
+                return formatter.groupStruct();
             // QQ group announcement
             if (messageString.contains("com.tencent.mannounce"))
-                return formatter.GroupAnnounce();
-            return formatter.GroupCardFallback();
+                return formatter.groupAnnounce();
+            return formatter.groupCardFallback();
         }
 
         // match messages with images
         if (images != null && !images.isEmpty()) {
-            return formatter.GroupImage(images);
+            return formatter.groupImage(images);
         }
         // match links
-        BaseComponent[] linkFormat = formatter.GroupLink();
+        BaseComponent[] linkFormat = formatter.groupLink();
         if (linkFormat != null) return linkFormat;
         // random message
         return new ComponentBuilder()
