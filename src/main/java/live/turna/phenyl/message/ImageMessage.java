@@ -99,7 +99,7 @@ public class ImageMessage {
      */
     public static double getHeight(String message, Rectangle2D rect) {
         double height = PhenylConfiguration.overall_padding * 2 + PhenylConfiguration.avatar_size;
-        for (String line : message.split("\n"))
+        for (String ignored : message.split("\n"))
             height += rect.getHeight();
         return height;
     }
@@ -114,7 +114,7 @@ public class ImageMessage {
      */
     public static String handleString(String message, double maxWidth, Rectangle2D rect) {
         int maxChars = (int) Math.floor((maxWidth - PhenylConfiguration.overall_padding) / rect.getWidth());
-        return insertPeriodically(message, maxChars, rect);
+        return insertPeriodically(message, maxChars);
     }
 
     /**
@@ -123,10 +123,9 @@ public class ImageMessage {
      *
      * @param message  The message content.
      * @param maxChars The maximum count of characters in a single line.
-     * @param rect     The font's rectangle instance.
      * @return The processed string.
      */
-    public static String insertPeriodically(String message, int maxChars, Rectangle2D rect) {
+    public static String insertPeriodically(String message, int maxChars) {
         StringBuilder builder = new StringBuilder();
         String doubleRegex = "[^\\x00-\\xff]";
         int index = 0;
