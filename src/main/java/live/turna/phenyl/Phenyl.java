@@ -29,7 +29,7 @@ public final class Phenyl extends Plugin {
     private static List<Player> mutedPlayer = new ArrayList<>();
     private static List<Player> noMessagePlayer = new ArrayList<>();
 
-    public static final Logger LOGGER = LogManager.getLogger("PhenylMain");
+    public static Logger LOGGER = null;
 
     public static Phenyl getInstance() {
         return instance;
@@ -55,6 +55,7 @@ public final class Phenyl extends Plugin {
                 instance.getLogger().severe("Failed to create data folder: " + instance.getDataFolder());
         try {
             Log4jLoader.onLoad();
+            LOGGER = LogManager.getLogger("PhenylMain");
         } catch (IOException e) {
             e.printStackTrace();
         }
