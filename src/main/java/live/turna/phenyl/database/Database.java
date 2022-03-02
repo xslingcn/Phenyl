@@ -17,19 +17,17 @@ import static live.turna.phenyl.message.I18n.i18n;
  * <b>Database</b><br>
  * Encapsulate all database operation methods.
  *
+ * @see live.turna.phenyl.database.Storage
  * @since 2021/12/6 2:43
  */
 public class Database {
     private final Phenyl phenyl = Phenyl.getInstance();
-
-    private static SQLite sqlite = null;
-    private static MySQL mysql = null;
-    private static PostgreSQL postgres = null;
+    private Storage implementation;
 
     /**
      * Initialize database connection and/or files.
      */
-    public static void onEnable() {
+    public void onEnable() {
         switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> {
                 File playerFile = new File(phenyl.getDataFolder(), "player.db");
@@ -61,7 +59,7 @@ public class Database {
                         Class.forName("org.sqlite.JDBC");
                         messageConnection = DriverManager.getConnection("jdbc:sqlite:" + messageFile.getPath());
                     }
-                    sqlite = new SQLite(playerConnection, messageConnection);
+                    implementation = new SQLite(playerConnection, messageConnection);
                     LOGGER.info(i18n("databaseSucceeded", "SQLite"));
                 } catch (Exception e) {
                     LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
@@ -80,7 +78,7 @@ public class Database {
                 mysqlConf.addDataSourceProperty("prepStmtCacheSize", "250");
                 mysqlConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
                 mysqlDataSource = new HikariDataSource(mysqlConf);
-                mysql = new MySQL(mysqlDataSource);
+                implementation = new MySQL(mysqlDataSource);
                 LOGGER.info(i18n("databaseSucceeded", "MySQL"));
             }
             case "postgresql" -> {
@@ -95,245 +93,72 @@ public class Database {
                 postgresConf.addDataSourceProperty("prepStmtCacheSize", "250");
                 postgresConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
                 postgresDataSource = new HikariDataSource(postgresConf);
-                postgres = new PostgreSQL(postgresDataSource);
+                implementation = new PostgreSQL(postgresDataSource);
                 LOGGER.info(i18n("databaseSucceeded", "PostgreSQL"));
             }
         }
     }
 
-    public static void onDisable() {
-        switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> {
-                if (sqlite != null)
-                    sqlite.onDisable();
-            }
-            case "mysql" -> {
-                if (mysql != null)
-                    mysql.onDisable();
-            }
-            case "postgresql" -> {
-                if (postgres != null)
-                    postgres.onDisable();
-            }
+    public void onDisable() {
+        if (implementation != null) {
+            implementation.onDisable();
+            implementation = null;
         }
     }
 
-    /**
-     * Try to register a player.
-     *
-     * @param uuid The player's Minecraft UUID.
-     * @return Player instance;
-     */
-    public static boolean registerPlayer(String uuid, String mcname) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.registerPlayer(uuid, mcname);
-            case "mysql" -> mysql.registerPlayer(uuid, mcname);
-            case "postgresql" -> postgres.registerPlayer(uuid, mcname);
-            default -> false;
-        };
+    public boolean registerPlayer(String uuid, String mcname) {
+        return implementation.registerPlayer(uuid, mcname);
     }
 
-    /**
-     * Get if a player is registered.
-     *
-     * @param uuid The player's Minecraft UUID.
-     * @return True - player is registered; False - not registered.
-     */
-    public static boolean getRegistered(String uuid) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.getRegistered(uuid);
-            case "mysql" -> mysql.getRegistered(uuid);
-            case "postgresql" -> postgres.getRegistered(uuid);
-            default -> false;
-        };
+    public boolean getRegistered(String uuid) {
+        return implementation.getRegistered(uuid);
     }
 
-    /**
-     * Update the username if is null or does not match the param's.
-     *
-     * @param uuid     The player's Minecraft UUID.
-     * @param userName The player's Minecraft username.
-     * @return True - the username needs to be updated and that is done successfully. False - no need to update username or query failed.
-     */
-    public static boolean updateUserName(String uuid, String userName) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.updateUserName(uuid, userName);
-            case "mysql" -> mysql.updateUserName(uuid, userName);
-            case "postgresql" -> postgres.updateUserName(uuid, userName);
-            default -> false;
-        };
+    public boolean updateUserName(String uuid, String userName) {
+        return implementation.updateUserName(uuid, userName);
     }
 
-    /**
-     * Update the player's muted setting.
-     *
-     * @param uuid   The player's Minecraft UUID.
-     * @param toggle Whether is muted.
-     * @return Whether the query succeeded.
-     */
-    public static boolean updateMutedPlayer(String uuid, Boolean toggle) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.updateMutedPlayer(uuid, toggle);
-            case "mysql" -> mysql.updateMutedPlayer(uuid, toggle);
-            case "postgresql" -> postgres.updateMutedPlayer(uuid, toggle);
-            default -> false;
-        };
+    public boolean updateMutedPlayer(String uuid, Boolean toggle) {
+        return implementation.updateMutedPlayer(uuid, toggle);
     }
 
-    /**
-     * Update the player's nomessage setting.
-     *
-     * @param uuid   The player's Minecraft UUID.
-     * @param toggle Whether is muted.
-     * @return Whether the query succeeded.
-     */
-    public static boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.updateNoMessagePlayer(uuid, toggle);
-            case "mysql" -> mysql.updateNoMessagePlayer(uuid, toggle);
-            case "postgresql" -> postgres.updateNoMessagePlayer(uuid, toggle);
-            default -> false;
-        };
+    public boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
+        return implementation.updateNoMessagePlayer(uuid, toggle);
     }
 
-    /**
-     * Get the list of muted players.
-     *
-     * @return An empty list if no player is muted, or a list of player instances.
-     */
-    public static List<Player> getMutedPlayer() {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.getMutedPlayer();
-            case "mysql" -> mysql.getMutedPlayer();
-            case "postgresql" -> postgres.getMutedPlayer();
-            default -> new ArrayList<>();
-        };
+    public List<Player> getMutedPlayer() {
+        return implementation.getMutedPlayer();
     }
 
-    /**
-     * Get the list of nomessaged players.
-     *
-     * @return An empty list if no player is nomessaged, or a list of player instances.
-     */
-    public static List<Player> getNoMessagePlayer() {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.getNoMessagePlayer();
-            case "mysql" -> mysql.getNoMessagePlayer();
-            case "postgresql" -> postgres.getNoMessagePlayer();
-            default -> new ArrayList<>();
-        };
+    public List<Player> getNoMessagePlayer() {
+        return implementation.getNoMessagePlayer();
     }
 
-    /**
-     * Add a binding.
-     *
-     * @param uuid The player's Minecraft UUID.
-     * @param qqid The player's QQ ID.
-     * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
-     */
-    public static boolean addBinding(String uuid, Long qqid) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.addBinding(uuid, qqid);
-            case "mysql" -> mysql.addBinding(uuid, qqid);
-            case "postgresql" -> postgres.addBinding(uuid, qqid);
-            default -> false;
-        };
+    public boolean addBinding(String uuid, Long qqid) {
+        return implementation.addBinding(uuid, qqid);
     }
 
-    /**
-     * Remove a player's QQ-UUID binding by setting the qqid column to NULL.
-     *
-     * @param uuid The player's Minecraft UUID.
-     * @return True - The binding is successfully removed. False - query failed.
-     */
-    public static boolean removeBinding(String uuid) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.removeBinding(uuid);
-            case "mysql" -> mysql.removeBinding(uuid);
-            case "postgresql" -> postgres.removeBinding(uuid);
-            default -> false;
-        };
+    public boolean removeBinding(String uuid) {
+        return implementation.removeBinding(uuid);
     }
 
-    /**
-     * Get QQ ID by Minecraft UUID.
-     *
-     * @param uuid The player's Minecraft UUID.
-     * @return Corresponding QQ ID if found, null if not.
-     */
-    public static Player getBinding(String uuid) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.getBinding(uuid);
-            case "mysql" -> mysql.getBinding(uuid);
-            case "postgresql" -> postgres.getBinding(uuid);
-            default -> null;
-        };
+    public Player getBinding(String uuid) {
+        return implementation.getBinding(uuid);
     }
 
-    /**
-     * Get Minecraft username by QQ ID.
-     *
-     * @param qqid The player's QQ ID.
-     * @return Corresponding UUID if found, null if not.
-     */
-    public static Player getBinding(Long qqid) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.getBinding(qqid);
-            case "mysql" -> mysql.getBinding(qqid);
-            case "postgresql" -> postgres.getBinding(qqid);
-            default -> null;
-        };
+    public Player getBinding(Long qqid) {
+        return implementation.getBinding(qqid);
     }
 
-    /**
-     * Get the player id by Minecraft username.
-     *
-     * @param userName The player's Minecraft username.
-     * @return Corresponding id if found, null if not.
-     */
-    public static Integer getIDByUserName(String userName) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.getIDByUserName(userName);
-            case "mysql" -> mysql.getIDByUserName(userName);
-            case "postgresql" -> postgres.getIDByUserName(userName);
-            default -> null;
-        };
+    public Integer getIDByUserName(String userName) {
+        return implementation.getIDByUserName(userName);
     }
 
-    /**
-     * Add a message from QQ group.<br>
-     * Phenyl will try to find the sender's binding first. If succeeded, the player's id and Minecraft UUID would be attached as well.
-     * If not, only group ID and QQ ID would be added.
-     *
-     * @param content The message content.
-     * @param groupID The group ID of which the message is from.
-     * @param qqID    The sender's QQ ID.
-     * @return True - the insert query was done successfully. False - query failed.
-     */
-    public static boolean addMessage(String content, Long groupID, Long qqID) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.addMessage(content, groupID, qqID);
-            case "mysql" -> mysql.addMessage(content, groupID, qqID);
-            case "postgresql" -> postgres.addMessage(content, groupID, qqID);
-            default -> false;
-        };
+    public boolean addMessage(String content, Long groupID, Long qqID) {
+        return implementation.addMessage(content, groupID, qqID);
     }
 
-    /**
-     * Add a message from Minecraft chat.
-     * Phenyl will try to find the sender's binding first. If succeeded, the player's id and QQ ID would be attached as well.
-     * If not, only the player's UUID would be added.
-     *
-     * @param content  message content.
-     * @param fromuuid The sender's Minecraft UUID.
-     * @return True - the insert query was done successfully. False - query failed.
-     */
-    public static boolean addMessage(String content, String fromuuid) {
-        return switch (PhenylConfiguration.storage.toLowerCase()) {
-            case "sqlite" -> sqlite.addMessage(content, fromuuid);
-            case "mysql" -> mysql.addMessage(content, fromuuid);
-            case "postgresql" -> postgres.addMessage(content, fromuuid);
-            default -> false;
-        };
+    public boolean addMessage(String content, String fromuuid) {
+        return implementation.addMessage(content, fromuuid);
     }
 }
