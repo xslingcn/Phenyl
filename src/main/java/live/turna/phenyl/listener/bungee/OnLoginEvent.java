@@ -1,7 +1,7 @@
 package live.turna.phenyl.listener.bungee;
 
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
-import live.turna.phenyl.database.Database;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -29,6 +29,8 @@ import static live.turna.phenyl.utils.Mirai.sendImage;
  * @since 2021/12/4 21:52
  */
 public class OnLoginEvent implements Listener {
+    private final transient Phenyl phenyl = Phenyl.getInstance();
+
     @EventHandler
     public void onLogin(ServerConnectedEvent e) {
         if (!PhenylConfiguration.on_join_broadcast.equals("disabled")) {
@@ -81,12 +83,12 @@ public class OnLoginEvent implements Listener {
         CompletableFuture.supplyAsync(() -> {
             String uuid = e.getPlayer().getUniqueId().toString();
             String userName = e.getPlayer().getName();
-            if (!Database.getRegistered(uuid)) {
-                Database.registerPlayer(uuid, userName);
+            if (!phenyl.getDatabase().getRegistered(uuid)) {
+                phenyl.getDatabase().registerPlayer(uuid, userName);
                 if (PhenylConfiguration.new_player_greeting)
                     sendMessage(i18n("newPlayer", userName), e.getPlayer());
             }
-            return Database.updateUserName(uuid, e.getPlayer().getName());
+            return phenyl.getDatabase().updateUserName(uuid, e.getPlayer().getName());
         }).orTimeout(3, TimeUnit.SECONDS);
     }
 }

@@ -8,7 +8,6 @@ import live.turna.phenyl.config.PhenylConfiguration;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.ArrayList;
 import java.util.List;
 
 import static live.turna.phenyl.Phenyl.LOGGER;
@@ -21,6 +20,8 @@ import static live.turna.phenyl.message.I18n.i18n;
  * @since 2021/12/6 2:43
  */
 public class Database {
+    private final Phenyl phenyl = Phenyl.getInstance();
+
     private static SQLite sqlite = null;
     private static MySQL mysql = null;
     private static PostgreSQL postgres = null;
@@ -31,9 +32,9 @@ public class Database {
     public static void onEnable() {
         switch (PhenylConfiguration.storage.toLowerCase()) {
             case "sqlite" -> {
-                File playerFile = new File(Phenyl.getInstance().getDataFolder(), "player.db");
+                File playerFile = new File(phenyl.getDataFolder(), "player.db");
                 Connection playerConnection;
-                File messageFile = PhenylConfiguration.save_message ? new File(Phenyl.getInstance().getDataFolder(), "message.db") : null;
+                File messageFile = PhenylConfiguration.save_message ? new File(phenyl.getDataFolder(), "message.db") : null;
                 Connection messageConnection = null;
                 if (!playerFile.exists()) {
                     try {

@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static live.turna.phenyl.dependency.DependencyLoader.toHex;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
@@ -23,10 +24,11 @@ import static live.turna.phenyl.message.I18n.i18n;
  * @since 2022/1/22 17:55
  */
 public class Log4jLoader {
-    private static final transient Logger Logger = Phenyl.getInstance().getLogger();
-    private static final transient File libs = new File(Phenyl.getInstance().getDataFolder(), "libs");
+    private final transient Phenyl phenyl = Phenyl.getInstance();
+    private final transient Logger Logger = phenyl.getLogger();
+    private final transient File libs = new File(phenyl.getDataFolder(), "libs");
 
-    public static void onLoad() throws IOException {
+    public void onLoad() throws IOException {
         if (!libs.exists()) {
             if (!libs.mkdir()) Logger.severe("Failed creating library directory");
             else Logger.info("Successfully created library directory");
@@ -42,7 +44,7 @@ public class Log4jLoader {
                 File md5File = new File(libs, dependency.getFileName() + ".md5");
                 if (jarFile.exists() && md5File.exists()) {
                     if (checkLog4j(jarFile, md5File)) {
-                        Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) Phenyl.getInstance().getClass().getClassLoader()))
+                        Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) phenyl.getClass().getClassLoader()))
                                 .get().addURL(jarFile.toURI().toURL());
                         Logger.info(dependency.getFileName() + " loaded");
                         continue;
@@ -63,7 +65,7 @@ public class Log4jLoader {
                     if (checkLog4j(jarFile, md5File)) break;
                 }
                 if (checkLog4j(jarFile, md5File)) {
-                    Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) Phenyl.getInstance().getClass().getClassLoader()))
+                    Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) phenyl.getClass().getClassLoader()))
                             .get().addURL(jarFile.toURI().toURL());
                     Logger.info(dependency.getFileName() + " loaded");
                     continue;
@@ -73,7 +75,7 @@ public class Log4jLoader {
         }
     }
 
-    private static boolean checkLog4j(File jarFile, File md5File) throws IOException {
+    private boolean checkLog4j(File jarFile, File md5File) throws IOException {
         try {
             String jarDigest = toHex(MessageDigest.getInstance("md5").digest(Files.readAllBytes(jarFile.toPath())));
             String md5Digest = Files.readString(md5File.toPath(), StandardCharsets.UTF_8).replace("\n", "");
@@ -82,16 +84,5 @@ public class Log4jLoader {
             e.printStackTrace();
             return false;
         }
-    }
-
-    private static String toHex(byte[] bytes) {
-        char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 }

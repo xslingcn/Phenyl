@@ -24,27 +24,37 @@ import java.util.concurrent.CompletableFuture;
 
 public final class Phenyl extends Plugin {
     private static Phenyl instance;
-    private static I18n i18nInstance;
-    private static MiraiHandler miraiInstance;
-    private static List<Player> mutedPlayer = new ArrayList<>();
-    private static List<Player> noMessagePlayer = new ArrayList<>();
 
-    public static Logger LOGGER = null;
+    private I18n i18n;
+    private MiraiHandler mirai;
+    private Database database;
+    private List<Player> mutedPlayer = new ArrayList<>();
+    private List<Player> noMessagePlayer = new ArrayList<>();
 
-    public static Phenyl getInstance() {
-        return instance;
+    public static Logger LOGGER;
+
+    public MiraiHandler getMirai() {
+        return mirai;
     }
 
-    public static MiraiHandler getMiraiInstance() {
-        return miraiInstance;
+    public I18n getI18n() {
+        return i18n;
     }
 
-    public static List<Player> getMutedPlayer() {
+    public Database getDatabase() {
+        return database;
+    }
+
+    public List<Player> getMutedPlayer() {
         return mutedPlayer;
     }
 
-    public static List<Player> getNoMessagePlayer() {
+    public List<Player> getNoMessagePlayer() {
         return noMessagePlayer;
+    }
+
+    public static Phenyl getInstance() {
+        return instance;
     }
 
     @Override
@@ -54,7 +64,7 @@ public final class Phenyl extends Plugin {
             if (!instance.getDataFolder().mkdir())
                 instance.getLogger().severe("Failed to create data folder: " + instance.getDataFolder());
         try {
-            Log4jLoader.onLoad();
+            new Log4jLoader().onLoad();
             LOGGER = LogManager.getLogger("PhenylMain");
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,22 +73,23 @@ public final class Phenyl extends Plugin {
 
     @Override
     public void onEnable() {
-        i18nInstance = new I18n();
-        i18nInstance.onEnable();
-        PhenylConfiguration.loadPhenylConfiguration();
+        i18n = new I18n();
+        i18n.onEnable();
+        new PhenylConfiguration().loadPhenylConfiguration();
         Logging.onEnable();
-        i18nInstance.updateLocale(PhenylConfiguration.locale);
-        DependencyLoader.onEnable();
+        i18n.updateLocale(PhenylConfiguration.locale);
+        new DependencyLoader().onEnable();
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl", "", "ph"));
-        if (!PhenylConfiguration.postConfiguration()) return;
+        if (!new PhenylConfiguration().postConfiguration()) return;
 
-        Database.onEnable();
-        mutedPlayer = Database.getMutedPlayer();
-        noMessagePlayer = Database.getNoMessagePlayer();
+        database = new Database();
+        database.onEnable();
+        mutedPlayer = database.getMutedPlayer();
+        noMessagePlayer = database.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
-            miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-            miraiInstance.onEnable();
-            ListenerRegisterer.registerListeners();
+            mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+            mirai.onEnable();
+            new ListenerRegisterer().registerListeners();
             return true;
         });
         new Metrics(this, 14309);
@@ -87,25 +98,25 @@ public final class Phenyl extends Plugin {
     public boolean reload() {
         mutedPlayer = new ArrayList<>();
         noMessagePlayer = new ArrayList<>();
-        Database.onDisable();
+        database.onDisable();
 
-        PhenylConfiguration.loadPhenylConfiguration();
+        new PhenylConfiguration().loadPhenylConfiguration();
         Logging.onEnable();
-        i18nInstance.updateLocale(PhenylConfiguration.locale);
-        ListenerRegisterer.unregisterListeners();
+        i18n.updateLocale(PhenylConfiguration.locale);
+        new ListenerRegisterer().unregisterListeners();
 
-        if (!PhenylConfiguration.postConfiguration()) return false;
-        if (!DependencyLoader.onEnable()) return false;
-        if (miraiInstance != null) miraiInstance.onDisable();
-        miraiInstance = null;
+        if (!new PhenylConfiguration().postConfiguration()) return false;
+        if (!new DependencyLoader().onEnable()) return false;
+        if (mirai != null) mirai.onDisable();
+        mirai = null;
 
-        Database.onEnable();
-        mutedPlayer = Database.getMutedPlayer();
-        noMessagePlayer = Database.getNoMessagePlayer();
+        database.onEnable();
+        mutedPlayer = database.getMutedPlayer();
+        noMessagePlayer = database.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
-            miraiInstance = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-            miraiInstance.onEnable();
-            ListenerRegisterer.registerListeners();
+            mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+            mirai.onEnable();
+            new ListenerRegisterer().registerListeners();
             return true;
         });
         return true;
@@ -115,9 +126,12 @@ public final class Phenyl extends Plugin {
     public void onDisable() {
         mutedPlayer = null;
         noMessagePlayer = null;
-        Database.onDisable();
-        ListenerRegisterer.unregisterListeners();
-        if (miraiInstance != null) miraiInstance.onDisable();
-        i18nInstance.onDisable();
+        database.onDisable();
+        database = null;
+        new ListenerRegisterer().unregisterListeners();
+        if (mirai != null) mirai.onDisable();
+        mirai = null;
+        i18n.onDisable();
+        i18n = null;
     }
 }

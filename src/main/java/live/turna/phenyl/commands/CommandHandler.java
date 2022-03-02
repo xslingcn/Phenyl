@@ -2,7 +2,6 @@ package live.turna.phenyl.commands;
 
 import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
-import live.turna.phenyl.database.Database;
 import live.turna.phenyl.database.Player;
 import live.turna.phenyl.mirai.MiraiLoginSolver;
 import net.md_5.bungee.api.ChatColor;
@@ -37,7 +36,7 @@ import static live.turna.phenyl.utils.Message.*;
  * @since 2021/12/3 4:28
  */
 public class CommandHandler extends Command implements TabExecutor {
-    private final Phenyl phenyl = Phenyl.getInstance();
+    private final transient Phenyl phenyl = Phenyl.getInstance();
 
     /**
      * @param name Command name
@@ -88,10 +87,10 @@ public class CommandHandler extends Command implements TabExecutor {
                 if (sender.hasPermission("phenyl.admin.login")) {
                     if (args.length == 1) {
                         try {
-                            CompletableFuture.supplyAsync(() -> Phenyl.getMiraiInstance().logIn())
+                            CompletableFuture.supplyAsync(() -> phenyl.getMirai().logIn())
                                     .thenAccept((result) -> sendMessage(result ?
-                                            i18n("logInSuccess", Phenyl.getMiraiInstance().getBot().getNick()) :
-                                            i18n("alreadyLoggedIn", String.valueOf(Phenyl.getMiraiInstance().getBot().getId())), sender));
+                                            i18n("logInSuccess", phenyl.getMirai().getBot().getNick()) :
+                                            i18n("alreadyLoggedIn", String.valueOf(phenyl.getMirai().getBot().getId())), sender));
                         } catch (Exception e) {
                             LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
                             if (PhenylConfiguration.debug) e.printStackTrace();
@@ -103,8 +102,8 @@ public class CommandHandler extends Command implements TabExecutor {
                 if (sender.hasPermission("phenyl.admin.logout")) {
                     if (args.length == 1) {
                         try {
-                            if (Phenyl.getMiraiInstance().logOut())
-                                sendMessage(i18n("logOutSuccess", Phenyl.getMiraiInstance().getBot().getNick()), sender);
+                            if (phenyl.getMirai().logOut())
+                                sendMessage(i18n("logOutSuccess", phenyl.getMirai().getBot().getNick()), sender);
                             else sendMessage(i18n("yetLoggedIn"), sender);
                         } catch (Exception e) {
                             LOGGER.warn(i18n("logOutFail", e.getLocalizedMessage()));
@@ -124,12 +123,12 @@ public class CommandHandler extends Command implements TabExecutor {
                         // check if the player is already muted
                         Player muted = getMuted(target.getUniqueId().toString());
                         if (muted.uuid() != null) {
-                            Database.updateMutedPlayer(muted.uuid(), false);
-                            Phenyl.getMutedPlayer().remove(muted);
+                            phenyl.getDatabase().updateMutedPlayer(muted.uuid(), false);
+                            phenyl.getMutedPlayer().remove(muted);
                             sendMessage(i18n("unMutedPlayer", args[1]), sender);
                         } else {
-                            Database.updateMutedPlayer(target.getUniqueId().toString(), true);
-                            Phenyl.getMutedPlayer().add(Database.getBinding(target.getUniqueId().toString()));
+                            phenyl.getDatabase().updateMutedPlayer(target.getUniqueId().toString(), true);
+                            phenyl.getMutedPlayer().add(phenyl.getDatabase().getBinding(target.getUniqueId().toString()));
                             sendMessage(i18n("mutedPlayer", args[1]), sender);
                         }
                     } else sendMessage(i18n("illegalArgumentPhenyl"), sender);
@@ -183,12 +182,12 @@ public class CommandHandler extends Command implements TabExecutor {
                                     // check if the player is already nomessaged
                                     Player noMessaged = getNoMessage(player.getUniqueId().toString());
                                     if (noMessaged.uuid() != null) {
-                                        Database.updateNoMessagePlayer(noMessaged.uuid(), false);
-                                        Phenyl.getNoMessagePlayer().remove(noMessaged);
+                                        phenyl.getDatabase().updateNoMessagePlayer(noMessaged.uuid(), false);
+                                        phenyl.getNoMessagePlayer().remove(noMessaged);
                                         sendMessage(i18n("receiveMessage"), player);
                                     } else {
-                                        Database.updateNoMessagePlayer(player.getUniqueId().toString(), true);
-                                        Phenyl.getNoMessagePlayer().add(Database.getBinding(player.getUniqueId().toString()));
+                                        phenyl.getDatabase().updateNoMessagePlayer(player.getUniqueId().toString(), true);
+                                        phenyl.getNoMessagePlayer().add(phenyl.getDatabase().getBinding(player.getUniqueId().toString()));
                                         sendMessage(i18n("noMessage"), player);
                                     }
                                 } else sendMessage(i18n("illegalArgumentPhenyl"), player);

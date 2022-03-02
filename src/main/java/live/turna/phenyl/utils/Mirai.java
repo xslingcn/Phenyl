@@ -118,7 +118,7 @@ public class Mirai {
     public static void sendGroup(MessageChain message) throws NoSuchElementException {
         for (Long id : PhenylConfiguration.enabled_groups) {
             try {
-                Phenyl.getMiraiInstance().getBot().getGroupOrFail(id).sendMessage(message);
+                Phenyl.getInstance().getMirai().getBot().getGroupOrFail(id).sendMessage(message);
             } catch (NoSuchElementException e) {
                 throw new NoSuchElementException(String.valueOf(id));
             }
@@ -141,7 +141,7 @@ public class Mirai {
         ExternalResource resource = ExternalResource.Companion.create(stream.toByteArray());
         for (Long id : PhenylConfiguration.enabled_groups) {
             try {
-                Group group = Phenyl.getMiraiInstance().getBot().getGroupOrFail(id);
+                Group group = Phenyl.getInstance().getMirai().getBot().getGroupOrFail(id);
                 Image img = ExternalResource.uploadAsImage(resource, group);
                 MessageChain message = new MessageChainBuilder().append(img).build();
                 group.sendMessage(message);

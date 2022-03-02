@@ -2,7 +2,6 @@ package live.turna.phenyl.message;
 
 import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
-import live.turna.phenyl.database.Database;
 import live.turna.phenyl.database.Player;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
 import net.mamoe.mirai.contact.Group;
@@ -36,6 +35,8 @@ import static live.turna.phenyl.utils.Mirai.sendImage;
  * @since 2021/12/23 18:34
  */
 public class Forward {
+    private static final Phenyl phenyl = Phenyl.getInstance();
+
     /**
      * Forward a message to bungee.<br>
      * Phenyl will replace all format-variables to corresponding value except %message%;
@@ -50,16 +51,16 @@ public class Forward {
     public static void forwardToBungee(Group group, Long senderID, MessageChain message, @Nullable String nickName, @Nullable List<SingleMessage> images) {
         String messageString = message.contentToString();
 
-        for (Player it : Phenyl.getMutedPlayer()) {
+        for (Player it : phenyl.getMutedPlayer()) {
             if (it == null) break;
             if (it.qqid() == null) continue;
             if (senderID.equals(it.qqid())) return;
         }
         if (PhenylConfiguration.save_message) {
             messageString = messageString.replaceAll("'", "''");
-            Database.addMessage(messageString, group.getId(), senderID);
+            phenyl.getDatabase().addMessage(messageString, group.getId(), senderID);
         }
-        String userName = Database.getBinding(senderID).mcname();
+        String userName = phenyl.getDatabase().getBinding(senderID).mcname();
         if (PhenylConfiguration.forward_mode.equals("bind") && userName == null) return;
 
         String preText = PhenylConfiguration.qq_to_server_format
@@ -138,12 +139,12 @@ public class Forward {
      * @param subServer In which sub server the message is sent.
      */
     public static boolean forwardToQQ(String message, String userName, String uuid, String subServer) {
-        for (Player it : Phenyl.getMutedPlayer()) {
+        for (Player it : phenyl.getMutedPlayer()) {
             if (uuid.equals(it.uuid())) return false;
         }
         if (PhenylConfiguration.save_message) {
             message = message.replaceAll("'", "''");
-            Database.addMessage(message, uuid);
+            phenyl.getDatabase().addMessage(message, uuid);
         }
 
         // if matches an image url

@@ -139,7 +139,7 @@ record Formatter(String[] format, String color, String message) {
                         .event((ClickEvent) null)
                         .event((HoverEvent) null);
             }
-            String url = net.mamoe.mirai.Mirai.getInstance().queryImageUrl(Phenyl.getMiraiInstance().getBot(), (Image) images.get(matchCount));
+            String url = net.mamoe.mirai.Mirai.getInstance().queryImageUrl(Phenyl.getInstance().getMirai().getBot(), (Image) images.get(matchCount));
             result.append(match.group())
                     .color(ChatColor.DARK_AQUA)
                     .event(new ClickEvent(ClickEvent.Action.OPEN_URL, url))

@@ -124,7 +124,7 @@ public class Message {
      */
     public static Player getMuted(String uuid) {
         AtomicReference<Player> found = new AtomicReference<>(new Player(null, null, null, null));
-        Phenyl.getMutedPlayer().forEach(muted -> {
+        Phenyl.getInstance().getMutedPlayer().forEach(muted -> {
             if (muted.uuid() == null) return;
             if (muted.uuid().equals(uuid)) found.set(muted);
         });
@@ -139,7 +139,7 @@ public class Message {
      */
     public static Player getNoMessage(String uuid) {
         AtomicReference<Player> found = new AtomicReference<>(new Player(null, null, null, null));
-        Phenyl.getNoMessagePlayer().forEach(noMessaged -> {
+        Phenyl.getInstance().getNoMessagePlayer().forEach(noMessaged -> {
             if (noMessaged.uuid() == null) return;
             if (noMessaged.uuid().equals(uuid)) found.set(noMessaged);
         });

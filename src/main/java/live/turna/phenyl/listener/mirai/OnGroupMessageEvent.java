@@ -1,7 +1,7 @@
 package live.turna.phenyl.listener.mirai;
 
+import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
-import live.turna.phenyl.database.Database;
 import live.turna.phenyl.mirai.event.CGroupMessageEvent;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.*;
@@ -179,7 +179,7 @@ public class OnGroupMessageEvent implements Listener {
 
         // random message that needs to be forwarded in *command* mode.
         if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
-            String userName = Database.getBinding(senderID).mcname();
+            String userName = Phenyl.getInstance().getDatabase().getBinding(senderID).mcname();
             if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
             forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), null);
             return;

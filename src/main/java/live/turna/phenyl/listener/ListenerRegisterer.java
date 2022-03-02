@@ -15,18 +15,20 @@ import net.md_5.bungee.api.ProxyServer;
  * @since 2021/12/4 22:42
  */
 public class ListenerRegisterer {
-    public static void registerListeners() {
+    private final transient Phenyl phenyl = Phenyl.getInstance();
+
+    public void registerListeners() {
         // Mirai
-        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnBotOfflineEvent());
-        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnGroupMessageEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnBotOfflineEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnGroupMessageEvent());
 
         // Bungee
-        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnChatEvent());
-        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnLoginEvent());
-        ProxyServer.getInstance().getPluginManager().registerListener(Phenyl.getInstance(), new OnPlayerDisconnectEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnChatEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnLoginEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnPlayerDisconnectEvent());
     }
 
-    public static void unregisterListeners() {
-        ProxyServer.getInstance().getPluginManager().unregisterListeners(Phenyl.getInstance());
+    public void unregisterListeners() {
+        ProxyServer.getInstance().getPluginManager().unregisterListeners(phenyl);
     }
 }

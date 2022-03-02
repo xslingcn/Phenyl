@@ -27,6 +27,7 @@ import static live.turna.phenyl.utils.Bind.isValidQQID;
  */
 public class PhenylConfiguration {
     private static Configuration config;
+    private static final Phenyl phenyl = Phenyl.getInstance();
 
     // General configuration
     public static String locale = "en";
@@ -94,10 +95,10 @@ public class PhenylConfiguration {
     /**
      * Load configurations.
      */
-    public static void loadPhenylConfiguration() {
-        File configFile = new File(Phenyl.getInstance().getDataFolder(), "config.yml");
+    public void loadPhenylConfiguration() {
+        File configFile = new File(phenyl.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
-            try (InputStream in = Phenyl.getInstance().getResourceAsStream("config.yml")) {
+            try (InputStream in = phenyl.getResourceAsStream("config.yml")) {
                 Files.copy(in, configFile.toPath());
             } catch (IOException e) {
                 LOGGER.error(i18n("createConfigFail", e.getLocalizedMessage()));
@@ -105,7 +106,7 @@ public class PhenylConfiguration {
             }
         }
         try {
-            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(Phenyl.getInstance().getDataFolder(), "config.yml"));
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(phenyl.getDataFolder(), "config.yml"));
         } catch (IOException e) {
             LOGGER.error(i18n("readConfigFail", e.getLocalizedMessage()));
             if (PhenylConfiguration.debug) e.printStackTrace();
@@ -183,7 +184,7 @@ public class PhenylConfiguration {
      * @throws IllegalArgumentException invalidGroupID: Group ID not valid. Checked by {@link live.turna.phenyl.utils.Bind#isValidQQID(String)}.
      * @throws IllegalArgumentException invalidStorage: Database type not valid.
      */
-    public static boolean postConfiguration() {
+    public boolean postConfiguration() {
         Integer latestVersion = 2;
 
         if ((forward_mode.equalsIgnoreCase("sync") && qq_to_server_format.contains("%username%"))
@@ -218,7 +219,7 @@ public class PhenylConfiguration {
      * @param path The keyword to locate YAML section.
      * @return HashMap $map
      */
-    private static HashMap<String, String> getMap(String path) {
+    private HashMap<String, String> getMap(String path) {
         Collection<String> keys;
         HashMap<String, String> map = new HashMap<>();
         keys = config.getSection(path).getKeys();

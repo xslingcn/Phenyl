@@ -24,13 +24,14 @@ import static live.turna.phenyl.message.I18n.i18n;
  * @since 2022/1/19 19:44
  */
 public class DependencyLoader {
+    private final transient Phenyl phenyl = Phenyl.getInstance();
 
     /**
      * Get and load all dependencies.
      *
      * @return Whether succeeded loading the dependencies.
      */
-    public static boolean onEnable() {
+    public boolean onEnable() {
         Set<Dependency> dependencies = getDependencies();
         try {
             loadDependencies(dependencies);
@@ -47,7 +48,7 @@ public class DependencyLoader {
      *
      * @return A set of dependencies.
      */
-    private static Set<Dependency> getDependencies() {
+    private Set<Dependency> getDependencies() {
         Set<Dependency> dependencies = new LinkedHashSet<>();
         switch (PhenylConfiguration.storage) {
             case "sqlite" -> dependencies.add(Dependency.SQLITE);
@@ -75,9 +76,9 @@ public class DependencyLoader {
      * @param dependencies The dependencies to be loaded.
      * @throws IOException Failed retrieving a dependency from remote or local.
      */
-    private static void loadDependencies(Set<Dependency> dependencies) throws IOException {
+    private void loadDependencies(Set<Dependency> dependencies) throws IOException {
         for (Dependency dependency : dependencies) {
-            Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) Phenyl.getInstance().getClass().getClassLoader()))
+            Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) phenyl.getClass().getClassLoader()))
                     .get().addURL(getDependency(dependency).toURI().toURL());
             LOGGER.info(i18n("libLoaded", dependency.getFileName()));
         }
@@ -90,9 +91,9 @@ public class DependencyLoader {
      * @return The jar file.
      * @throws IOException Failed while processing files.
      */
-    private static File getDependency(Dependency dependency) throws IOException {
-        File jarFile = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName());
-        File md5File = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
+    private File getDependency(Dependency dependency) throws IOException {
+        File jarFile = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName());
+        File md5File = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
         if (jarFile.exists() && checkDependency(dependency)) return jarFile;
         for (DependencyRepository repo : DependencyRepository.values()) {
             if (jarFile.exists() && !jarFile.delete())
@@ -124,9 +125,9 @@ public class DependencyLoader {
      * @return Whether the dependency matches.
      * @throws IOException Failed reading jar or md5 file.
      */
-    private static boolean checkDependency(Dependency dependency) throws IOException {
-        File jarFile = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName());
-        File md5File = new File(Phenyl.getInstance().getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
+    private boolean checkDependency(Dependency dependency) throws IOException {
+        File jarFile = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName());
+        File md5File = new File(phenyl.getDataFolder(), "libs/" + dependency.getFileName() + ".md5");
         if (!jarFile.exists() || !md5File.exists()) return false;
         try {
             String jarDigest = toHex(MessageDigest.getInstance("md5").digest(Files.readAllBytes(jarFile.toPath())));
@@ -144,7 +145,7 @@ public class DependencyLoader {
      * @param bytes The byte array to be converted.
      * @return The result string.
      */
-    public static String toHex(byte[] bytes) {
+    static String toHex(byte[] bytes) {
         char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
