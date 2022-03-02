@@ -28,31 +28,4 @@ public record BindMap(String userName, Long userID, String code) {
         return userID.equals(key);
     }
 
-    /**
-     * Get userName string.
-     *
-     * @return The userName.
-     */
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
-     * Get code string.
-     *
-     * @return The code.
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Get userID.
-     *
-     * @return The userID.
-     */
-    public Long getUserID() {
-        return userID;
-    }
-
 }

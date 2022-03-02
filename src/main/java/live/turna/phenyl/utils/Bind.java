@@ -79,17 +79,17 @@ public class Bind {
         if (bindResult == null) throw new IllegalArgumentException(i18n("invalidCode"));
 
         // Failed while updating the database.
-        if (!bindResult.getQuerySucceeded()) throw new IllegalArgumentException(i18n("bindFail"));
+        if (!bindResult.querySucceeded()) throw new IllegalArgumentException(i18n("bindFail"));
 
         //The first time someone attempts binding and succeeded.
-        if (bindResult.getOldUserName() == null) return i18n("bindSuccess", bindResult.getUserName());
+        if (bindResult.oldUserName() == null) return i18n("bindSuccess", bindResult.userName());
 
         // Binding found in database and the request is the same as the existing, not updating.
-        if (bindResult.getOldUserName().equals(bindResult.getUserName()))
+        if (bindResult.oldUserName().equals(bindResult.userName()))
             return i18n("bindNoChange");
 
         //Update binding succeeded.
-        return i18n("changeBind", bindResult.getOldUserName(), bindResult.getUserName());
+        return i18n("changeBind", bindResult.oldUserName(), bindResult.userName());
     }
 
     /**
@@ -111,16 +111,16 @@ public class Bind {
         if (bindResult == null) throw new IllegalArgumentException(i18n("invalidCode"));
 
         // Failed while updating the database.
-        if (!bindResult.getQuerySucceeded()) throw new IllegalArgumentException(i18n("bindFail"));
+        if (!bindResult.querySucceeded()) throw new IllegalArgumentException(i18n("bindFail"));
 
         //The first time someone attempts binding and succeeded.
-        if (bindResult.getOldUserName() == null) return i18n("bindSuccess", bindResult.getUserName());
+        if (bindResult.oldUserName() == null) return i18n("bindSuccess", bindResult.userName());
 
         // Binding found in database and the request is the same as the existing, not updating.
-        if (bindResult.getOldUserName().equals(bindResult.getUserName()))
+        if (bindResult.oldUserName().equals(bindResult.userName()))
             return i18n("bindNoChange");
 
         //Update binding succeeded.
-        return i18n("changeBind", bindResult.getOldUserName(), bindResult.getUserName());
+        return i18n("changeBind", bindResult.oldUserName(), bindResult.userName());
     }
 }

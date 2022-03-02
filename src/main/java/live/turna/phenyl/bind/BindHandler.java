@@ -40,11 +40,11 @@ public class BindHandler {
     @Nullable
     public static BindResult handleConfirm(String userName, String code) {
         BindArray result = userBindings.get(code);
-        if (result != null && result.instance != null) {
-            for (BindMap entry : result.instance) {
+        if (result != null) {
+            for (BindMap entry : result) {
                 BindMap match = entry.match(code) ? entry : null;
                 if (match != null) {
-                    if (match.getUserName().equals(userName)) {
+                    if (match.userName().equals(userName)) {
                         String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
                         Long userID = match.userID();
                         Player oldBinding = Database.getBinding(userID);
@@ -73,12 +73,12 @@ public class BindHandler {
     @Nullable
     public static BindResult handleConfirm(Long userID, String code) {
         BindArray result = userBindings.get(code);
-        if (result != null && result.instance != null) {
-            for (BindMap entry : result.instance) {
+        if (result != null) {
+            for (BindMap entry : result) {
                 BindMap match = entry.match(code) ? entry : null;
                 if (match != null) {
-                    if (match.getUserID().equals(userID)) {
-                        String userName = match.getUserName();
+                    if (match.userID().equals(userID)) {
+                        String userName = match.userName();
                         String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
                         Player oldBinding = Database.getBinding(userID);
                         userBindings.remove(match);
