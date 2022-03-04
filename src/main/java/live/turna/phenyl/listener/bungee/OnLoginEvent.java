@@ -83,12 +83,12 @@ public class OnLoginEvent implements Listener {
         CompletableFuture.supplyAsync(() -> {
             String uuid = e.getPlayer().getUniqueId().toString();
             String userName = e.getPlayer().getName();
-            if (!phenyl.getDatabase().getRegistered(uuid)) {
-                phenyl.getDatabase().registerPlayer(uuid, userName);
+            if (!phenyl.getStorage().getRegistered(uuid)) {
+                phenyl.getStorage().registerPlayer(uuid, userName);
                 if (PhenylConfiguration.new_player_greeting)
                     sendMessage(i18n("newPlayer", userName), e.getPlayer());
             }
-            return phenyl.getDatabase().updateUserName(uuid, e.getPlayer().getName());
+            return phenyl.getStorage().updateUserName(uuid, e.getPlayer().getName());
         }).orTimeout(3, TimeUnit.SECONDS);
     }
 }

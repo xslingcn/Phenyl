@@ -1,11 +1,13 @@
 package live.turna.phenyl.database;
 
+import live.turna.phenyl.database.sql.SQLExecutor;
+
 import java.util.List;
 
 /**
  * Data services.
  */
-public interface Storage extends SQLExecutor {
+public interface StorageImplementation extends SQLExecutor {
     /**
      * Try to register a player.
      *

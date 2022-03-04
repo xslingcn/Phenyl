@@ -49,14 +49,14 @@ public class BindHandler {
                     if (match.userName().equals(userName)) {
                         String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
                         Long userID = match.userID();
-                        Player oldBinding = phenyl.getDatabase().getBinding(userID);
+                        Player oldBinding = phenyl.getStorage().getBinding(userID);
                         userBindings.remove(match);
                         if (oldBinding.uuid() == null)
-                            return new BindResult(null, phenyl.getDatabase().addBinding(uuid, userID), userName);
+                            return new BindResult(null, phenyl.getStorage().addBinding(uuid, userID), userName);
                         if (oldBinding.uuid().equals(uuid))
                             return new BindResult(oldBinding.mcname(), true, userName);
-                        phenyl.getDatabase().removeBinding(oldBinding.uuid());
-                        return new BindResult(oldBinding.mcname(), phenyl.getDatabase().addBinding(uuid, userID), userName);
+                        phenyl.getStorage().removeBinding(oldBinding.uuid());
+                        return new BindResult(oldBinding.mcname(), phenyl.getStorage().addBinding(uuid, userID), userName);
                     }
                 }
             }
@@ -82,14 +82,14 @@ public class BindHandler {
                     if (match.userID().equals(userID)) {
                         String userName = match.userName();
                         String uuid = ProxyServer.getInstance().getPlayer(userName).getUniqueId().toString();
-                        Player oldBinding = phenyl.getDatabase().getBinding(userID);
+                        Player oldBinding = phenyl.getStorage().getBinding(userID);
                         userBindings.remove(match);
                         if (oldBinding.uuid() == null)
-                            return new BindResult(null, phenyl.getDatabase().addBinding(uuid, userID), userName);
+                            return new BindResult(null, phenyl.getStorage().addBinding(uuid, userID), userName);
                         if (oldBinding.uuid().equals(uuid))
                             return new BindResult(oldBinding.mcname(), true, userName);
-                        phenyl.getDatabase().removeBinding(oldBinding.uuid());
-                        return new BindResult(oldBinding.mcname(), phenyl.getDatabase().addBinding(uuid, userID), userName);
+                        phenyl.getStorage().removeBinding(oldBinding.uuid());
+                        return new BindResult(oldBinding.mcname(), phenyl.getStorage().addBinding(uuid, userID), userName);
                     }
                 }
             }

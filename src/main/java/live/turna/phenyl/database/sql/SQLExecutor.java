@@ -1,4 +1,6 @@
-package live.turna.phenyl.database;
+package live.turna.phenyl.database.sql;
+
+import live.turna.phenyl.database.Player;
 
 import java.util.List;
 

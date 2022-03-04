@@ -2,8 +2,9 @@ package live.turna.phenyl;
 
 import live.turna.phenyl.commands.CommandHandler;
 import live.turna.phenyl.config.PhenylConfiguration;
-import live.turna.phenyl.database.Database;
+import live.turna.phenyl.database.StorageFactory;
 import live.turna.phenyl.database.Player;
+import live.turna.phenyl.database.StorageImplementation;
 import live.turna.phenyl.dependency.DependencyLoader;
 import live.turna.phenyl.dependency.Log4jLoader;
 import live.turna.phenyl.listener.ListenerRegisterer;
@@ -27,7 +28,7 @@ public final class Phenyl extends Plugin {
 
     private I18n i18n;
     private MiraiHandler mirai;
-    private Database database;
+    private StorageImplementation storage;
     private List<Player> mutedPlayer = new ArrayList<>();
     private List<Player> noMessagePlayer = new ArrayList<>();
 
@@ -41,8 +42,8 @@ public final class Phenyl extends Plugin {
         return i18n;
     }
 
-    public Database getDatabase() {
-        return database;
+    public StorageImplementation getStorage() {
+        return storage;
     }
 
     public List<Player> getMutedPlayer() {
@@ -82,10 +83,9 @@ public final class Phenyl extends Plugin {
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl", "", "ph"));
         if (!new PhenylConfiguration().postConfiguration()) return;
 
-        database = new Database();
-        database.onEnable();
-        mutedPlayer = database.getMutedPlayer();
-        noMessagePlayer = database.getNoMessagePlayer();
+        storage = new StorageFactory().createStorage(PhenylConfiguration.storage.toLowerCase());
+        mutedPlayer = storage.getMutedPlayer();
+        noMessagePlayer = storage.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
             mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
             mirai.onEnable();
@@ -98,7 +98,7 @@ public final class Phenyl extends Plugin {
     public boolean reload() {
         mutedPlayer = new ArrayList<>();
         noMessagePlayer = new ArrayList<>();
-        database.onDisable();
+        storage.onDisable();
 
         new PhenylConfiguration().loadPhenylConfiguration();
         Logging.onEnable();
@@ -110,9 +110,9 @@ public final class Phenyl extends Plugin {
         if (mirai != null) mirai.onDisable();
         mirai = null;
 
-        database.onEnable();
-        mutedPlayer = database.getMutedPlayer();
-        noMessagePlayer = database.getNoMessagePlayer();
+        storage = new StorageFactory().createStorage(PhenylConfiguration.storage.toLowerCase());
+        mutedPlayer = storage.getMutedPlayer();
+        noMessagePlayer = storage.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
             mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
             mirai.onEnable();

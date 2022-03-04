@@ -123,12 +123,12 @@ public class CommandHandler extends Command implements TabExecutor {
                         // check if the player is already muted
                         Player muted = getMuted(target.getUniqueId().toString());
                         if (muted.uuid() != null) {
-                            phenyl.getDatabase().updateMutedPlayer(muted.uuid(), false);
+                            phenyl.getStorage().updateMutedPlayer(muted.uuid(), false);
                             phenyl.getMutedPlayer().remove(muted);
                             sendMessage(i18n("unMutedPlayer", args[1]), sender);
                         } else {
-                            phenyl.getDatabase().updateMutedPlayer(target.getUniqueId().toString(), true);
-                            phenyl.getMutedPlayer().add(phenyl.getDatabase().getBinding(target.getUniqueId().toString()));
+                            phenyl.getStorage().updateMutedPlayer(target.getUniqueId().toString(), true);
+                            phenyl.getMutedPlayer().add(phenyl.getStorage().getBinding(target.getUniqueId().toString()));
                             sendMessage(i18n("mutedPlayer", args[1]), sender);
                         }
                     } else sendMessage(i18n("illegalArgumentPhenyl"), sender);
@@ -182,12 +182,12 @@ public class CommandHandler extends Command implements TabExecutor {
                                     // check if the player is already nomessaged
                                     Player noMessaged = getNoMessage(player.getUniqueId().toString());
                                     if (noMessaged.uuid() != null) {
-                                        phenyl.getDatabase().updateNoMessagePlayer(noMessaged.uuid(), false);
+                                        phenyl.getStorage().updateNoMessagePlayer(noMessaged.uuid(), false);
                                         phenyl.getNoMessagePlayer().remove(noMessaged);
                                         sendMessage(i18n("receiveMessage"), player);
                                     } else {
-                                        phenyl.getDatabase().updateNoMessagePlayer(player.getUniqueId().toString(), true);
-                                        phenyl.getNoMessagePlayer().add(phenyl.getDatabase().getBinding(player.getUniqueId().toString()));
+                                        phenyl.getStorage().updateNoMessagePlayer(player.getUniqueId().toString(), true);
+                                        phenyl.getNoMessagePlayer().add(phenyl.getStorage().getBinding(player.getUniqueId().toString()));
                                         sendMessage(i18n("noMessage"), player);
                                     }
                                 } else sendMessage(i18n("illegalArgumentPhenyl"), player);

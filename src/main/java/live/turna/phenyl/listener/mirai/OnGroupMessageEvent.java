@@ -179,7 +179,7 @@ public class OnGroupMessageEvent implements Listener {
 
         // random message that needs to be forwarded in *command* mode.
         if (PhenylConfiguration.forward_mode.equalsIgnoreCase("command")) {
-            String userName = Phenyl.getInstance().getDatabase().getBinding(senderID).mcname();
+            String userName = Phenyl.getInstance().getStorage().getBinding(senderID).mcname();
             if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
             forwardToBungee(group, senderID, messageString.substring(1), event.getSenderNameCardOrNick(), null);
             return;

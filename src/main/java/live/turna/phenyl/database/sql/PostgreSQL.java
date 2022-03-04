@@ -1,7 +1,9 @@
-package live.turna.phenyl.database;
+package live.turna.phenyl.database.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.database.Player;
+import live.turna.phenyl.database.StorageImplementation;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,11 +17,11 @@ import static live.turna.phenyl.message.I18n.i18n;
  * <b>PostgreSQL</b><br>
  * PostgreSQL handler.
  *
- * @see live.turna.phenyl.database.SQLExecutor
- * @see live.turna.phenyl.database.Storage
+ * @see SQLExecutor
+ * @see StorageImplementation
  * @since 2021/12/6 1:53
  */
-public class PostgreSQL implements Storage {
+public class PostgreSQL implements StorageImplementation {
     private HikariDataSource dataSource;
 
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS %splayer (" +
@@ -42,7 +44,7 @@ public class PostgreSQL implements Storage {
     private static final String insertPlayer = "INSERT INTO %splayer(%s) VALUES('%s') ON CONFLICT DO NOTHING;";
     private static final String insertMessage = "INSERT INTO %smessage(%s) VALUES(%s) ON CONFLICT DO NOTHING;";
 
-    PostgreSQL(HikariDataSource ds) {
+    public PostgreSQL(HikariDataSource ds) {
         dataSource = ds;
         initTables();
     }

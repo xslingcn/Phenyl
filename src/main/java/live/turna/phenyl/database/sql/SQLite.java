@@ -1,6 +1,8 @@
-package live.turna.phenyl.database;
+package live.turna.phenyl.database.sql;
 
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.database.Player;
+import live.turna.phenyl.database.StorageImplementation;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
@@ -16,13 +18,13 @@ import static live.turna.phenyl.message.I18n.i18n;
  * <b>SQLite</b><br>
  * SQLite handler.
  *
- * @see live.turna.phenyl.database.SQLExecutor
- * @see live.turna.phenyl.database.Storage
+ * @see SQLExecutor
+ * @see StorageImplementation
  * @since 2021/12/5 21:08
  */
-public class SQLite implements Storage {
-    private Connection playerConnection;
-    private Connection messageConnection;
+public class SQLite implements StorageImplementation {
+    private final Connection playerConnection;
+    private final Connection messageConnection;
     private Statement player;
     private Statement message;
 
@@ -46,7 +48,7 @@ public class SQLite implements Storage {
     private static final String insertPlayer = "INSERT OR IGNORE INTO player(%s) VALUES('%s');";
     private static final String insertMessage = "INSERT INTO message(%s) VALUES(%s);";
 
-    SQLite(Connection playerC, @Nullable Connection messageC) {
+    public SQLite(Connection playerC, @Nullable Connection messageC) {
         playerConnection = playerC;
         messageConnection = messageC;
         initTables();

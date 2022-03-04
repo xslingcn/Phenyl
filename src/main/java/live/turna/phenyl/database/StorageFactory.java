@@ -4,31 +4,36 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
+import live.turna.phenyl.database.sql.MySQL;
+import live.turna.phenyl.database.sql.PostgreSQL;
+import live.turna.phenyl.database.sql.SQLite;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.List;
 
 import static live.turna.phenyl.Phenyl.LOGGER;
 import static live.turna.phenyl.message.I18n.i18n;
 
 /**
- * <b>Database</b><br>
- * Encapsulate all database operation methods.
+ * <b>StorageFactory</b><br>
+ * Create the specified storage instance.
  *
- * @see live.turna.phenyl.database.Storage
+ * @see StorageImplementation
  * @since 2021/12/6 2:43
  */
-public class Database {
+public class StorageFactory {
     private final Phenyl phenyl = Phenyl.getInstance();
-    private Storage implementation;
+    private StorageImplementation implementation;
 
     /**
-     * Initialize database connection and/or files.
+     * Initialize storage.
+     *
+     * @param storageType The type of storage.
+     * @return The implementation instance of storage.
      */
-    public void onEnable() {
-        switch (PhenylConfiguration.storage.toLowerCase()) {
+    public StorageImplementation createStorage(String storageType) {
+        switch (storageType) {
             case "sqlite" -> {
                 File playerFile = new File(phenyl.getDataFolder(), "player.db");
                 Connection playerConnection;
@@ -96,69 +101,8 @@ public class Database {
                 implementation = new PostgreSQL(postgresDataSource);
                 LOGGER.info(i18n("databaseSucceeded", "PostgreSQL"));
             }
+            default -> implementation = null;
         }
-    }
-
-    public void onDisable() {
-        if (implementation != null) {
-            implementation.onDisable();
-            implementation = null;
-        }
-    }
-
-    public boolean registerPlayer(String uuid, String mcname) {
-        return implementation.registerPlayer(uuid, mcname);
-    }
-
-    public boolean getRegistered(String uuid) {
-        return implementation.getRegistered(uuid);
-    }
-
-    public boolean updateUserName(String uuid, String userName) {
-        return implementation.updateUserName(uuid, userName);
-    }
-
-    public boolean updateMutedPlayer(String uuid, Boolean toggle) {
-        return implementation.updateMutedPlayer(uuid, toggle);
-    }
-
-    public boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
-        return implementation.updateNoMessagePlayer(uuid, toggle);
-    }
-
-    public List<Player> getMutedPlayer() {
-        return implementation.getMutedPlayer();
-    }
-
-    public List<Player> getNoMessagePlayer() {
-        return implementation.getNoMessagePlayer();
-    }
-
-    public boolean addBinding(String uuid, Long qqid) {
-        return implementation.addBinding(uuid, qqid);
-    }
-
-    public boolean removeBinding(String uuid) {
-        return implementation.removeBinding(uuid);
-    }
-
-    public Player getBinding(String uuid) {
-        return implementation.getBinding(uuid);
-    }
-
-    public Player getBinding(Long qqid) {
-        return implementation.getBinding(qqid);
-    }
-
-    public Integer getIDByUserName(String userName) {
-        return implementation.getIDByUserName(userName);
-    }
-
-    public boolean addMessage(String content, Long groupID, Long qqID) {
-        return implementation.addMessage(content, groupID, qqID);
-    }
-
-    public boolean addMessage(String content, String fromuuid) {
-        return implementation.addMessage(content, fromuuid);
+        return implementation;
     }
 }

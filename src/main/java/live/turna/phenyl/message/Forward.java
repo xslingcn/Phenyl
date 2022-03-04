@@ -58,9 +58,9 @@ public class Forward {
         }
         if (PhenylConfiguration.save_message) {
             messageString = messageString.replaceAll("'", "''");
-            phenyl.getDatabase().addMessage(messageString, group.getId(), senderID);
+            phenyl.getStorage().addMessage(messageString, group.getId(), senderID);
         }
-        String userName = phenyl.getDatabase().getBinding(senderID).mcname();
+        String userName = phenyl.getStorage().getBinding(senderID).mcname();
         if (PhenylConfiguration.forward_mode.equals("bind") && userName == null) return;
 
         String preText = PhenylConfiguration.qq_to_server_format
@@ -144,7 +144,7 @@ public class Forward {
         }
         if (PhenylConfiguration.save_message) {
             message = message.replaceAll("'", "''");
-            phenyl.getDatabase().addMessage(message, uuid);
+            phenyl.getStorage().addMessage(message, uuid);
         }
 
         // if matches an image url
