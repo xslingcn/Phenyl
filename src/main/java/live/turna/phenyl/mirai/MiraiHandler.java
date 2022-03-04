@@ -1,9 +1,9 @@
 package live.turna.phenyl.mirai;
 
 import live.turna.phenyl.Phenyl;
-import live.turna.phenyl.config.PhenylConfiguration;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
+import net.mamoe.mirai.network.LoginFailedException;
 import net.mamoe.mirai.utils.BotConfiguration;
 import net.mamoe.mirai.utils.LoggerAdapters;
 import org.apache.logging.log4j.LogManager;
@@ -24,39 +24,24 @@ import static live.turna.phenyl.utils.Mirai.*;
  */
 public class MiraiHandler {
 
-    private static Bot bot;
-    private static Long userID;
-    private static byte[] userPass;
-    private static BotConfiguration.MiraiProtocol protocol;
-    private static File workingDir;
+    private Bot bot;
+    private final Long userID;
+    private final byte[] userPass;
+    private final BotConfiguration.MiraiProtocol protocol;
+    private final File workingDir;
 
     /**
      * Initialize MiraiHandler.
      *
-     * @param user_id   Bot's QQ id.
-     * @param user_pass Bot's QQ password.
-     * @param pro       The protocol to use.
+     * @param userID   Bot's QQ id.
+     * @param userPass Bot's QQ password.
+     * @param protocol The protocol to use.
      */
-    public MiraiHandler(String user_id, String user_pass, String pro) {
-        userID = Long.parseLong(user_id);
-        try {
-            workingDir = checkMiraiDir(new File(Phenyl.getInstance().getDataFolder(), "mirai"));
-        } catch (IOException e) {
-            LOGGER.error(i18n("createMiraiDirFail"));
-            if (PhenylConfiguration.debug) e.printStackTrace();
-        }
-        try {
-            protocol = matchProtocol(pro);
-        } catch (IllegalArgumentException e) {
-            LOGGER.error(i18n("matchProtocolFail"));
-            if (PhenylConfiguration.debug) e.printStackTrace();
-        }
-        try {
-            userPass = md5Digest(user_pass);
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(i18n("digestFail") + e.getLocalizedMessage());
-            if (PhenylConfiguration.debug) e.printStackTrace();
-        }
+    public MiraiHandler(String userID, String userPass, String protocol) throws IOException, NoSuchAlgorithmException {
+        this.userID = Long.parseLong(userID);
+        this.workingDir = checkMiraiDir(new File(Phenyl.getInstance().getDataFolder(), "mirai"));
+        this.protocol = matchProtocol(protocol);
+        this.userPass = md5Digest(userPass);
     }
 
     /**
@@ -83,16 +68,15 @@ public class MiraiHandler {
         return bot;
     }
 
-    public void onEnable() {
+    public void onEnable() throws RuntimeException {
         try {
             LOGGER.info(i18n("loggingIn"));
             configureBot();
             MiraiEvent.listenEvents(bot);
             bot.login();
             LOGGER.info(i18n("logInSuccessNoColor", bot.getNick()));
-        } catch (Exception e) {
-            LOGGER.error(i18n("logInFail", e.getLocalizedMessage()));
-            if (PhenylConfiguration.debug) e.printStackTrace();
+        } catch (LoginFailedException e) {
+            throw new RuntimeException(i18n("logInFail", e.getLocalizedMessage()));
         }
     }
 
@@ -103,12 +87,16 @@ public class MiraiHandler {
         if (!nick.isEmpty()) LOGGER.info(i18n("logOutSuccessNoColor", nick));
     }
 
-    public boolean logIn() {
+    public boolean logIn() throws RuntimeException {
         if (!bot.isOnline()) {
-            configureBot();
-            bot.login();
-            MiraiEvent.listenEvents(bot);
-            return true;
+            try {
+                configureBot();
+                bot.login();
+                MiraiEvent.listenEvents(bot);
+                return true;
+            } catch (LoginFailedException e) {
+                throw new RuntimeException(i18n("logInFail", e.getLocalizedMessage()));
+            }
         } else return false;
     }
 

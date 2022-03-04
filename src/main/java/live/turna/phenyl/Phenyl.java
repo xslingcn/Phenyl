@@ -95,10 +95,16 @@ public final class Phenyl extends Plugin {
         mutedPlayer = storage.getMutedPlayer();
         noMessagePlayer = storage.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
-            mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-            mirai.onEnable();
-            listenerManager.register();
-            return true;
+            try {
+                mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+                mirai.onEnable();
+                listenerManager.register();
+                return true;
+            } catch (Exception e) {
+                LOGGER.error(e.getLocalizedMessage());
+                if (PhenylConfiguration.debug) e.printStackTrace();
+                return false;
+            }
         });
         new Metrics(this, 14309);
     }
@@ -122,10 +128,16 @@ public final class Phenyl extends Plugin {
         mutedPlayer = storage.getMutedPlayer();
         noMessagePlayer = storage.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
-            mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-            mirai.onEnable();
-            listenerManager.register();
-            return true;
+            try {
+                mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
+                mirai.onEnable();
+                listenerManager.register();
+                return true;
+            } catch (Exception e) {
+                LOGGER.error(e.getLocalizedMessage());
+                if (PhenylConfiguration.debug) e.printStackTrace();
+                return false;
+            }
         });
         return true;
     }

@@ -39,10 +39,14 @@ public class Mirai {
      */
     public static byte[] md5Digest(String user_pass) throws NoSuchAlgorithmException {
         byte[] pass;
-        MessageDigest digest = MessageDigest.getInstance("MD5");
-        digest.update(user_pass.getBytes(StandardCharsets.UTF_8));
-        pass = digest.digest();
-        return pass;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(user_pass.getBytes(StandardCharsets.UTF_8));
+            pass = digest.digest();
+            return pass;
+        } catch (NoSuchElementException e) {
+            throw new NoSuchAlgorithmException(i18n("digestFail") + e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -55,7 +59,7 @@ public class Mirai {
     public static File checkMiraiDir(File workingDir) throws IOException {
         if (!workingDir.exists()) {
             if (!workingDir.mkdir()) {
-                throw new IOException();
+                throw new IOException(i18n("createMiraiDirFail"));
             }
             LOGGER.info(i18n("createMiraiDir"));
         }
@@ -77,7 +81,7 @@ public class Mirai {
             protocol = BotConfiguration.MiraiProtocol.ANDROID_PAD;
         } else if (proString.equalsIgnoreCase("ANDROID_WATCH")) {
             protocol = BotConfiguration.MiraiProtocol.ANDROID_WATCH;
-        } else throw new IllegalArgumentException();
+        } else throw new IllegalArgumentException(i18n("matchProtocolFail"));
         return protocol;
     }
 
