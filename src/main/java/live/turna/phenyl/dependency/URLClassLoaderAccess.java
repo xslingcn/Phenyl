@@ -15,7 +15,7 @@ import static live.turna.phenyl.message.I18n.i18n;
  * <b>URLClassLoaderAccess</b><br>
  * Provides access to {@link URLClassLoader}#addURL using sun.misc.Unsafe.
  *
- * @author lucko (https://github.com/LuckPerms/LuckPerms)
+ * @author lucko (https://github.com/LuckPerms/LuckPerms) udner MIT license.
  * @author Vaishnav Anil (https://github.com/slimjar/slimjar)
  * @since 2022/3/2 20:49
  */

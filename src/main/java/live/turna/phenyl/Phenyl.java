@@ -7,7 +7,7 @@ import live.turna.phenyl.database.Player;
 import live.turna.phenyl.database.StorageImplementation;
 import live.turna.phenyl.dependency.DependencyLoader;
 import live.turna.phenyl.dependency.Log4jLoader;
-import live.turna.phenyl.listener.ListenerRegisterer;
+import live.turna.phenyl.listener.ListenerManager;
 import live.turna.phenyl.message.I18n;
 import live.turna.phenyl.mirai.MiraiHandler;
 import live.turna.phenyl.logger.Logging;
@@ -26,7 +26,10 @@ import java.util.concurrent.CompletableFuture;
 public final class Phenyl extends Plugin {
     private static Phenyl instance;
 
-    private I18n i18n;
+    private final I18n i18n;
+    private final PhenylConfiguration config;
+    private final ListenerManager listenerManager;
+
     private MiraiHandler mirai;
     private StorageImplementation storage;
     private List<Player> mutedPlayer = new ArrayList<>();
@@ -58,9 +61,15 @@ public final class Phenyl extends Plugin {
         return instance;
     }
 
+    public Phenyl() {
+        instance = this;
+        i18n = new I18n();
+        config = new PhenylConfiguration();
+        listenerManager = new ListenerManager();
+    }
+
     @Override
     public void onLoad() {
-        instance = this;
         if (!instance.getDataFolder().exists())
             if (!instance.getDataFolder().mkdir())
                 instance.getLogger().severe("Failed to create data folder: " + instance.getDataFolder());
@@ -74,14 +83,13 @@ public final class Phenyl extends Plugin {
 
     @Override
     public void onEnable() {
-        i18n = new I18n();
         i18n.onEnable();
-        new PhenylConfiguration().loadPhenylConfiguration();
+        config.loadPhenylConfiguration();
         Logging.onEnable();
         i18n.updateLocale(PhenylConfiguration.locale);
         new DependencyLoader().onEnable();
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new CommandHandler("phenyl", "", "ph"));
-        if (!new PhenylConfiguration().postConfiguration()) return;
+        if (!config.postConfiguration()) return;
 
         storage = new StorageFactory().createStorage(PhenylConfiguration.storage.toLowerCase());
         mutedPlayer = storage.getMutedPlayer();
@@ -89,7 +97,7 @@ public final class Phenyl extends Plugin {
         CompletableFuture.supplyAsync(() -> {
             mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
             mirai.onEnable();
-            new ListenerRegisterer().registerListeners();
+            listenerManager.register();
             return true;
         });
         new Metrics(this, 14309);
@@ -100,12 +108,12 @@ public final class Phenyl extends Plugin {
         noMessagePlayer = new ArrayList<>();
         storage.onDisable();
 
-        new PhenylConfiguration().loadPhenylConfiguration();
+        config.loadPhenylConfiguration();
         Logging.onEnable();
         i18n.updateLocale(PhenylConfiguration.locale);
-        new ListenerRegisterer().unregisterListeners();
+        listenerManager.unregister();
 
-        if (!new PhenylConfiguration().postConfiguration()) return false;
+        if (!config.postConfiguration()) return false;
         if (!new DependencyLoader().onEnable()) return false;
         if (mirai != null) mirai.onDisable();
         mirai = null;
@@ -116,7 +124,7 @@ public final class Phenyl extends Plugin {
         CompletableFuture.supplyAsync(() -> {
             mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
             mirai.onEnable();
-            new ListenerRegisterer().registerListeners();
+            listenerManager.register();
             return true;
         });
         return true;
@@ -124,14 +132,9 @@ public final class Phenyl extends Plugin {
 
     @Override
     public void onDisable() {
-        mutedPlayer = null;
-        noMessagePlayer = null;
-        database.onDisable();
-        database = null;
-        new ListenerRegisterer().unregisterListeners();
+        storage.onDisable();
+        listenerManager.unregister();
         if (mirai != null) mirai.onDisable();
-        mirai = null;
         i18n.onDisable();
-        i18n = null;
     }
 }

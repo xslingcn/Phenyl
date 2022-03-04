@@ -14,10 +14,10 @@ import net.md_5.bungee.api.ProxyServer;
  *
  * @since 2021/12/4 22:42
  */
-public class ListenerRegisterer {
+public class ListenerManager {
     private final transient Phenyl phenyl = Phenyl.getInstance();
 
-    public void registerListeners() {
+    public void register() {
         // Mirai
         ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnBotOfflineEvent());
         ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnGroupMessageEvent());
@@ -28,7 +28,7 @@ public class ListenerRegisterer {
         ProxyServer.getInstance().getPluginManager().registerListener(phenyl, new OnPlayerDisconnectEvent());
     }
 
-    public void unregisterListeners() {
+    public void unregister() {
         ProxyServer.getInstance().getPluginManager().unregisterListeners(phenyl);
     }
 }
