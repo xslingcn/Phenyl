@@ -3,7 +3,6 @@ package live.turna.phenyl.database.sql;
 import com.zaxxer.hikari.HikariDataSource;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Player;
-import live.turna.phenyl.database.StorageImplementation;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,11 +16,11 @@ import static live.turna.phenyl.message.I18n.i18n;
  * <b>MySQL</b><br>
  * MySQL handler.
  *
- * @see SQLExecutor
- * @see StorageImplementation
+ * @see SQLQuery
+ * @see SQLStorage
  * @since 2021/12/6 1:53
  */
-public class MySQL implements StorageImplementation {
+public class MySQL implements SQLStorage {
     private HikariDataSource dataSource;
 
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS %splayer (" +

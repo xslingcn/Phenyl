@@ -4,7 +4,13 @@ import live.turna.phenyl.database.Player;
 
 import java.util.List;
 
-public interface SQLExecutor {
+/**
+ * <b>SQLQuery</b><br>
+ *
+ * @see SQLStorage
+ * @since 2022/3/4 21:18
+ */
+public interface SQLQuery {
     /**
      * Initialize tables for sqlite.
      */

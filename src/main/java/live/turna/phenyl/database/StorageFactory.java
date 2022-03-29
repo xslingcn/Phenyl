@@ -6,6 +6,7 @@ import live.turna.phenyl.Phenyl;
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.sql.MySQL;
 import live.turna.phenyl.database.sql.PostgreSQL;
+import live.turna.phenyl.database.sql.SQLStorage;
 import live.turna.phenyl.database.sql.SQLite;
 
 import java.io.File;
@@ -19,12 +20,12 @@ import static live.turna.phenyl.message.I18n.i18n;
  * <b>StorageFactory</b><br>
  * Create the specified storage instance.
  *
- * @see StorageImplementation
+ * @see SQLStorage
  * @since 2021/12/6 2:43
  */
 public class StorageFactory {
     private final Phenyl phenyl = Phenyl.getInstance();
-    private StorageImplementation implementation;
+    private PhenylStorage implementation;
 
     /**
      * Initialize storage.
@@ -32,7 +33,7 @@ public class StorageFactory {
      * @param storageType The type of storage.
      * @return The implementation instance of storage.
      */
-    public StorageImplementation createStorage(String storageType) {
+    public PhenylStorage createStorage(String storageType) {
         switch (storageType) {
             case "sqlite" -> {
                 File playerFile = new File(phenyl.getDataFolder(), "player.db");

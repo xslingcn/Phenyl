@@ -1,13 +1,14 @@
 package live.turna.phenyl.database;
 
-import live.turna.phenyl.database.sql.SQLExecutor;
-
 import java.util.List;
 
 /**
- * Data services.
+ * <b>PhenylStorage</b><br>
+ * Base storage interface for Phenyl.
+ *
+ * @since 2022/3/29 20:52
  */
-public interface StorageImplementation extends SQLExecutor {
+public interface PhenylStorage {
     /**
      * Try to register a player.
      *
@@ -15,11 +16,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param mcname The player's Minecraft username.
      * @return Whether the queries succeeded.
      */
-    default boolean registerPlayer(String uuid, String mcname) {
-        if (getPlayer("uuid", uuid).id() == null)
-            return insertPlayer("uuid", uuid) && updatePlayer("mcname", mcname, "uuid", uuid);
-        return false;
-    }
+    boolean registerPlayer(String uuid, String mcname);
 
     /**
      * Get if a player is registered.
@@ -27,9 +24,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param uuid The player's Minecraft UUID.
      * @return True - player is registered; False - not registered.
      */
-    default boolean getRegistered(String uuid) {
-        return getPlayer("uuid", uuid).id() != null;
-    }
+    boolean getRegistered(String uuid);
 
     /**
      * Update the username if is null or does not match the param's.
@@ -38,13 +33,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param userName The player's Minecraft username.
      * @return True - the username needs to be updated and that is done successfully. False - no need to update username or query failed.
      */
-    default boolean updateUserName(String uuid, String userName) {
-        Player result = getPlayer("uuid", uuid);
-        if (result.mcname() == null || !result.mcname().equals(userName)) {
-            return updatePlayer("mcname", userName, "uuid", uuid);
-        }
-        return false;
-    }
+    boolean updateUserName(String uuid, String userName);
 
     /**
      * Update the player's muted setting.
@@ -53,9 +42,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param toggle Whether is muted.
      * @return Whether the query succeeded.
      */
-    default boolean updateMutedPlayer(String uuid, Boolean toggle) {
-        return updatePlayer("muted", toggle ? "1" : "0", "uuid", uuid);
-    }
+    boolean updateMutedPlayer(String uuid, Boolean toggle);
 
     /**
      * Update the player's nomessage setting.
@@ -64,27 +51,21 @@ public interface StorageImplementation extends SQLExecutor {
      * @param toggle Whether is muted.
      * @return Whether the query succeeded.
      */
-    default boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
-        return updatePlayer("nomessage", toggle ? "1" : "0", "uuid", uuid);
-    }
+    boolean updateNoMessagePlayer(String uuid, Boolean toggle);
 
     /**
      * Get the list of muted players.
      *
      * @return An empty list if no player is muted, or a list of player instances.
      */
-    default List<Player> getMutedPlayer() {
-        return getPlayerList("muted", "1");
-    }
+    List<Player> getMutedPlayer();
 
     /**
      * Get the list of nomessaged players.
      *
      * @return An empty list if no player is nomessaged, or a list of player instances.
      */
-    default List<Player> getNoMessagePlayer() {
-        return getPlayerList("nomessage", "1");
-    }
+    List<Player> getNoMessagePlayer();
 
     /**
      * Add a binding.
@@ -93,9 +74,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param qqid The player's QQ ID.
      * @return True - both Minecraft username and QQ ID are successfully added to database. False - query failed.
      */
-    default boolean addBinding(String uuid, Long qqid) {
-        return updatePlayer("qqid", qqid.toString(), "uuid", uuid);
-    }
+    boolean addBinding(String uuid, Long qqid);
 
     /**
      * Remove a player's QQ-UUID binding by setting the qqid column to NULL.
@@ -103,29 +82,23 @@ public interface StorageImplementation extends SQLExecutor {
      * @param uuid The player's Minecraft UUID.
      * @return True - The binding is successfully removed. False - query failed.
      */
-    default boolean removeBinding(String uuid) {
-        return updatePlayer("qqid", "NULL", "uuid", uuid);
-    }
+    boolean removeBinding(String uuid);
 
     /**
      * Get player by Minecraft UUID.
      *
      * @param uuid The player's Minecraft UUID.
-     * @return Player instance gotten from {@link #getPlayer(String, String)}.
+     * @return Player instance.
      */
-    default Player getBinding(String uuid) {
-        return getPlayer("uuid", uuid);
-    }
+    Player getBinding(String uuid);
 
     /**
      * Get player username by QQ ID.
      *
      * @param qqid The player's QQ ID.
-     * @return Player instance gotten from {@link #getPlayer(String, String)}.
+     * @return Player instance.
      */
-    default Player getBinding(Long qqid) {
-        return getPlayer("qqid", qqid.toString());
-    }
+    Player getBinding(Long qqid);
 
     /**
      * Get the player id by Minecraft username.
@@ -133,9 +106,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param userName The player's Minecraft username.
      * @return Corresponding id if found, null if not.
      */
-    default Integer getIDByUserName(String userName) {
-        return getPlayer("mcname", userName).id();
-    }
+    Integer getIDByUserName(String userName);
 
     /**
      * Add a message from QQ group.<br>
@@ -147,13 +118,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param qqID    The sender's QQ ID.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    default boolean addMessage(String content, Long groupID, Long qqID) {
-        Player result = getPlayer("qqid", qqID.toString());
-        if (result.uuid() != null)
-            return insertMessage("content,fromid,fromuuid,fromgroup,fromqqid", String.format("'%s',%s,'%s',%s,%s", content, result.id(), result.uuid(), groupID.toString(), qqID));
-        else
-            return insertMessage("content,fromgroup,fromqqid", String.format("'%s',%s,%s", content, groupID.toString(), qqID));
-    }
+    boolean addMessage(String content, Long groupID, Long qqID);
 
     /**
      * Add a message from Minecraft chat.
@@ -164,12 +129,7 @@ public interface StorageImplementation extends SQLExecutor {
      * @param fromuuid The sender's Minecraft UUID.
      * @return True - the insert query was done successfully. False - query failed.
      */
-    default boolean addMessage(String content, String fromuuid) {
-        Player result = getPlayer("uuid", fromuuid);
-        if (result.qqid() != null)
-            return insertMessage("content,fromid,fromqqid,fromuuid", String.format("'%s',%s,%s,'%s'", content, result.id(), result.qqid(), result.uuid()));
-        return insertMessage("content,fromid,fromuuid", String.format("'%s',%s,'%s'", content, result.id(), fromuuid));
-    }
+    boolean addMessage(String content, String fromuuid);
 
     /**
      * Close all connections.

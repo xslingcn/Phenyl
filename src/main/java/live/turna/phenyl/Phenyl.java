@@ -2,15 +2,15 @@ package live.turna.phenyl;
 
 import live.turna.phenyl.commands.CommandHandler;
 import live.turna.phenyl.config.PhenylConfiguration;
-import live.turna.phenyl.database.StorageFactory;
+import live.turna.phenyl.database.PhenylStorage;
 import live.turna.phenyl.database.Player;
-import live.turna.phenyl.database.StorageImplementation;
+import live.turna.phenyl.database.StorageFactory;
 import live.turna.phenyl.dependency.DependencyLoader;
 import live.turna.phenyl.dependency.Log4jLoader;
 import live.turna.phenyl.listener.ListenerManager;
+import live.turna.phenyl.logger.Logging;
 import live.turna.phenyl.message.I18n;
 import live.turna.phenyl.mirai.MiraiHandler;
-import live.turna.phenyl.logger.Logging;
 import live.turna.phenyl.utils.Metrics;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -31,7 +31,7 @@ public final class Phenyl extends Plugin {
     private final ListenerManager listenerManager;
 
     private MiraiHandler mirai;
-    private StorageImplementation storage;
+    private PhenylStorage storage;
     private List<Player> mutedPlayer = new ArrayList<>();
     private List<Player> noMessagePlayer = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public final class Phenyl extends Plugin {
         return i18n;
     }
 
-    public StorageImplementation getStorage() {
+    public PhenylStorage getStorage() {
         return storage;
     }
 
@@ -92,20 +92,7 @@ public final class Phenyl extends Plugin {
         if (!config.postConfiguration()) return;
 
         storage = new StorageFactory().createStorage(PhenylConfiguration.storage.toLowerCase());
-        mutedPlayer = storage.getMutedPlayer();
-        noMessagePlayer = storage.getNoMessagePlayer();
-        CompletableFuture.supplyAsync(() -> {
-            try {
-                mirai = new MiraiHandler(PhenylConfiguration.user_id, PhenylConfiguration.user_pass, PhenylConfiguration.login_protocol);
-                mirai.onEnable();
-                listenerManager.register();
-                return true;
-            } catch (Exception e) {
-                LOGGER.error(e.getLocalizedMessage());
-                if (PhenylConfiguration.debug) e.printStackTrace();
-                return false;
-            }
-        });
+        initMirai();
         new Metrics(this, 14309);
     }
 
@@ -125,6 +112,11 @@ public final class Phenyl extends Plugin {
         mirai = null;
 
         storage = new StorageFactory().createStorage(PhenylConfiguration.storage.toLowerCase());
+        initMirai();
+        return true;
+    }
+
+    private void initMirai() {
         mutedPlayer = storage.getMutedPlayer();
         noMessagePlayer = storage.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
@@ -139,7 +131,6 @@ public final class Phenyl extends Plugin {
                 return false;
             }
         });
-        return true;
     }
 
     @Override

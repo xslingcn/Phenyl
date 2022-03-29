@@ -2,7 +2,6 @@ package live.turna.phenyl.database.sql;
 
 import live.turna.phenyl.config.PhenylConfiguration;
 import live.turna.phenyl.database.Player;
-import live.turna.phenyl.database.StorageImplementation;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
@@ -18,11 +17,11 @@ import static live.turna.phenyl.message.I18n.i18n;
  * <b>SQLite</b><br>
  * SQLite handler.
  *
- * @see SQLExecutor
- * @see StorageImplementation
+ * @see SQLQuery
+ * @see SQLStorage
  * @since 2021/12/5 21:08
  */
-public class SQLite implements StorageImplementation {
+public class SQLite implements SQLStorage {
     private final Connection playerConnection;
     private final Connection messageConnection;
     private Statement player;
