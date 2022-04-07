@@ -44,7 +44,7 @@ public class OnGroupMessageEvent implements Listener {
     public void onGroupMessage(CGroupMessageEvent e) {
         event = e;
         group = event.getGroup();
-        senderID = event.getSenderID();
+        senderID = event.getSenderId();
         message = event.getMessage();
         messageString = event.getMessageString();
 

@@ -21,8 +21,8 @@ public class OnBotOfflineEvent implements Listener {
     @EventHandler
     public void onBotOffline(CBotOfflineEvent event) {
         if (event.getType().equalsIgnoreCase("force"))
-            LOGGER.warn(i18n("occupiedOffline", String.valueOf(event.getID())));
+            LOGGER.warn(i18n("occupiedOffline", String.valueOf(event.getId())));
         else
-            LOGGER.warn(i18n("droppedOffline", String.valueOf(event.getID()), event.getType()));
+            LOGGER.warn(i18n("droppedOffline", String.valueOf(event.getId()), event.getType()));
     }
 }
