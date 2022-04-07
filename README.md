@@ -1,4 +1,4 @@
-<div align="center">
+<div style="text-align: center">
    <img width="160" src="https://s3.bmp.ovh/imgs/2022/01/665fd8e6ead3d2c8.png" alt="logo"></br></br>
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/turnalive/phenyl)](https://github.com/TurnALive/Phenyl/releases)
@@ -42,3 +42,6 @@ The generated jar file should be found in the project root's `build/libs` direct
 [LuckPerms/LuckPerms](https://github.com/LuckPerms/LuckPerms)
 
 [DreamVoid/MiraiMC](https://github.com/DreamVoid/MiraiMC)
+
+Thanks to [JetBrains](https://www.jetbrains.com/?from=phenyl) for allocating free open-source licences for IDEs such as [IntelliJ IDEA](https://www.jetbrains.com/idea/?from=phenyl).  
+[<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" width="200"/>](https://www.jetbrains.com/?from=phenyl)
