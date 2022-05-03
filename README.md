@@ -1,4 +1,4 @@
-<div style="text-align: center">
+<div align="center">
    <img width="160" src="https://s3.bmp.ovh/imgs/2022/01/665fd8e6ead3d2c8.png" alt="logo"></br></br>
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/turnalive/phenyl)](https://github.com/TurnALive/Phenyl/releases)
