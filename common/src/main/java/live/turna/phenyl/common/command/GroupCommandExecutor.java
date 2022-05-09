@@ -10,7 +10,6 @@ import net.mamoe.mirai.message.data.QuoteReply;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static live.turna.phenyl.common.message.I18n.i18n;
@@ -37,20 +36,20 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
     }
 
     public boolean match() throws IllegalArgumentException {
-        AtomicBoolean isCommand = new AtomicBoolean(true);
         List<GroupCommand> match = Stream.of(GroupCommand.values())
                 .filter(cmd -> cmd.prompt.equals(args[0])).toList();
-        if (match.isEmpty() && !Config.forward_mode.equals("command"))
-            throw new IllegalArgumentException(i18n("commandNotFound"));
+        if (match.isEmpty()) {
+            if (!Config.forward_mode.equals("command")) throw new IllegalArgumentException(i18n("commandNotFound"));
+            else return false;
+        }
         match.forEach(cmd -> {
             if (args.length != cmd.argCount) throw new IllegalArgumentException(i18n("illegalArgument"));
             if (cmd.prompt.equals(Config.bind_command)) bind();
             else if (cmd.prompt.equals(Config.confirm_command)) confirm();
             else if (cmd.prompt.equals(Config.online_command)) online();
             else if (cmd.prompt.equals(Config.status_command)) status();
-            else isCommand.set(false);
         });
-        return isCommand.get();
+        return true;
     }
 
     public void bind() throws IllegalArgumentException {
