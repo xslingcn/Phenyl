@@ -56,7 +56,7 @@ public abstract class OnGroupMessageEvent<P extends AbstractPhenyl> {
                         // if is random message that needs to be forwarded under `command` mode
                         String userName = phenyl.getStorage().getBinding(senderId).mcname();
                         if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
-                        phenyl.getForwarder().forwardToServer(group, senderId, messageString.substring(1), nameCardOrNick, null);
+                        phenyl.getForwarder().forwardToServer(group, senderId, messageString.substring(1), nameCardOrNick, images);
                     }
                     return true;
                 } catch (IllegalArgumentException ex) {
@@ -65,7 +65,6 @@ public abstract class OnGroupMessageEvent<P extends AbstractPhenyl> {
                             .append(ex.getMessage())
                             .build();
                     phenyl.getMessenger().sendGroup(group, reply);
-                    if (Config.debug) ex.printStackTrace();
                     return false;
                 }
             }).orTimeout(3, TimeUnit.SECONDS);
