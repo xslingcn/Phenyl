@@ -2,7 +2,7 @@ package live.turna.phenyl.common.command;
 
 public enum ServerCommand {
     WELCOME("", 1, ""),
-    HELP("help", 1, ""),
+    HELP("help", 1, "phenyl.use.bind"),
     RELOAD("reload", 1, "phenyl.admin.reload"),
     SLIDER("slider", 2, "phenyl.admin.login"),
     LOGIN("login", 1, "phenyl.admin.login"),
