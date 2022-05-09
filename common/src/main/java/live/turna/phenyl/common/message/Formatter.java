@@ -179,7 +179,7 @@ public class Formatter<P extends AbstractPhenyl> {
 
     Component groupImage() {
         int matchCount = 0;
-        String pattern = "\\u56fe\\u7247";
+        String pattern = "\\u56fe\\u7247|\\u52a8\\u753b\\u8868\\u60c5";
         Matcher match = Pattern.compile(pattern).matcher(messageString);
         List<String> other = List.of(messageString.split(pattern));
         TextComponent.Builder result = Component.text().content(altColor(format[0]));
