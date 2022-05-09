@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
 
 import static live.turna.phenyl.common.message.I18n.i18n;
@@ -24,10 +25,11 @@ public class ImageMessage {
     private final transient AbstractPhenyl phenyl;
     private final transient Logger LOGGER;
 
-    public ImageMessage(AbstractPhenyl plugin){
-        phenyl=plugin;
-        LOGGER=phenyl.getLogger();
+    public ImageMessage(AbstractPhenyl plugin) {
+        phenyl = plugin;
+        LOGGER = phenyl.getLogger();
     }
+
     /**
      * Draw an image message.
      *
@@ -157,13 +159,7 @@ public class ImageMessage {
      * @param url The remote URL.
      * @return The buffered image.
      */
-    public BufferedImage getImageFromURL(String url) {
-        try {
-            return ImageIO.read(new URL(url));
-        } catch (Exception e) {
-            LOGGER.error(i18n("getImageFail", e.getLocalizedMessage()));
-            if (Config.debug) e.printStackTrace();
-        }
-        return null;
+    public BufferedImage getImageFromURL(String url) throws IOException {
+        return ImageIO.read(new URL(url));
     }
 }

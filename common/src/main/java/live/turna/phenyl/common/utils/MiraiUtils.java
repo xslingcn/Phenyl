@@ -3,6 +3,7 @@ package live.turna.phenyl.common.utils;
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import static live.turna.phenyl.common.message.I18n.i18n;
@@ -32,9 +34,9 @@ public class MiraiUtils {
     private final transient AbstractPhenyl phenyl;
     private final transient Logger LOGGER;
 
-    public MiraiUtils(AbstractPhenyl plugin){
-        phenyl=plugin;
-        LOGGER=phenyl.getLogger();
+    public MiraiUtils(AbstractPhenyl plugin) {
+        phenyl = plugin;
+        LOGGER = phenyl.getLogger();
     }
 
     /**
@@ -98,8 +100,8 @@ public class MiraiUtils {
      * @param group   The group to send to.
      * @param message The message in plain string type.
      */
-    public void sendGroup(Group group, String message) {
-        group.sendMessage(message);
+    public MessageReceipt<Group> sendGroup(Group group, String message) {
+        return group.sendMessage(message);
     }
 
     /**
@@ -108,8 +110,8 @@ public class MiraiUtils {
      * @param group   The group to send to.
      * @param message The message in {@link MessageChain} type.
      */
-    public void sendGroup(Group group, MessageChain message) {
-        group.sendMessage(message);
+    public MessageReceipt<Group> sendGroup(Group group, MessageChain message) {
+        return group.sendMessage(message);
     }
 
     /**
@@ -117,8 +119,12 @@ public class MiraiUtils {
      *
      * @param message The message in plain string type.
      */
-    public void sendGroup(String message) throws NoSuchElementException {
-        sendGroup(new MessageChainBuilder().append(message).build());
+    public ArrayList<MessageReceipt<Group>> sendAllGroup(String message) throws NoSuchElementException {
+        return sendAllGroup(new MessageChainBuilder().append(message).build());
+    }
+
+    public ArrayList<MessageReceipt<Group>> sendAllGroup(String message, ArrayList<MessageReceipt<Group>> referenceReceipts) throws NoSuchElementException {
+        return sendAllGroup(new MessageChainBuilder().append(message).build(), referenceReceipts);
     }
 
     /**
@@ -126,14 +132,24 @@ public class MiraiUtils {
      *
      * @param message The message in {@link MessageChain} type.
      */
-    public void sendGroup(MessageChain message) throws NoSuchElementException {
+    public ArrayList<MessageReceipt<Group>> sendAllGroup(MessageChain message) throws NoSuchElementException {
+        return sendAllGroup(message, null);
+    }
+
+    public ArrayList<MessageReceipt<Group>> sendAllGroup(MessageChain message, ArrayList<MessageReceipt<Group>> referenceReceipts) throws NoSuchElementException {
+        ArrayList<MessageReceipt<Group>> receipts = new ArrayList<>();
         for (Long id : Config.enabled_groups) {
             try {
-                phenyl.getMirai().getBot().getGroupOrFail(id).sendMessage(message);
+                Group group = phenyl.getMirai().getBot().getGroupOrFail(id);
+                MessageChainBuilder msg = new MessageChainBuilder().append(message);
+                if (referenceReceipts != null)
+                    referenceReceipts.stream().filter(r -> r.getTarget().equals(group)).forEach(r -> msg.append(r.quote()));
+                receipts.add(group.sendMessage(msg.build()));
             } catch (NoSuchElementException e) {
                 throw new NoSuchElementException(String.valueOf(id));
             }
         }
+        return receipts;
     }
 
     /**
@@ -142,7 +158,8 @@ public class MiraiUtils {
      * @param image The image to be sent.
      * @throws NoSuchElementException Target group not found.
      */
-    public void sendImage(BufferedImage image) throws NoSuchElementException {
+    public ArrayList<MessageReceipt<Group>> sendImage(BufferedImage image, ArrayList<MessageReceipt<Group>> referenceReceipts) throws NoSuchElementException {
+        ArrayList<MessageReceipt<Group>> receipts = new ArrayList<>();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             ImageIO.write(image, "png", stream);
@@ -154,8 +171,10 @@ public class MiraiUtils {
             try {
                 Group group = phenyl.getMirai().getBot().getGroupOrFail(id);
                 Image img = ExternalResource.uploadAsImage(resource, group);
-                MessageChain message = new MessageChainBuilder().append(img).build();
-                group.sendMessage(message);
+                MessageChainBuilder message = new MessageChainBuilder().append(img);
+                if (referenceReceipts != null)
+                    referenceReceipts.stream().filter(r -> r.getTarget().equals(group)).forEach(r -> message.append(r.quote()));
+                receipts.add(group.sendMessage(message.build()));
             } catch (NoSuchElementException e) {
                 throw new NoSuchElementException(String.valueOf(id));
             }
@@ -165,5 +184,10 @@ public class MiraiUtils {
         } catch (IOException e) {
             if (Config.debug) e.printStackTrace();
         }
+        return receipts;
+    }
+
+    public ArrayList<MessageReceipt<Group>> sendImage(BufferedImage image) throws NoSuchElementException {
+        return sendImage(image, null);
     }
 }

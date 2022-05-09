@@ -6,18 +6,21 @@ import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import live.turna.phenyl.common.utils.MiraiUtils;
 import net.kyori.adventure.text.Component;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.SingleMessage;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,9 +84,9 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
      * @param uuid      The sender's Minecraft UUID.
      * @param subServer In which sub server the message is sent.
      */
-    public boolean forwardToQQ(String message, String userName, String uuid, String subServer) {
+    public ArrayList<MessageReceipt<Group>> forwardToQQ(String message, String userName, String uuid, String subServer) {
         for (Player it : phenyl.getMutedPlayer()) {
-            if (uuid.equals(it.uuid())) return false;
+            if (uuid.equals(it.uuid())) return null;
         }
         if (Config.save_message) {
             phenyl.getStorage().addMessage(message.replaceAll("'", "''"), uuid);
@@ -100,50 +103,59 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
         else return forwardPlainMessage(message, userName, subServer);
     }
 
-    private boolean forwardSingleImage(String url, String userName, String uuid, String subServer) {
+    private ArrayList<MessageReceipt<Group>> forwardSingleImage(String url, String userName, String uuid, String subServer) {
+        ArrayList<MessageReceipt<Group>> referenceReceipts;
+        AtomicReference<ArrayList<MessageReceipt<Group>>> receipts = new AtomicReference<>();
         if (Config.server_to_qq_format.equals("image"))
-            forwardImageMessage(i18n("imageMessage"), userName, uuid);
-        else forwardPlainMessage(i18n("imageMessage"), userName, subServer);
+            referenceReceipts = forwardImageMessage(i18n("imageMessage"), userName, uuid);
+        else referenceReceipts = forwardPlainMessage(i18n("imageMessage"), userName, subServer);
 
         // retrieve and send image
-        CompletableFuture<Boolean> futureGet = CompletableFuture.supplyAsync(() -> new ImageMessage(phenyl).getImageFromURL(url))
-                .orTimeout(Config.get_image_timeout, TimeUnit.SECONDS).thenApplyAsync((@NotNull BufferedImage image) -> {
-                    try {
-                        new MiraiUtils(phenyl).sendImage(image);
-                        return true;
-                    } catch (NoSuchElementException e) {
-                        LOGGER.error(i18n("noSuchGroup", e.getLocalizedMessage()));
-                        if (Config.debug) e.printStackTrace();
-                        return false;
-                    }
-                }).orTimeout(3, TimeUnit.SECONDS);
-        return !futureGet.isCompletedExceptionally();
+        CompletableFuture<BufferedImage> futureGet = CompletableFuture.supplyAsync(() -> {
+            try {
+                return new ImageMessage(phenyl).getImageFromURL(url);
+            } catch (IOException e) {
+                return null;
+            }
+        }).completeOnTimeout(null, Config.get_image_timeout, TimeUnit.SECONDS);
+        futureGet.thenApplyAsync((BufferedImage image) -> {
+            if (image == null) {
+                receipts.set(new MiraiUtils(phenyl).sendAllGroup(i18n("getImageFail"), referenceReceipts));
+                return false;
+            }
+            try {
+                receipts.set(new MiraiUtils(phenyl).sendImage(image, referenceReceipts));
+                return true;
+            } catch (NoSuchElementException e) {
+                LOGGER.error(i18n("noSuchGroup", e.getLocalizedMessage()));
+                if (Config.debug) e.printStackTrace();
+                return false;
+            }
+        }).orTimeout(3, TimeUnit.SECONDS);
+        return receipts.get();
     }
 
-    private boolean forwardPlainMessage(String message, String userName, String subServer) {
+    private ArrayList<MessageReceipt<Group>> forwardPlainMessage(String message, String userName, String subServer) {
         String format = Config.server_to_qq_format
                 .replace("%sub_server%", subServer)
                 .replace("%username%", userName)
                 .replace("%message%", message);
-        MessageChain messageChain = new MessageChainBuilder().append(format).build();
         try {
-            new MiraiUtils(phenyl).sendGroup(messageChain);
-            return true;
+            return new MiraiUtils(phenyl).sendAllGroup(format);
         } catch (NoSuchElementException e) {
             LOGGER.error(i18n("noSuchGroup", e.getLocalizedMessage()));
             if (Config.debug) e.printStackTrace();
-            return false;
+            return new ArrayList<>();
         }
     }
 
-    private boolean forwardImageMessage(String message, String userName, String uuid) {
+    private ArrayList<MessageReceipt<Group>> forwardImageMessage(String message, String userName, String uuid) {
         try {
-            new MiraiUtils(phenyl).sendImage(new ImageMessage(phenyl).drawImageMessage(message, userName, uuid));
-            return true;
+            return new MiraiUtils(phenyl).sendImage(new ImageMessage(phenyl).drawImageMessage(message, userName, uuid));
         } catch (NoSuchElementException e) {
             LOGGER.error(i18n("noSuchGroup", e.getLocalizedMessage()));
             if (Config.debug) e.printStackTrace();
-            return false;
+            return new ArrayList<>();
         }
     }
 }
