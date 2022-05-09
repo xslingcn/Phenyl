@@ -1,4 +1,4 @@
-package live.turna.phenyl.common.commands;
+package live.turna.phenyl.common.command;
 
 public enum ServerCommand {
     WELCOME("", 1, ""),

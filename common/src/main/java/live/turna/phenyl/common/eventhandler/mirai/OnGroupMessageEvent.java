@@ -1,6 +1,6 @@
 package live.turna.phenyl.common.eventhandler.mirai;
 
-import live.turna.phenyl.common.commands.GroupCommandExecutor;
+import live.turna.phenyl.common.command.GroupCommandExecutor;
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import net.mamoe.mirai.contact.Group;

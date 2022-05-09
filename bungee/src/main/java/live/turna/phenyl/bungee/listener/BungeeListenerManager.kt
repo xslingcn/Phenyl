@@ -1,33 +1,28 @@
-package live.turna.phenyl.bungee.listener;
+package live.turna.phenyl.bungee.listener
 
-import live.turna.phenyl.bungee.BungeePhenyl;
-import live.turna.phenyl.bungee.listener.bungee.BungeeOnChatEvent;
-import live.turna.phenyl.bungee.listener.bungee.BungeeOnLoginEvent;
-import live.turna.phenyl.bungee.listener.bungee.BungeeOnPlayerDisconnectEvent;
-import live.turna.phenyl.bungee.listener.mirai.BungeeOnBotOfflineEvent;
-import live.turna.phenyl.bungee.listener.mirai.BungeeOnGroupMessageEvent;
-import live.turna.phenyl.common.listener.AbstractServerListenerManager;
+import live.turna.phenyl.bungee.BungeePhenyl
+import live.turna.phenyl.bungee.listener.bungee.BungeeOnChatEvent
+import live.turna.phenyl.bungee.listener.bungee.BungeeOnLoginEvent
+import live.turna.phenyl.bungee.listener.bungee.BungeeOnPlayerDisconnectEvent
+import live.turna.phenyl.bungee.listener.mirai.BungeeOnBotOfflineEvent
+import live.turna.phenyl.bungee.listener.mirai.BungeeOnGroupMessageEvent
+import live.turna.phenyl.common.listener.AbstractServerListenerManager
 
 /**
- * <b>BungeeListenerManager</b><br>
+ * **BungeeListenerManager**<br></br>
  * *
  *
  * @since 2022/5/6 15:43
  */
-public class BungeeListenerManager extends AbstractServerListenerManager<BungeePhenyl> {
-    public BungeeListenerManager(BungeePhenyl plugin) {
-        super(plugin);
-    }
-
-    @Override
-    public void start() {
+class BungeeListenerManager(plugin: BungeePhenyl) : AbstractServerListenerManager<BungeePhenyl>(plugin) {
+    override fun start() {
         // Mirai
-        phenyl.registerListener(new BungeeOnBotOfflineEvent(phenyl));
-        phenyl.registerListener(new BungeeOnGroupMessageEvent(phenyl));
+        phenyl.registerListener(BungeeOnBotOfflineEvent(phenyl))
+        phenyl.registerListener(BungeeOnGroupMessageEvent(phenyl))
 
         // Bungee
-        phenyl.registerListener(new BungeeOnChatEvent(phenyl));
-        phenyl.registerListener(new BungeeOnLoginEvent(phenyl));
-        phenyl.registerListener(new BungeeOnPlayerDisconnectEvent(phenyl));
+        phenyl.registerListener(BungeeOnChatEvent(phenyl))
+        phenyl.registerListener(BungeeOnLoginEvent(phenyl))
+        phenyl.registerListener(BungeeOnPlayerDisconnectEvent(phenyl))
     }
 }

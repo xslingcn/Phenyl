@@ -1,23 +1,19 @@
-package live.turna.phenyl.bungee.loader;
+package live.turna.phenyl.bungee.loader
 
-import live.turna.phenyl.bungee.BungeePhenyl;
-import net.md_5.bungee.api.plugin.Plugin;
+import live.turna.phenyl.bungee.BungeePhenyl
+import net.md_5.bungee.api.plugin.Plugin
 
-public final class PhenylBungeeLoader extends Plugin {
-    BungeePhenyl plugin = new BungeePhenyl(this);
-
-    @Override
-    public void onLoad(){
-        plugin.onLoad();
+class PhenylBungeeLoader : Plugin() {
+    var plugin = BungeePhenyl(this)
+    override fun onLoad() {
+        plugin.onLoad()
     }
 
-    @Override
-    public void onEnable() {
-        plugin.onEnable();
+    override fun onEnable() {
+        plugin.onEnable()
     }
 
-    @Override
-    public void onDisable() {
-        plugin.onDisable();
+    override fun onDisable() {
+        plugin.onDisable()
     }
 }

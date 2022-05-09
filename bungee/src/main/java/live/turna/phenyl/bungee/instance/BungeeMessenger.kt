@@ -1,70 +1,54 @@
-package live.turna.phenyl.bungee.instance;
+package live.turna.phenyl.bungee.instance
 
-import live.turna.phenyl.bungee.BungeePhenyl;
-import live.turna.phenyl.common.config.Config;
-import live.turna.phenyl.common.message.messenger.AbstractMessenger;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import live.turna.phenyl.bungee.BungeePhenyl
+import live.turna.phenyl.common.config.Config
+import live.turna.phenyl.common.message.messenger.AbstractMessenger
+import net.kyori.adventure.text.Component
+import net.md_5.bungee.api.ProxyServer
 
 /**
- * <b>BungeeMessenger</b><br>
+ * **BungeeMessenger**<br></br>
  * *
  *
  * @since 2022/5/3 14:14
  */
-public class BungeeMessenger extends AbstractMessenger<BungeePhenyl> {
-
-    public BungeeMessenger(BungeePhenyl plugin) {
-        super(plugin);
-
-    }
-
-    @Override
-    public void sendAllServer(String message, Boolean force) {
-        TextComponent result = Component.text(altColor(message));
+class BungeeMessenger(plugin: BungeePhenyl) : AbstractMessenger<BungeePhenyl>(plugin) {
+    override fun sendAllServer(message: String, force: Boolean) {
+        val result = Component.text(altColor(message))
         if (force) {
-            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+            for (player in ProxyServer.getInstance().players) {
                 // a player hasn't joined any server yet
-                if (player.getServer() == null) continue;
-
-                if (Config.enabled_servers.contains(player.getServer().getInfo().getName())) {
-                    phenyl.getPlayer(player.getUniqueId()).sendMessage(result);
+                if (player.server == null) continue
+                if (Config.enabled_servers.contains(player.server.info.name)) {
+                    phenyl.getPlayer(player.uniqueId).sendMessage(result)
                 }
             }
-        } else sendAllServer(message);
+        } else sendAllServer(message)
     }
 
-
-    @Override
-    public void sendAllServer(String message, String[] exclude) {
-        TextComponent result = Component.text(altColor(message));
-        for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+    override fun sendAllServer(message: String, exclude: Array<String>) {
+        val result = Component.text(altColor(message))
+        for (player in ProxyServer.getInstance().players) {
             // in case any player leaves the server while broadcasting messages
-            if (player.getServer() == null) continue;
-
-            if (Config.enabled_servers.contains(player.getServer().getInfo().getName())) {
-                for (String server : exclude) {
-                    if (!server.equals(player.getServer().getInfo().getName())) {
-                        if (Config.nomessage_with_cross_server && getNoMessage(player.getUniqueId().toString()).uuid() != null)
-                            continue;
-                        phenyl.getPlayer(player.getUniqueId()).sendMessage(result);
+            if (player.server == null) continue
+            if (Config.enabled_servers.contains(player.server.info.name)) {
+                for (server in exclude) {
+                    if (server != player.server.info.name) {
+                        if (Config.nomessage_with_cross_server && getNoMessage(player.uniqueId.toString()).uuid() != null) continue
+                        phenyl.getPlayer(player.uniqueId).sendMessage(result)
                     }
                 }
             }
         }
     }
 
-    @Override
-    public void sendAllServer(Component message) {
-        for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+    override fun sendAllServer(message: Component) {
+        for (player in ProxyServer.getInstance().players) {
             // in case any player leaves the server while broadcasting messages
-            if (player.getServer() == null) continue;
-
-            if (Config.enabled_servers.contains(player.getServer().getInfo().getName())) {
-                if (getNoMessage(player.getUniqueId().toString()).uuid() != null) continue;
-                phenyl.getPlayer(player.getUniqueId()).sendMessage(message);
+            if (player.server == null) continue
+            if (Config.enabled_servers.contains(player.server.info.name)) {
+                if (getNoMessage(player.uniqueId.toString()).uuid() != null) continue
+                phenyl.getPlayer(player.uniqueId).sendMessage(message)
             }
         }
     }

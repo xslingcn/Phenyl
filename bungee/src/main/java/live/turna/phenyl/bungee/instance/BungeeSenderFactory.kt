@@ -1,67 +1,57 @@
-package live.turna.phenyl.bungee.instance;
+package live.turna.phenyl.bungee.instance
 
-import live.turna.phenyl.bungee.BungeePhenyl;
-import live.turna.phenyl.common.instance.AbstractSender;
-import live.turna.phenyl.common.instance.PSender;
-import live.turna.phenyl.common.instance.SenderFactory;
-import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
-import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import java.util.Objects;
-import java.util.UUID;
+import live.turna.phenyl.bungee.BungeePhenyl
+import live.turna.phenyl.common.instance.AbstractSender
+import live.turna.phenyl.common.instance.PSender
+import live.turna.phenyl.common.instance.SenderFactory
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences
+import net.kyori.adventure.text.Component
+import net.md_5.bungee.api.CommandSender
+import net.md_5.bungee.api.connection.ProxiedPlayer
+import java.util.*
 
 /**
- * <b>BungeeSenderFactory</b><br>
+ * **BungeeSenderFactory**<br></br>
  *
  * @since 2022/5/3 13:12
  */
-public class BungeeSenderFactory extends SenderFactory<BungeePhenyl, CommandSender> {
-    private final BungeeAudiences audiences;
+class BungeeSenderFactory(plugin: BungeePhenyl) : SenderFactory<BungeePhenyl, CommandSender>(plugin) {
+    private val audiences: BungeeAudiences
 
-    public BungeeSenderFactory(BungeePhenyl plugin) {
-        super(plugin);
-        audiences = BungeeAudiences.create(plugin.getLoader());
+    init {
+        audiences = BungeeAudiences.create(plugin.loader)
     }
 
-    @Override
-    protected UUID getUniqueId(CommandSender sender) {
-        if (sender instanceof ProxiedPlayer player)
-            return player.getUniqueId();
-        return new UUID(0, 0);
+    override fun getUniqueId(sender: CommandSender): UUID {
+        if (sender is ProxiedPlayer) return sender.uniqueId
+        return UUID(0, 0)
     }
 
-    @Override
-    protected String getName(CommandSender sender) {
-        return sender.getName();
+    override fun getName(sender: CommandSender): String {
+        return sender.name
     }
 
-    @Override
-    protected void sendMessage(CommandSender sender, Component message) {
-        audiences.sender(sender).sendMessage(message);
+    override fun sendMessage(sender: CommandSender, message: Component) {
+        audiences.sender(sender).sendMessage(message)
     }
 
-    @Override
-    protected Boolean hasPermission(CommandSender sender, String node) {
-        return sender.hasPermission(node);
+    override fun hasPermission(sender: CommandSender, node: String): Boolean {
+        return sender.hasPermission(node)
     }
 
-    @Override
-    protected Boolean isConsole(CommandSender sender) {
-        return !(sender instanceof ProxiedPlayer);
+    override fun isConsole(sender: CommandSender): Boolean {
+        return sender !is ProxiedPlayer
     }
 
-    @Override
-    protected String getServerName(CommandSender sender) {
-        if (sender instanceof ProxiedPlayer player)
-            return player.getServer().getInfo().getName();
-        return "CONSOLE";
+    override fun getServerName(sender: CommandSender): String {
+        if (sender is ProxiedPlayer) return sender.server.info.name
+        return "CONSOLE"
     }
 
-    @Override
-    public PSender wrap(CommandSender sender) {
-        Objects.requireNonNull(sender, "sender");
-        return new AbstractSender<>(phenyl, this, sender);
+    override fun wrap(sender: CommandSender): PSender {
+        Objects.requireNonNull(sender, "sender")
+        return AbstractSender(phenyl, this, sender)
     }
+
+
 }

@@ -1,4 +1,4 @@
-package live.turna.phenyl.common.commands;
+package live.turna.phenyl.common.command;
 
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.database.Player;
@@ -81,7 +81,7 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         String message = i18n("welcomeMessage", phenyl.getVersion()) + "\n"
                 + i18n("helpMessage") + "\n"
                 + i18n("commandHelp") + "\n";
-        if (sender.isConsole()) message += i18n("commandHelpPlayer");
+        if (!sender.isConsole()) message += i18n("commandHelpPlayer");
         if (sender.hasPermission("phenyl.admin.reload")) message += i18n("commandHelpAdmin");
         phenyl.getMessenger().sendPlayer(message, sender);
     }

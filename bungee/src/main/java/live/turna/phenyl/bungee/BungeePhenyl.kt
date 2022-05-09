@@ -1,232 +1,209 @@
-package live.turna.phenyl.bungee;
+package live.turna.phenyl.bungee
 
-import live.turna.phenyl.bungee.instance.*;
-import live.turna.phenyl.bungee.listener.BungeeListenerManager;
-import live.turna.phenyl.bungee.listener.MiraiListenerManager;
-import live.turna.phenyl.common.config.Config;
-import live.turna.phenyl.common.dependency.Log4jLoader;
-import live.turna.phenyl.common.instance.PSender;
-import live.turna.phenyl.common.listener.AbstractMiraiListenerManager;
-import live.turna.phenyl.common.plugin.AbstractPhenyl;
-import live.turna.phenyl.common.utils.MessageUtils;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
+import live.turna.phenyl.bungee.instance.*
+import live.turna.phenyl.bungee.listener.BungeeListenerManager
+import live.turna.phenyl.bungee.listener.MiraiListenerManager
+import live.turna.phenyl.common.config.Config
+import live.turna.phenyl.common.dependency.Log4jLoader
+import live.turna.phenyl.common.instance.PSender
+import live.turna.phenyl.common.listener.AbstractMiraiListenerManager
+import live.turna.phenyl.common.plugin.AbstractPhenyl
+import live.turna.phenyl.common.utils.MessageUtils
+import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.ServerPing
+import net.md_5.bungee.api.config.ServerInfo
+import net.md_5.bungee.api.connection.ProxiedPlayer
+import net.md_5.bungee.api.plugin.Listener
+import net.md_5.bungee.api.plugin.Plugin
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.function.Consumer
+import java.util.logging.Logger
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
+class BungeePhenyl(val loader: Plugin) : AbstractPhenyl() {
 
-public final class BungeePhenyl extends AbstractPhenyl {
+    private val miraiListenerManager = MiraiListenerManager()
 
-    private final transient Plugin loader;
-    private final transient MiraiListenerManager miraiListenerManager = new MiraiListenerManager();
-    private transient BungeeListenerManager bungeeListenerManager;
-    private transient BungeeConfig bungeeConfig;
-    private transient BungeeSenderFactory senderFactory;
-    private transient BungeeForwarder forwarder;
-    private transient BungeeMessenger messenger;
+    private lateinit var bungeeListenerManager: BungeeListenerManager
 
-    public BungeePhenyl(Plugin loader) {
-        this.loader = loader;
+    private lateinit var bungeeConfig: BungeeConfig
+
+    private lateinit var senderFactory: BungeeSenderFactory
+
+    private lateinit var forwarder: BungeeForwarder
+
+    private lateinit var messenger: BungeeMessenger
+
+    fun onLoad() {
+        super.load()
     }
 
-    public void onLoad() {
-        super.load();
+    fun onEnable() {
+        super.enable()
     }
 
-    public void onEnable() {
-        super.enable();
+    fun onDisable() {
+        super.disable()
     }
 
-    public void onDisable() {
-        super.disable();
+    override fun getMiraiListenerManager(): AbstractMiraiListenerManager {
+        return miraiListenerManager
     }
 
-    @Override
-    public AbstractMiraiListenerManager getMiraiListenerManager() {
-        return miraiListenerManager;
-    }
-
-    @Override
-    protected boolean setupLog4j() {
-        try {
-            new Log4jLoader(this).onLoad();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+    override fun setupLog4j(): Boolean {
+        return try {
+            Log4jLoader(this).onLoad()
+            true
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false
         }
     }
 
-    @Override
-    protected void initSenderFactory() {
-        senderFactory = new BungeeSenderFactory(this);
+    override fun initSenderFactory() {
+        senderFactory = BungeeSenderFactory(this)
     }
 
-    @Override
-    protected void initForwarder() {
-        forwarder = new BungeeForwarder(this);
+    override fun initForwarder() {
+        forwarder = BungeeForwarder(this)
     }
 
-    @Override
-    protected void initMessenger() {
-        messenger = new BungeeMessenger(this);
+    override fun initMessenger() {
+        messenger = BungeeMessenger(this)
     }
 
-    @Override
-    protected void loadConfig() {
-        bungeeConfig = new BungeeConfig(this);
-        bungeeConfig.load();
+    override fun loadConfig() {
+        bungeeConfig = BungeeConfig(this)
+        bungeeConfig.load()
     }
 
-    @Override
-    protected boolean postConfig() {
-        return bungeeConfig.postLoad();
+    override fun postConfig(): Boolean {
+        return bungeeConfig.postLoad()
     }
 
-    @Override
-    protected void registerCommand() {
-        ProxyServer.getInstance().getPluginManager().registerCommand(loader, new BungeeCommand(this, "phenyl", "ph"));
+    override fun registerCommand() {
+        ProxyServer.getInstance().pluginManager.registerCommand(loader, BungeeCommand(this, "phenyl", "ph"))
     }
 
-    @Override
-    protected void startListening() {
-        bungeeListenerManager = new BungeeListenerManager(this);
-        bungeeListenerManager.start();
+    override fun startListening() {
+        bungeeListenerManager = BungeeListenerManager(this)
+        bungeeListenerManager.start()
     }
 
-    @Override
-    protected void stopListening() {
-        bungeeListenerManager.end();
+    override fun stopListening() {
+        bungeeListenerManager.end()
     }
 
-    @Override
-    protected void initMetrics() {
-        new Metrics(loader, 14309);
+    override fun initMetrics() {
+        Metrics(loader, 14309)
     }
 
-    @Override
-    public BungeeForwarder getForwarder() {
-        return forwarder;
+    override fun getForwarder(): BungeeForwarder {
+        return forwarder
     }
 
-    @Override
-    public BungeeMessenger getMessenger() {
-        return messenger;
+    override fun getMessenger(): BungeeMessenger {
+        return messenger
     }
 
-    @Override
-    public BungeeSenderFactory getSenderFactory() {
-        return senderFactory;
+    override fun getSenderFactory(): BungeeSenderFactory {
+        return senderFactory
     }
 
-    @Override
-    public String getVersion() {
-        return loader.getDescription().getVersion();
+    override fun getVersion(): String {
+        return loader.description.version
     }
 
-    @Override
-    public Collection<PSender> getPlayers() {
-        Collection<PSender> players = new ArrayList<>();
-        ProxyServer.getInstance().getPlayers().forEach(player -> players.add(senderFactory.wrap(player)));
-        return players;
+    override fun getPlayers(): Collection<PSender> {
+        val players: MutableCollection<PSender> = ArrayList()
+        ProxyServer.getInstance().players.forEach(Consumer { player: ProxiedPlayer ->
+            players.add(
+                senderFactory.wrap(player)
+            )
+        })
+        return players
     }
 
-    @Override
-    public File getDir() {
-        return loader.getDataFolder();
+    override fun getPlatform(): String {
+        return "BUNGEE"
     }
 
-    @Override
-    public Logger getNativeLogger() {
-        return loader.getLogger();
+    override fun getDir(): File {
+        return loader.dataFolder
     }
 
-    @Override
-    public PSender getPlayer(String username) {
-        return this.getSenderFactory().wrap(ProxyServer.getInstance().getPlayer(username));
+    override fun getNativeLogger(): Logger {
+        return loader.logger
     }
 
-    @Override
-    public PSender getPlayer(UUID uuid) {
-        return this.getSenderFactory().wrap(ProxyServer.getInstance().getPlayer(uuid));
+    override fun getPlayer(username: String): PSender {
+        return getSenderFactory().wrap(ProxyServer.getInstance().getPlayer(username))
     }
 
-    @Override
-    public HashMap<String, String> getOnlineList() {
-        HashMap<String, String> result = new HashMap<>();
-        ProxyServer.getInstance().getServers().forEach((s, serverInfo) -> {
-            StringBuilder players = new StringBuilder();
-            serverInfo.getPlayers().forEach(player -> players.append(player.getName()).append(","));
-            if (players.isEmpty()) return;
-            result.put(new MessageUtils(this).getServerName(serverInfo.getName()), players.substring(0, players.length() - 1));
-        });
-        return result;
+    override fun getPlayer(uuid: UUID): PSender {
+        return getSenderFactory().wrap(ProxyServer.getInstance().getPlayer(uuid))
     }
 
-    @Override
-    public HashMap<String, Boolean> getStatus() {
-        MessageUtils messageUtils = new MessageUtils(this);
-        HashMap<String, Boolean> serverStatus = new HashMap<>();
-        Config.enabled_servers.forEach(server -> {
-            if (!ProxyServer.getInstance().getServers().containsKey(server)) {
-                serverStatus.put(messageUtils.getServerName(server), false);
-                return;
+    override fun getOnlineList(): HashMap<String, String> {
+        val result = HashMap<String, String>()
+        ProxyServer.getInstance().servers.forEach { (_: String?, serverInfo: ServerInfo) ->
+            val players = StringBuilder()
+            serverInfo.players.forEach(Consumer { player: ProxiedPlayer -> players.append(player.name).append(",") })
+            if (players.isEmpty()) return@forEach
+            result[MessageUtils(this).getServerName(serverInfo.name)] = players.substring(0, players.length - 1)
+        }
+        return result
+    }
+
+    override fun getStatus(): HashMap<String, Boolean> {
+        val messageUtils = MessageUtils(this)
+        val serverStatus = HashMap<String, Boolean>()
+        Config.enabled_servers.forEach(Consumer { server: String? ->
+            if (!ProxyServer.getInstance().servers.containsKey(server)) {
+                serverStatus[messageUtils.getServerName(server)] = false
+                return@Consumer
             }
-            ProxyServer.getInstance().getServers().get(server).ping((result, error) -> {
-                if (error == null) {
-                    serverStatus.put(messageUtils.getServerName(server), true);
-                } else
-                    serverStatus.put(messageUtils.getServerName(server), false);
-            });
-        });
-        while (serverStatus.size() != Config.enabled_servers.size()) {
+            ProxyServer.getInstance().servers[server]!!
+                .ping { _: ServerPing?, error: Throwable? ->
+                    serverStatus[messageUtils.getServerName(server)] = error == null
+                }
+        })
+        while (serverStatus.size != Config.enabled_servers.size) {
             try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                if (Config.debug) e.printStackTrace();
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                if (Config.debug) e.printStackTrace()
             }
         }
-        return serverStatus;
+        return serverStatus
     }
 
-    @Override
-    public Integer getOnlineCount() {
-        AtomicInteger onlineCount = new AtomicInteger();
-        onlineCount.getAndSet(0);
-        ProxyServer.getInstance().getServers().forEach((s, serverInfo) -> serverInfo.getPlayers().forEach(player -> onlineCount.getAndIncrement()));
-        return onlineCount.get();
+    override fun getOnlineCount(): Int {
+        val onlineCount = AtomicInteger()
+        onlineCount.getAndSet(0)
+        ProxyServer.getInstance().servers.forEach { (_: String?, serverInfo: ServerInfo) ->
+            serverInfo.players.forEach(
+                Consumer { onlineCount.getAndIncrement() })
+        }
+        return onlineCount.get()
     }
 
-    @Override
-    public Boolean isProxy() {
-        return true;
+    override fun isProxy(): Boolean {
+        return true
     }
 
-    @Override
-    public <T> void registerListener(T listener) {
-        ProxyServer.getInstance().getPluginManager().registerListener(loader, (Listener) listener);
+    override fun <T> registerListener(listener: T) {
+        ProxyServer.getInstance().pluginManager.registerListener(loader, listener as Listener)
     }
 
-    @Override
-    public void unregisterListeners() {
-        ProxyServer.getInstance().getPluginManager().unregisterListeners(loader);
+    override fun unregisterListeners() {
+        ProxyServer.getInstance().pluginManager.unregisterListeners(loader)
     }
 
-    @Override
-    public InputStream getResourceAsStream(String name) {
-        return loader.getResourceAsStream(name);
+    override fun getResourceAsStream(name: String): InputStream {
+        return loader.getResourceAsStream(name)
     }
-
-    public Plugin getLoader() {
-        return loader;
-    }
-
 }

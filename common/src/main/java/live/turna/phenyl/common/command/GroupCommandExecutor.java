@@ -1,4 +1,4 @@
-package live.turna.phenyl.common.commands;
+package live.turna.phenyl.common.command;
 
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
