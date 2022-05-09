@@ -50,10 +50,14 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
                 .toList();
         if (match.isEmpty()) throw new RuntimeException(i18n("commandNotFoundPhenyl"));
         else match.forEach(cmd -> {
+            if (sender.isConsole())
+                switch (args[0].toLowerCase()) {
+                    case "bind", "verify", "say", "nomessage" -> throw new RuntimeException(i18n("commandNotFoundPhenyl"));
+                }
             if (!sender.hasPermission(cmd.permission)) throw new RuntimeException(i18n("noPermission"));
             if (!cmd.argCnt.equals(args.length))
                 throw new RuntimeException(i18n("illegalArgumentPhenyl"));
-            if (!sender.isConsole()) {
+            else {
                 switch (args[0].toLowerCase()) {
                     case "bind" -> bind();
                     case "verify" -> verify();

@@ -48,8 +48,8 @@ class BungeeSenderFactory(plugin: BungeePhenyl) : SenderFactory<BungeePhenyl, Co
         return "CONSOLE"
     }
 
-    override fun wrap(sender: CommandSender): PSender {
-        Objects.requireNonNull(sender, "sender")
+    override fun wrap(sender: CommandSender?): PSender? {
+        if (sender == null) return null
         return AbstractSender(phenyl, this, sender)
     }
 
