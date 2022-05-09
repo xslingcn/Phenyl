@@ -17,3 +17,8 @@ java {
         vendor.set(JvmVendorSpec.ADOPTOPENJDK)
     }
 }
+
+tasks.jar {
+    from("README.md")
+    archiveFileName.set("Phenyl")
+}

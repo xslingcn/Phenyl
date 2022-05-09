@@ -27,9 +27,26 @@ public class DependencyManager {
     private final transient AbstractPhenyl phenyl;
     private final transient Logger LOGGER;
 
-    public DependencyManager(AbstractPhenyl plugin){
-        phenyl=plugin;
-        LOGGER=phenyl.getLogger();
+    public DependencyManager(AbstractPhenyl plugin) {
+        phenyl = plugin;
+        LOGGER = phenyl.getLogger();
+    }
+
+    /**
+     * Convert a byte array to hex string.
+     *
+     * @param bytes The byte array to be converted.
+     * @return The result string.
+     */
+    static String toHex(byte[] bytes) {
+        char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 
     /**
@@ -69,6 +86,15 @@ public class DependencyManager {
             default -> {
             }
         }
+
+        switch (phenyl.getPlatform().toLowerCase()) {
+            case "bungee" -> {
+                dependencies.add(Dependency.ADVENTUREAPI);
+                dependencies.add(Dependency.ADVENTUREBUNGEE);
+                dependencies.add(Dependency.ADVENTURESERIALIZERBUNGEE);
+            }
+        }
+
         dependencies.add(Dependency.GENEREX);
         dependencies.add(Dependency.JACKSON);
         dependencies.add(Dependency.AUTOMATON);
@@ -116,7 +142,7 @@ public class DependencyManager {
                 if (!repo.download(dependency.getMavenRepoPath() + ".md5", md5File))
                     LOGGER.warn(i18n("failLibDown", md5File.getPath()));
             } catch (IOException e) {
-                LOGGER.warn(i18n("failLibDown", dependency.getFileName()) + e.getLocalizedMessage());
+                LOGGER.warn(i18n("failLibDown", dependency.getFileName()) + " " + e.getLocalizedMessage());
                 if (Config.debug) e.printStackTrace();
             }
             if (checkDependency(dependency)) return jarFile;
@@ -143,22 +169,5 @@ public class DependencyManager {
             if (Config.debug) e.printStackTrace();
             return false;
         }
-    }
-
-    /**
-     * Convert a byte array to hex string.
-     *
-     * @param bytes The byte array to be converted.
-     * @return The result string.
-     */
-    static String toHex(byte[] bytes) {
-        char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 }

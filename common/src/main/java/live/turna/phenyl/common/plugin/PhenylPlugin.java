@@ -64,4 +64,6 @@ public interface PhenylPlugin {
     String getVersion();
 
     Collection<PSender> getPlayers();
+
+    String getPlatform();
 }
