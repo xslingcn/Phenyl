@@ -67,6 +67,9 @@ public class Formatter<P extends AbstractPhenyl> {
             return groupCardFallback();
         }
 
+        if (message.size() == 2 && message.get(1) instanceof FlashImage flashImage)
+            return groupFlashImage(flashImage);
+
         // match messages with images
         if (images != null && !images.isEmpty()) {
             return groupImage();
@@ -201,6 +204,19 @@ public class Formatter<P extends AbstractPhenyl> {
                             .hoverEvent(null));
         }
         return result.build();
+    }
+
+    Component groupFlashImage(FlashImage flashImage) {
+        String url = net.mamoe.mirai.Mirai.getInstance().queryImageUrl(phenyl.getMirai().getBot(), flashImage.getImage());
+        return Component.text(altColor(format[0]))
+                .append(Component.text("[", NamedTextColor.GRAY))
+                .append(Component.text(messageString.substring(1, messageString.length() - 1), NamedTextColor.DARK_AQUA)
+                        .clickEvent(ClickEvent.openUrl(url))
+                        .hoverEvent(HoverEvent.showText(Component.text(i18n("clickToView") + url, NamedTextColor.YELLOW))))
+                .append(Component.text("]", NamedTextColor.GRAY))
+                .append(Component.text(format.length > 1
+                        ? altColor(color + format[1])
+                        : ""));
     }
 
     Component groupLink() {
