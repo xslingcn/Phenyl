@@ -40,8 +40,8 @@ public class Formatter<P extends AbstractPhenyl> {
         phenyl = plugin;
         this.format = format;
         this.color = color;
-        this.message = message;
-        this.messageString = message.contentToString();
+        this.message = processAt(message);
+        this.messageString = this.message.contentToString();
         this.images = this.message.stream().filter(Image.class::isInstance).toList();
         List<SingleMessage> replyList = this.message.stream().filter(QuoteReply.class::isInstance).toList();
         if (!replyList.isEmpty()) this.quote = (QuoteReply) replyList.get(0);
@@ -276,5 +276,23 @@ public class Formatter<P extends AbstractPhenyl> {
             if (Config.debug) e.printStackTrace();
             return "";
         }
+    }
+
+    MessageChain processAt(MessageChain message) {
+        MessageSource source = message.get(MessageSource.Key);
+        if (source == null) return message;
+        // convert @id to @username
+        for (SingleMessage singleMessage : message) {
+            if (singleMessage instanceof At at) {
+                MessageChainBuilder builder = new MessageChainBuilder();
+                SingleMessage atName = new PlainText("@" + new MiraiUtils(phenyl).getUserNameOrNameCardOrNick(source.getTargetId(), at.getTarget()));
+                builder.addAll(message.subList(0, message.indexOf(at)));
+                builder.append(atName);
+                if (message.indexOf(at) < message.size())
+                    builder.addAll(message.subList(message.indexOf(at) + 1, message.size()));
+                message = builder.build();
+            }
+        }
+        return message;
     }
 }
