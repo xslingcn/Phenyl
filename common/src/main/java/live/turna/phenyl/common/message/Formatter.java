@@ -72,6 +72,9 @@ public class Formatter<P extends AbstractPhenyl> {
             return groupCardFallback();
         }
 
+        if (message.size() == 2 && message.get(1) instanceof OnlineAudio audio)
+            return groupAudio(audio);
+
         if (message.size() == 2 && message.get(1) instanceof FlashImage flashImage)
             return groupFlashImage(flashImage);
 
@@ -79,6 +82,7 @@ public class Formatter<P extends AbstractPhenyl> {
         if (images != null && !images.isEmpty()) {
             return groupImage();
         }
+
         // match links
         Component linkFormat = groupLink();
         if (linkFormat != null) return linkFormat;
@@ -177,6 +181,19 @@ public class Formatter<P extends AbstractPhenyl> {
         return Component.text(altColor(format[0]))
                 .append(summary)
                 .append(title)
+                .append(Component.text(format.length > 1
+                        ? altColor(color + format[1])
+                        : ""));
+    }
+
+    Component groupAudio(OnlineAudio audio) {
+        String url = audio.getUrlForDownload();
+        return Component.text(altColor(format[0]))
+                .append(Component.text("[", NamedTextColor.GRAY))
+                .append(Component.text(messageString.substring(1, messageString.length() - 1), NamedTextColor.DARK_AQUA)
+                        .clickEvent(ClickEvent.openUrl(url))
+                        .hoverEvent(HoverEvent.showText(Component.text(i18n("clickToView") + url, NamedTextColor.YELLOW))))
+                .append(Component.text("]", NamedTextColor.GRAY))
                 .append(Component.text(format.length > 1
                         ? altColor(color + format[1])
                         : ""));
