@@ -10,9 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <b>OnBungeeChatEvent</b><br>
- * Called when player sent a chat message.
- * Forward the message to QQ group.<br>
- * Forward the message to all online players in other sub-servers if {@code cross_sever_format} is not set to "disabled".
+ * Called when player sent a chat message.<br>
+ * Forward the message to QQ group and to all online players in other sub-servers if {@code cross_sever_format} is not set to "disabled".
  *
  * @since 2021/12/4 21:54
  */
@@ -28,6 +27,10 @@ public abstract class OnChatEvent<P extends AbstractPhenyl> {
         messageUtils = new MessageUtils(phenyl);
     }
 
+    /**
+     * @param sender  Message sender.
+     * @param message Message content.
+     */
     public void fill(PSender sender, String message) {
         player = sender;
         this.message = message;

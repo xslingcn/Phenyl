@@ -15,9 +15,8 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>OnPlayerDisconnectEvent</b><br>
- * Called when a player has disconnected from bungee.
- * Send a message to QQ group if {@code on_leave} is not set to "disabled".<br>
- * Send a message to all online players if {@code on_leave_broadcast} is not set to "disabled".
+ * Called when a player has disconnected from bungee.It can also be called when someone attempts to join a server after connected to the proxy while get refused.<br>
+ * Send a message to QQ group if {@code on_leave} is not set to "disabled" and broadcast in game if {@code on_leave_broadcast} is not set to "disabled".
  *
  * @since 2021/12/4 21:51
  */

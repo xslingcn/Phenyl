@@ -16,7 +16,7 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>GroupCommandExecutor</b><br>
- * *
+ * Command executor for those called in groups.
  *
  * @since 2022/5/3 23:46
  */
@@ -35,6 +35,12 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
         this.args = args;
     }
 
+    /**
+     * @return The type of the message - a command or a piece of message that needs to be forwarded under {@code command} mode.
+     * @throws IllegalArgumentException The failing message. <br/>
+     *                                  1). commandNotFound: Unknown command.<br/>
+     *                                  2). illegalArgument: The number of arguments doesn't match.
+     */
     public boolean match() throws IllegalArgumentException {
         List<GroupCommand> match = Stream.of(GroupCommand.values())
                 .filter(cmd -> cmd.prompt.equals(args[0])).toList();
@@ -43,7 +49,7 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
             else return false;
         }
         match.forEach(cmd -> {
-            if (args.length != cmd.argCount) throw new IllegalArgumentException(i18n("illegalArgument"));
+            if (args.length != cmd.argCnt) throw new IllegalArgumentException(i18n("illegalArgument"));
             if (cmd.prompt.equals(Config.bind_command)) bind();
             else if (cmd.prompt.equals(Config.confirm_command)) confirm();
             else if (cmd.prompt.equals(Config.online_command)) online();
@@ -52,6 +58,11 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
         return true;
     }
 
+    /**
+     * Request for binding.
+     *
+     * @throws IllegalArgumentException invalidUserName: The given username not legal for a Minecraft account.
+     */
     public void bind() throws IllegalArgumentException {
         if (!BindUtils.isValidUsername(args[1])) throw new IllegalArgumentException(i18n("invalidUserName"));
         String userName = args[1];
@@ -64,6 +75,10 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
         phenyl.getMessenger().sendGroup(group, "/phenyl verify " + code);
     }
 
+    /**
+     * @throws IllegalArgumentException The failing message.
+     * @see live.turna.phenyl.common.bind.BindHandler#handleConfirm
+     */
     public void confirm() throws IllegalArgumentException {
         String code = args[1];
         MessageChain reply = new MessageChainBuilder()
@@ -73,7 +88,10 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
         phenyl.getMessenger().sendGroup(group, reply);
     }
 
-    public void online() throws IllegalArgumentException {
+    /**
+     * Send online list.
+     */
+    public void online() {
         String totalFormat = Config.online_total_format
                 .replace("%player_count%", phenyl.getOnlineCount().toString());
         List<String> listFormat = new ArrayList<>();
@@ -87,7 +105,10 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
         phenyl.getMessenger().sendGroup(group, reply.append((totalFormat + "\n" + listContent).trim()).build());
     }
 
-    public void status() throws IllegalArgumentException {
+    /**
+     * Send server status.
+     */
+    public void status() {
         List<String> listFormat = new ArrayList<>();
         phenyl.getStatus().forEach((serverName, status) -> listFormat.add(serverName + " - " + "[" + (status ? "√" : "×") + "]" + "\n"));
         MessageChainBuilder reply = new MessageChainBuilder()

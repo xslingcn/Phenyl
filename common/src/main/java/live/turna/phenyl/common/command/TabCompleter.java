@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 /**
  * <b>TabCompleter</b><br>
- * *
+ * Phenyl tab-completion handler.
  *
  * @since 2022/5/9 5:16
  */
@@ -34,6 +34,7 @@ public class TabCompleter<P extends AbstractPhenyl, S extends PSender> {
                         .forEach(cmd -> completions.add(cmd.prompt));
                 return completions.stream().filter(val -> val.startsWith(args[0].toLowerCase())).collect(Collectors.toList());
             }
+            // player name completion
             case 2 -> {
                 if (args[0].equals("mute")) {
                     List<PSender> playerList = phenyl.getPlayers().stream().filter(player -> player.getUsername().startsWith(args[1])).toList();

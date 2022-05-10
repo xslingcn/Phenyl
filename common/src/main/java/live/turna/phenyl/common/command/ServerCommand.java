@@ -1,5 +1,11 @@
 package live.turna.phenyl.common.command;
 
+/**
+ * <b>ServerCommand</b><br>
+ * List all Phenyl commands that could be called in Minecraft.
+ *
+ * @since 2022/5/6 17:30
+ */
 public enum ServerCommand {
     HELP("help", 1, "phenyl.use.bind"),
     RELOAD("reload", 1, "phenyl.admin.reload"),
@@ -16,6 +22,11 @@ public enum ServerCommand {
     final Integer argCnt;
     final String permission;
 
+    /**
+     * @param prompt     The command name.
+     * @param argCnt     The number of its arguments.
+     * @param permission The permission node needed to perform the command.
+     */
     ServerCommand(String prompt, Integer argCnt, String permission) {
         this.prompt = prompt;
         this.argCnt = argCnt;

@@ -14,9 +14,9 @@ public class BindArray extends ArrayList<BindMap> {
 
     /**
      * Add a BindMap object to BindArray.
-     * Tries to end all existing objects that has same elements as the provided one in array before adding to keep requests unique.
+     * Would try to remove all existing objects that have same elements as the provided one in array before adding, in order to keep requests unique.
      *
-     * @param map The BindMap.
+     * @param map The BindMap to be added.
      * @return {@code true} (as specified by {@link java.util.Collection#add})
      */
     @Override

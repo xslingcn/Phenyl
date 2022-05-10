@@ -10,11 +10,6 @@ import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.util.*
 
-/**
- * **BungeeSenderFactory**<br></br>
- *
- * @since 2022/5/3 13:12
- */
 class BungeeSenderFactory(plugin: BungeePhenyl) : SenderFactory<BungeePhenyl, CommandSender>(plugin) {
     private val audiences: BungeeAudiences
 

@@ -11,7 +11,9 @@ import static live.turna.phenyl.common.utils.BindUtils.isValidVerificationCode;
 
 /**
  * <b>BindHandler</b><br>
- * Handles all binding and confirming requests.
+ * Handles all binding and verification requests.<br/>
+ * To call a request, provide in-game username and QQ ID; <br/>
+ * To verify a request, provide either username or ID with the verification code.
  *
  * @since 2021/12/5 2:58
  */
@@ -24,10 +26,10 @@ public class BindHandler {
     }
 
     /**
-     * Generate verification code for a request from QQ group and add the request to array.
+     * Generate verification code for a and add the request to array.
      *
-     * @param userName The username to bind.
-     * @param userId   The QQ ID to bind.
+     * @param userName The username.
+     * @param userId   The QQ ID.
      * @return Verification code.
      */
     public String handleRequest(String userName, Long userId) {
@@ -36,7 +38,17 @@ public class BindHandler {
         return code;
     }
 
-
+    /**
+     * @param userName The username.
+     * @param code     The verification code.
+     * @return The success message. <br/>
+     * 1). bindSuccess when a new binding is successfully added;<br/>
+     * 2). bindNoChange when the binding already exists and no operation is done; <br/>
+     * 3). changeBind when an existing binding is updated.
+     * @throws IllegalArgumentException The failing message. <br/>
+     *                                  1). invalidCode: Verification code is neither format-correct nor valid.<br/>
+     *                                  2). bindFail: The request is valid, but binding attempt failed while operating database.
+     */
     public String handleConfirm(String userName, String code) throws IllegalArgumentException {
         return new Verify(userName, code).check();
     }
@@ -58,12 +70,6 @@ public class BindHandler {
             code = c;
         }
 
-        /**
-         * @return The binding success message. Which are 1). bindSuccess when a new binding is successfully added;
-         * 2). bindNoChange when the binding already exists and no operation is done; 3). changeBind when an existing binding is updated.
-         * @throws IllegalArgumentException invalidCode: Verification code is neither format-correct nor valid.
-         * @throws IllegalArgumentException bindFail: The request is valid, but binding attempt failed while operating database.
-         */
         public String check() throws IllegalArgumentException {
             // Code not matching generating regex.
             if (!isValidVerificationCode(code, Config.verification))

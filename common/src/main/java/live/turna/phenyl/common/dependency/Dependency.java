@@ -19,7 +19,9 @@ public enum Dependency {
     MYSQL("mysql", "mysql-connector-java", "8.0.28"),
     POSTGRESQL("org.postgresql", "postgresql", "42.3.2"),
 
+    // Adventure API is just too big to include in Phenyl jar.
     ADVENTUREAPI("net.kyori", "adventure-api", "4.10.1"),
+    // Platform specified Adventure APIs.
     ADVENTUREBUNGEE("net.kyori", "adventure-platform-bungeecord", "4.1.0"),
     ADVENTURESERIALIZERBUNGEE("net.kyori", "adventure-text-serializer-bungeecord", "4.1.0");
 

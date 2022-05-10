@@ -23,7 +23,7 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>ServerCommandExecutor</b><br>
- * *
+ * Command executor for those called in game.
  *
  * @since 2022/5/6 17:34
  */
@@ -40,6 +40,14 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         this.args = args;
     }
 
+    /**
+     * Match and perform the commands.
+     *
+     * @throws RuntimeException The failing message. <br/>
+     *                          1). commandNotFoundPhenyl: Unknown command. Could be player-only commands called by console.<br/>
+     *                          2). noPermission: The command sender doesn't have the permission to perform it.<br/>
+     *                          3). illegalArgumentPhenyl: The number of arguments doesn't match.
+     */
     public void match() throws RuntimeException {
         if (args.length == 0) {
             welcome();
@@ -81,6 +89,10 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         phenyl.getMessenger().sendPlayer(message, sender);
     }
 
+    /**
+     * {@code /phenyl help} <br/>
+     * Send help message, the content varies regarding roles and permissions.
+     */
     private void help() {
         String message = i18n("welcomeMessage", phenyl.getVersion()) + "\n"
                 + i18n("helpMessage") + "\n"
@@ -90,15 +102,28 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         phenyl.getMessenger().sendPlayer(message, sender);
     }
 
+    /**
+     * {@code /phenyl reload} <br/>
+     * Reload Phenyl. <br/>
+     * Would do: reload config, reconnect database, unregister and then register all listeners, re-login Mirai account.
+     */
     private void reload() {
         if (phenyl.reload())
             phenyl.getMessenger().sendPlayer(i18n("reloadSuccessful", phenyl.getVersion()), sender);
     }
 
+    /**
+     * {@code /phenyl slider [TICKET]} <br/>
+     * Add ticket to solving queue.
+     */
     private void slider() {
         MiraiLoginSolver.addTicket(args[1]);
     }
 
+    /**
+     * {@code /phenyl login} <br/>
+     * Attempt to log the bot in.
+     */
     private void login() {
         try {
             CompletableFuture.supplyAsync(() -> phenyl.getMirai().logIn())
@@ -111,6 +136,10 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         }
     }
 
+    /**
+     * {@code /phenyl logout} <br/>
+     * Attempt to log the bot out.
+     */
     private void logout() {
         String message;
         try {
@@ -124,6 +153,10 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         }
     }
 
+    /**
+     * {@code /phenyl mute [USERNAME]} <br/>
+     * Mute someone, so that messages would not be forwarded.
+     */
     private void mute() {
         PSender target = phenyl.getPlayer(args[1]);
         if (target == null) {
@@ -131,7 +164,7 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
             return;
         }
         // check if the player is already muted
-        Player muted = phenyl.getMessenger().getMuted(target.getUUID().toString());
+        Player muted = new MessageUtils(phenyl).isMuted(target.getUUID().toString());
         if (muted.uuid() != null) {
             phenyl.getStorage().updateMutedPlayer(muted.uuid(), false);
             phenyl.getMutedPlayer().remove(muted);
@@ -143,6 +176,10 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         }
     }
 
+    /**
+     * {@code /phenyl mute [QQID]} <br/>
+     * Request to bind to a QQ account.
+     */
     private void bind() {
         if (!BindUtils.isValidQQID(args[1])) {
             phenyl.getMessenger().sendPlayer(i18n("invalidQQID"), sender);
@@ -159,6 +196,10 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         phenyl.getMessenger().sendPlayer(bind, sender);
     }
 
+    /**
+     * {@code /phenyl verify [CODE]} <br/>
+     * Verify a binding request.
+     */
     private void verify() {
         TextComponent message;
         try {
@@ -169,6 +210,10 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         phenyl.getMessenger().sendPlayer(message, sender);
     }
 
+    /**
+     * {@code /phenyl say [MESSAGE]} <br/>
+     * Send message to groups under {@code command} mode.
+     */
     private void say() {
         if (Config.forward_mode.equals("command")) {
             CompletableFuture.supplyAsync(() ->
@@ -178,9 +223,13 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         } else phenyl.getMessenger().sendPlayer(i18n("notCommandMode"), sender);
     }
 
+    /**
+     * {@code /phenyl nomessage} <br/>
+     * Toggle whether to receive messages from groups.
+     */
     private void noMessage() {
         // check if the player is already nomessaged
-        Player noMessaged = phenyl.getMessenger().getNoMessage(sender.getUUID().toString());
+        Player noMessaged = new MessageUtils(phenyl).isNoMessaged(sender.getUUID().toString());
         if (noMessaged.uuid() != null) {
             phenyl.getStorage().updateNoMessagePlayer(noMessaged.uuid(), false);
             phenyl.getNoMessagePlayer().remove(noMessaged);

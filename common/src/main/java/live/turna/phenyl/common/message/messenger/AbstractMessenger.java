@@ -1,12 +1,10 @@
 package live.turna.phenyl.common.message.messenger;
 
 import live.turna.phenyl.common.config.Config;
-import live.turna.phenyl.common.database.Player;
 import live.turna.phenyl.common.instance.PSender;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
@@ -18,11 +16,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <b>AbstractMessenger</b><br>
- * *
+ * Abstract messenger, providing methods to send messages to server or QQ group.
  *
  * @since 2022/4/11 10:45
  */
@@ -35,6 +32,12 @@ public abstract class AbstractMessenger<P extends AbstractPhenyl> implements Ser
         phenyl = plugin;
     }
 
+    /**
+     * Translate the color code used in locale files(&) to the one applies for Minecraft(§).
+     *
+     * @param message The message including the color code.
+     * @return A translated String.
+     */
     public static String altColor(String message) {
         char[] c = message.toCharArray();
         for (int i = 0; i < c.length - 1; i++) {
@@ -44,28 +47,6 @@ public abstract class AbstractMessenger<P extends AbstractPhenyl> implements Ser
             }
         }
         return String.valueOf(c);
-    }
-
-    public static NamedTextColor altColor(char color) {
-        return switch (color) {
-            case '0' -> NamedTextColor.BLACK;
-            case '1' -> NamedTextColor.DARK_BLUE;
-            case '2' -> NamedTextColor.DARK_GREEN;
-            case '3' -> NamedTextColor.DARK_AQUA;
-            case '4' -> NamedTextColor.DARK_RED;
-            case '5' -> NamedTextColor.DARK_PURPLE;
-            case '6' -> NamedTextColor.GOLD;
-            case '7' -> NamedTextColor.GRAY;
-            case '8' -> NamedTextColor.DARK_GRAY;
-            case '9' -> NamedTextColor.BLUE;
-            case 'a' -> NamedTextColor.GREEN;
-            case 'b' -> NamedTextColor.AQUA;
-            case 'c' -> NamedTextColor.RED;
-            case 'd' -> NamedTextColor.LIGHT_PURPLE;
-            case 'e' -> NamedTextColor.YELLOW;
-            case 'f' -> NamedTextColor.WHITE;
-            default -> NamedTextColor.WHITE;
-        };
     }
 
     public void sendGroup(Group group, String message) {
@@ -135,24 +116,6 @@ public abstract class AbstractMessenger<P extends AbstractPhenyl> implements Ser
         } catch (IOException e) {
             if (Config.debug) e.printStackTrace();
         }
-    }
-
-    public Player getNoMessage(String uuid) {
-        AtomicReference<Player> found = new AtomicReference<>(new Player(null, null, null, null));
-        phenyl.getNoMessagePlayer().forEach(noMessaged -> {
-            if (noMessaged.uuid() == null) return;
-            if (noMessaged.uuid().equals(uuid)) found.set(noMessaged);
-        });
-        return found.get();
-    }
-
-    public Player getMuted(String uuid) {
-        AtomicReference<Player> found = new AtomicReference<>(new Player(null, null, null, null));
-        phenyl.getMutedPlayer().forEach(muted -> {
-            if (muted.uuid() == null) return;
-            if (muted.uuid().equals(uuid)) found.set(muted);
-        });
-        return found.get();
     }
 
     public void sendPlayer(String message, PSender player) {

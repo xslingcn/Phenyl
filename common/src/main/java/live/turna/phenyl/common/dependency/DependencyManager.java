@@ -19,7 +19,7 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>DependencyManager</b><br>
- * Load all dependencies.
+ * Manager to download, verify dependencies and load them to classpath.
  *
  * @since 2022/1/19 19:44
  */
@@ -67,7 +67,7 @@ public class DependencyManager {
     }
 
     /**
-     * Get the list of dependencies to load.
+     * Decide the list of dependencies to load.
      *
      * @return A set of dependencies.
      */
@@ -117,11 +117,13 @@ public class DependencyManager {
     }
 
     /**
-     * Get a certain dependency file.
+     * Get certain dependency file.
      *
      * @param dependency The dependency to be located.
      * @return The jar file.
-     * @throws IOException Failed while processing files.
+     * @throws IOException Failed while processing files.<br/>
+     *                     1).failLibDelete: Failed to delete an existing and broken jar file.
+     *                     2).failLibDown: Failed to download the file from remote.
      */
     private File getDependency(Dependency dependency) throws IOException {
         File jarFile = new File(phenyl.getDir(), "libs/" + dependency.getFileName());
@@ -154,7 +156,7 @@ public class DependencyManager {
      * Check if the dependency matches the MD5 digestion from maven.
      *
      * @param dependency The dependency to be checked.
-     * @return Whether the dependency matches.
+     * @return Whether matches.
      * @throws IOException Failed reading jar or md5 file.
      */
     private boolean checkDependency(Dependency dependency) throws IOException {

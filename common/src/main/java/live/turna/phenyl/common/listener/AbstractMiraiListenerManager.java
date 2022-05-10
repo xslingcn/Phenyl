@@ -6,7 +6,7 @@ import net.mamoe.mirai.event.events.*;
 
 /**
  * <b>AbstractMiraiListenerManager</b><br>
- * Listen on necessary mirai events and call Bungeecord events.
+ * Manager to register listeners on necessary mirai events and call corresponding wrapper events.
  *
  * @since 2021/12/4 4:20
  */

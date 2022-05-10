@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * <b>AbstractPhenyl</b><br>
- * *
+ * Implementation of {@link PhenylPlugin}.
  *
  * @since 2022/4/7 22:49
  */
@@ -135,6 +135,11 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
         return bindHandler;
     }
 
+    /**
+     * Load log4j to classpath if not existing and assign LOGGER.
+     *
+     * @return Whether log4j is loaded.
+     */
     protected abstract boolean setupLog4j();
 
     protected abstract void initSenderFactory();

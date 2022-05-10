@@ -1,8 +1,9 @@
 package live.turna.phenyl.mirai.event
 
 /**
- * **CGroupTempMessageEvent**<br></br>
+ * **CGroupTempMessageEvent**
  *
  * @since 2021/12/5 1:23
  */
 interface PGroupTempMessageEvent
+// TODO(Yet to be implemented)

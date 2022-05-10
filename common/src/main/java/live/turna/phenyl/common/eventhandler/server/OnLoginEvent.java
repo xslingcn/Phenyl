@@ -16,9 +16,8 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>OnLoginEvent</b><br>
- * Called when a server is ready to take control of a player instance.
- * Send a message to QQ group if {@code on_join} is not set to "disabled".<br>
- * Send a message to all online players if {@code on_join_broadcast} is not set to "disabled".
+ * Called when a server is ready to take control of a player instance.<br>
+ * Send a message to QQ group if {@code on_join} is not set to "disabled" and broadcast in game if {@code on_join_broadcast} is not set to "disabled".
  *
  * @since 2021/12/4 21:52
  */

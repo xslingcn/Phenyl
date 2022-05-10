@@ -23,7 +23,7 @@ import static live.turna.phenyl.common.message.messenger.AbstractMessenger.altCo
 
 /**
  * <b>Formatter</b><br>
- * *
+ * Parse and format all messages, towards in-game interface.
  *
  * @since 2022/4/11 12:33
  */

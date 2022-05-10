@@ -29,9 +29,9 @@ public enum DependencyRepository {
      * Downloads the specified URL to the specified file location. Maximum size
      * allowed is <code>Long.MAX_VALUE</code> bytes.
      *
-     * @param url  Location to read
-     * @param file Location to write
-     * @throws IOException Reading failed
+     * @param url  URL to read from.
+     * @param file File to write.
+     * @throws IOException Reading failed.
      */
     public boolean download(URL url, File file) throws IOException {
         InputStream is = url.openStream();

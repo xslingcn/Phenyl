@@ -7,8 +7,9 @@ import java.util.UUID;
 
 /**
  * <b>AbstractSender</b><br>
- * *
+ * {@link PSender} implementation.
  *
+ * @see PSender
  * @since 2022/5/3 13:04
  */
 public class AbstractSender<S> implements PSender {

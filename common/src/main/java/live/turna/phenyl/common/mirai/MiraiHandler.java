@@ -35,11 +35,14 @@ public class MiraiHandler {
     private Bot bot;
 
     /**
-     * Initialize MiraiHandler.
+     * Construct a MiraiHandler
      *
+     * @param plugin   Phenyl instance.
      * @param userID   Bot's QQ id.
      * @param userPass Bot's QQ password.
-     * @param protocol The protocol to use.
+     * @param protocol The protocol chosen for logging in.
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
      */
     public MiraiHandler(AbstractPhenyl plugin, String userID, String userPass, String protocol) throws IOException, NoSuchAlgorithmException {
         phenyl = plugin;
@@ -54,6 +57,7 @@ public class MiraiHandler {
 
     /**
      * Configure the bot to login.
+     * Set {@code mirai.no-desktop} property to prevent using GUI login-solver.
      */
     private void configureBot() {
         System.setProperty("mirai.no-desktop", "");

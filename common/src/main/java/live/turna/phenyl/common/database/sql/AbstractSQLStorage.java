@@ -6,25 +6,25 @@ import live.turna.phenyl.common.database.Player;
 import java.util.List;
 
 /**
- * <b>SQLStorage</b><br>
+ * <b>AbstractSQLStorage</b><br>
  * Storage for SQL implementations.
  *
  * @see SQLQuery
  * @since 2022/3/4 21:18
  */
-public interface SQLStorage extends SQLQuery, PhenylStorage {
+public abstract class AbstractSQLStorage implements SQLQuery, PhenylStorage {
 
-    default boolean registerPlayer(String uuid, String mcname) {
+    public boolean registerPlayer(String uuid, String mcname) {
         if (getPlayer("uuid", uuid).id() == null)
             return insertPlayer("uuid", uuid) && updatePlayer("mcname", mcname, "uuid", uuid);
         return false;
     }
 
-    default boolean getRegistered(String uuid) {
+    public boolean getRegistered(String uuid) {
         return getPlayer("uuid", uuid).id() != null;
     }
 
-    default boolean updateUserName(String uuid, String userName) {
+    public boolean updateUserName(String uuid, String userName) {
         Player result = getPlayer("uuid", uuid);
         if (result.mcname() == null || !result.mcname().equals(userName)) {
             return updatePlayer("mcname", userName, "uuid", uuid);
@@ -32,43 +32,43 @@ public interface SQLStorage extends SQLQuery, PhenylStorage {
         return false;
     }
 
-    default boolean updateMutedPlayer(String uuid, Boolean toggle) {
+    public boolean updateMutedPlayer(String uuid, Boolean toggle) {
         return updatePlayer("muted", toggle ? "1" : "0", "uuid", uuid);
     }
 
-    default boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
+    public boolean updateNoMessagePlayer(String uuid, Boolean toggle) {
         return updatePlayer("nomessage", toggle ? "1" : "0", "uuid", uuid);
     }
 
-    default List<Player> getMutedPlayer() {
+    public List<Player> getMutedPlayer() {
         return getPlayerList("muted", "1");
     }
 
-    default List<Player> getNoMessagePlayer() {
+    public List<Player> getNoMessagePlayer() {
         return getPlayerList("nomessage", "1");
     }
 
-    default boolean addBinding(String uuid, Long qqid) {
+    public boolean addBinding(String uuid, Long qqid) {
         return updatePlayer("qqid", qqid.toString(), "uuid", uuid);
     }
 
-    default boolean removeBinding(String uuid) {
+    public boolean removeBinding(String uuid) {
         return updatePlayer("qqid", "NULL", "uuid", uuid);
     }
 
-    default Player getBinding(String uuid) {
+    public Player getBinding(String uuid) {
         return getPlayer("uuid", uuid);
     }
 
-    default Player getBinding(Long qqid) {
+    public Player getBinding(Long qqid) {
         return getPlayer("qqid", qqid.toString());
     }
 
-    default Integer getIDByUserName(String userName) {
+    public Integer getIDByUserName(String userName) {
         return getPlayer("mcname", userName).id();
     }
 
-    default boolean addMessage(String content, Long groupID, Long qqID) {
+    public boolean addMessage(String content, Long groupID, Long qqID) {
         Player result = getPlayer("qqid", qqID.toString());
         if (result.uuid() != null)
             return insertMessage("content,fromid,fromuuid,fromgroup,fromqqid", String.format("'%s',%s,'%s',%s,%s", content, result.id(), result.uuid(), groupID.toString(), qqID));
@@ -76,7 +76,7 @@ public interface SQLStorage extends SQLQuery, PhenylStorage {
             return insertMessage("content,fromgroup,fromqqid", String.format("'%s',%s,%s", content, groupID.toString(), qqID));
     }
 
-    default boolean addMessage(String content, String fromuuid) {
+    public boolean addMessage(String content, String fromuuid) {
         Player result = getPlayer("uuid", fromuuid);
         if (result.qqid() != null)
             return insertMessage("content,fromid,fromqqid,fromuuid", String.format("'%s',%s,%s,'%s'", content, result.id(), result.qqid(), result.uuid()));

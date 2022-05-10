@@ -3,9 +3,9 @@ package live.turna.phenyl.common.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import live.turna.phenyl.common.config.Config;
+import live.turna.phenyl.common.database.sql.AbstractSQLStorage;
 import live.turna.phenyl.common.database.sql.MySQL;
 import live.turna.phenyl.common.database.sql.PostgreSQL;
-import live.turna.phenyl.common.database.sql.SQLStorage;
 import live.turna.phenyl.common.database.sql.SQLite;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import org.apache.logging.log4j.Logger;
@@ -20,19 +20,18 @@ import static live.turna.phenyl.common.message.I18n.i18n;
  * <b>StorageFactory</b><br>
  * Create the specified storage instance.
  *
- * @see SQLStorage
+ * @see AbstractSQLStorage
  * @since 2021/12/6 2:43
  */
 public class StorageFactory {
     private final transient AbstractPhenyl phenyl;
     private final transient Logger LOGGER;
-
-    public StorageFactory(AbstractPhenyl plugin){
-        phenyl=plugin;
-        LOGGER=phenyl.getLogger();
-    }
-
     private PhenylStorage implementation;
+
+    public StorageFactory(AbstractPhenyl plugin) {
+        phenyl = plugin;
+        LOGGER = phenyl.getLogger();
+    }
 
     /**
      * Initialize storage.
@@ -72,7 +71,7 @@ public class StorageFactory {
                         Class.forName("org.sqlite.JDBC");
                         messageConnection = DriverManager.getConnection("jdbc:sqlite:" + messageFile.getPath());
                     }
-                    implementation = new SQLite(phenyl,playerConnection, messageConnection);
+                    implementation = new SQLite(phenyl, playerConnection, messageConnection);
                     LOGGER.info(i18n("databaseSucceeded", "SQLite"));
                 } catch (Exception e) {
                     LOGGER.error(i18n("databaseInitFail") + e.getLocalizedMessage());
@@ -91,7 +90,7 @@ public class StorageFactory {
                 mysqlConf.addDataSourceProperty("prepStmtCacheSize", "250");
                 mysqlConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
                 mysqlDataSource = new HikariDataSource(mysqlConf);
-                implementation = new MySQL(phenyl,mysqlDataSource);
+                implementation = new MySQL(phenyl, mysqlDataSource);
                 LOGGER.info(i18n("databaseSucceeded", "MySQL"));
             }
             case "postgresql" -> {
@@ -106,7 +105,7 @@ public class StorageFactory {
                 postgresConf.addDataSourceProperty("prepStmtCacheSize", "250");
                 postgresConf.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
                 postgresDataSource = new HikariDataSource(postgresConf);
-                implementation = new PostgreSQL(phenyl,postgresDataSource);
+                implementation = new PostgreSQL(phenyl, postgresDataSource);
                 LOGGER.info(i18n("databaseSucceeded", "PostgreSQL"));
             }
             default -> implementation = null;

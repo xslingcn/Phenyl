@@ -32,6 +32,12 @@ public abstract class OnGroupMessageEvent<P extends AbstractPhenyl> {
         phenyl = plugin;
     }
 
+    /**
+     * @param group          Where the message come from.
+     * @param senderID       The message sender's QQ ID.
+     * @param message        The message.
+     * @param nameCardOrNick The sender's name-card or nickname.
+     */
     public void fill(Group group, Long senderID, MessageChain message, String nameCardOrNick) {
         this.group = group;
         this.senderId = senderID;

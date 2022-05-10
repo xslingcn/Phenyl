@@ -16,12 +16,6 @@ import java.util.HashMap;
 
 import static live.turna.phenyl.common.message.I18n.i18n;
 
-/**
- * <b>BungeeConfig</b><br>
- * *
- *
- * @since 2022/5/6 17:13
- */
 public class BungeeConfig extends Config implements ConfigLoader {
     private static Configuration config;
 

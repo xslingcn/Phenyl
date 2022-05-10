@@ -7,12 +7,6 @@ import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.TabExecutor
 
-/**
- * **BungeeCommand**<br></br>
- * *
- *
- * @since 2022/5/9 5:47
- */
 class BungeeCommand(private val phenyl: BungeePhenyl, name: String, alia: String?) :
     Command(name, "", alia), TabExecutor {
     override fun execute(sender: CommandSender, args: Array<String>) {

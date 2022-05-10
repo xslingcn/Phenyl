@@ -15,16 +15,19 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>MySQL</b><br>
- * MySQL handler.
+ * MySQL implementation.
  *
  * @see SQLQuery
- * @see SQLStorage
+ * @see AbstractSQLStorage
  * @since 2021/12/6 1:53
  */
-public class MySQL implements SQLStorage {
+public class MySQL extends AbstractSQLStorage {
+    private static final String selectPlayer = "SELECT * FROM %splayer WHERE %s=%s LIMIT 1;";
+    private static final String selectPlayerList = "SELECT * FROM %splayer WHERE %s=%s;";
+    private static final String updatePlayer = "UPDATE %splayer SET %s=%s WHERE %s=%s;";
+    private static final String insertPlayer = "INSERT IGNORE INTO %splayer(%s) VALUES('%s');";
+    private static final String insertMessage = "INSERT IGNORE INTO %smessage(%s) VALUES(%s);";
     private final transient Logger LOGGER;
-    private HikariDataSource dataSource;
-
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS %splayer (" +
             "id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, " +
             "uuid CHAR(36), " +
@@ -41,14 +44,10 @@ public class MySQL implements SQLStorage {
             "fromqqid BIGINT, " +
             "fromuuid CHAR(36), " +
             "senttime TIMESTAMP DEFAULT CURRENT_TIMESTAMP); ";
-    private static final String selectPlayer = "SELECT * FROM %splayer WHERE %s=%s LIMIT 1;";
-    private static final String selectPlayerList = "SELECT * FROM %splayer WHERE %s=%s;";
-    private static final String updatePlayer = "UPDATE %splayer SET %s=%s WHERE %s=%s;";
-    private static final String insertPlayer = "INSERT IGNORE INTO %splayer(%s) VALUES('%s');";
-    private static final String insertMessage = "INSERT IGNORE INTO %smessage(%s) VALUES(%s);";
+    private HikariDataSource dataSource;
 
-    public MySQL(AbstractPhenyl plugin,HikariDataSource ds) {
-        LOGGER= plugin.getLogger();
+    public MySQL(AbstractPhenyl plugin, HikariDataSource ds) {
+        LOGGER = plugin.getLogger();
         dataSource = ds;
         initTables();
     }

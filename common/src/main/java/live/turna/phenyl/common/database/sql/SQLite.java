@@ -16,19 +16,21 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>SQLite</b><br>
- * SQLite handler.
+ * SQLite implementation.
  *
  * @see SQLQuery
- * @see SQLStorage
+ * @see AbstractSQLStorage
  * @since 2021/12/5 21:08
  */
-public class SQLite implements SQLStorage {
+public class SQLite extends AbstractSQLStorage {
+    private static final String selectPlayer = "SELECT * FROM player WHERE %s=%s LIMIT 1;";
+    private static final String selectPlayerList = "SELECT * FROM player WHERE %s=%s;";
+    private static final String updatePlayer = "UPDATE player SET %s=%s WHERE %s=%s;";
+    private static final String insertPlayer = "INSERT OR IGNORE INTO player(%s) VALUES('%s');";
+    private static final String insertMessage = "INSERT INTO message(%s) VALUES(%s);";
     private final transient Logger LOGGER;
     private final Connection playerConnection;
     private final Connection messageConnection;
-    private Statement player;
-    private Statement message;
-
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS player (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, " +
             "uuid CHAR(36), " +
@@ -43,14 +45,11 @@ public class SQLite implements SQLStorage {
             "fromqqid BIGINT, " +
             "fromuuid CHAR(36), " +
             "senttime TIMESTAMP DEFAULT CURRENT_TIMESTAMP); ";
-    private static final String selectPlayer = "SELECT * FROM player WHERE %s=%s LIMIT 1;";
-    private static final String selectPlayerList = "SELECT * FROM player WHERE %s=%s;";
-    private static final String updatePlayer = "UPDATE player SET %s=%s WHERE %s=%s;";
-    private static final String insertPlayer = "INSERT OR IGNORE INTO player(%s) VALUES('%s');";
-    private static final String insertMessage = "INSERT INTO message(%s) VALUES(%s);";
+    private Statement player;
+    private Statement message;
 
-    public SQLite(AbstractPhenyl plugin,Connection playerC, @Nullable Connection messageC) {
-        LOGGER= plugin.getLogger();
+    public SQLite(AbstractPhenyl plugin, Connection playerC, @Nullable Connection messageC) {
+        LOGGER = plugin.getLogger();
         playerConnection = playerC;
         messageConnection = messageC;
         initTables();

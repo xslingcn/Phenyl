@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * <b>PhenylStorage</b><br>
- * Base storage interface for Phenyl.
+ * Defines all operations that should be supported for Phenyl storage.
  *
  * @since 2022/3/29 20:52
  */

@@ -22,7 +22,7 @@ public record BindMap(String userName, Long userID, String code) {
      * To check if the key matches the map.
      *
      * @param key The key to proceed matching, which is userID.
-     * @return The BindMap object if matches and null for not so.
+     * @return BindMap object if matches and null for not.
      */
     public Boolean match(Long key) {
         return userID.equals(key);

@@ -7,8 +7,9 @@ import java.util.UUID;
 
 /**
  * <b>SenderFactory</b><br>
- * *
+ * Factory to wrap a CommandSender to PSender.
  *
+ * @see PSender
  * @since 2022/5/3 12:58
  */
 public abstract class SenderFactory<P extends AbstractPhenyl, S> {

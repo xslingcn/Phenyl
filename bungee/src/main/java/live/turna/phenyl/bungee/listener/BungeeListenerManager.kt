@@ -8,12 +8,6 @@ import live.turna.phenyl.bungee.listener.mirai.BungeeOnBotOfflineEvent
 import live.turna.phenyl.bungee.listener.mirai.BungeeOnGroupMessageEvent
 import live.turna.phenyl.common.listener.AbstractServerListenerManager
 
-/**
- * **BungeeListenerManager**<br></br>
- * *
- *
- * @since 2022/5/6 15:43
- */
 class BungeeListenerManager(plugin: BungeePhenyl) : AbstractServerListenerManager<BungeePhenyl>(plugin) {
     override fun start() {
         // Mirai

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * <b>SQLQuery</b><br>
  *
- * @see SQLStorage
+ * @see AbstractSQLStorage
  * @since 2022/3/4 21:18
  */
 public interface SQLQuery {

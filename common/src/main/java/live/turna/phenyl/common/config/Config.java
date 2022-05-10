@@ -12,7 +12,7 @@ import static live.turna.phenyl.common.utils.BindUtils.isValidQQID;
 
 /**
  * <b>Config</b><br>
- * *
+ * The configuration.
  *
  * @since 2022/4/7 23:07
  */

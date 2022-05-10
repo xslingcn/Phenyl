@@ -15,16 +15,19 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>PostgreSQL</b><br>
- * PostgreSQL handler.
+ * PostgreSQL implementation.
  *
  * @see SQLQuery
- * @see SQLStorage
+ * @see AbstractSQLStorage
  * @since 2021/12/6 1:53
  */
-public class PostgreSQL implements SQLStorage {
+public class PostgreSQL extends AbstractSQLStorage {
+    private static final String selectPlayer = "SELECT * FROM %splayer WHERE %s=%s LIMIT 1;";
+    private static final String selectPlayerList = "SELECT * FROM %splayer WHERE %s=%s;";
+    private static final String updatePlayer = "UPDATE %splayer SET %s=%s WHERE %s=%s;";
+    private static final String insertPlayer = "INSERT INTO %splayer(%s) VALUES('%s') ON CONFLICT DO NOTHING;";
+    private static final String insertMessage = "INSERT INTO %smessage(%s) VALUES(%s) ON CONFLICT DO NOTHING;";
     private final transient Logger LOGGER;
-    private HikariDataSource dataSource;
-
     private final String initPlayerTable = "CREATE TABLE IF NOT EXISTS %splayer (" +
             "id SERIAL PRIMARY KEY, " +
             "uuid CHAR(36) UNIQUE, " +
@@ -39,14 +42,10 @@ public class PostgreSQL implements SQLStorage {
             "fromqqid BIGINT, " +
             "fromuuid CHAR(36), " +
             "senttime TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP); ";
-    private static final String selectPlayer = "SELECT * FROM %splayer WHERE %s=%s LIMIT 1;";
-    private static final String selectPlayerList = "SELECT * FROM %splayer WHERE %s=%s;";
-    private static final String updatePlayer = "UPDATE %splayer SET %s=%s WHERE %s=%s;";
-    private static final String insertPlayer = "INSERT INTO %splayer(%s) VALUES('%s') ON CONFLICT DO NOTHING;";
-    private static final String insertMessage = "INSERT INTO %smessage(%s) VALUES(%s) ON CONFLICT DO NOTHING;";
+    private HikariDataSource dataSource;
 
     public PostgreSQL(AbstractPhenyl plugin, HikariDataSource ds) {
-        LOGGER=plugin.getLogger();
+        LOGGER = plugin.getLogger();
         dataSource = ds;
         initTables();
     }

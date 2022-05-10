@@ -95,6 +95,16 @@ public class MiraiUtils {
         return protocol;
     }
 
+    /**
+     * Get the name of senders that are possibly not registered, from {@link net.mamoe.mirai.message.data.QuoteReply} and {@link net.mamoe.mirai.message.data.At}.
+     *
+     * @param groupId  The id of group where the sender from.
+     * @param senderId The sender's QQ ID.
+     * @return 1). Minecraft username;<br/>
+     * 2). Name-card in group;<br/>
+     * 3). Nickname.
+     * @throws NoSuchElementException The target is not found.
+     */
     public String getUserNameOrNameCardOrNick(Long groupId, Long senderId) throws NoSuchElementException {
         String userName = null;
         if (Config.forward_mode.equals("command") || Config.forward_mode.equals("bind"))

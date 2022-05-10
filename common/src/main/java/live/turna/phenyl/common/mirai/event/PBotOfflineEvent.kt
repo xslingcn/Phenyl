@@ -1,7 +1,8 @@
 package live.turna.phenyl.mirai.event
 
 /**
- * **CBotOfflineEvent**<br></br>
+ * **CBotOfflineEvent**
+ *
  * BotOfflineEvent class.
  *
  * @since 2021/12/4 4:19

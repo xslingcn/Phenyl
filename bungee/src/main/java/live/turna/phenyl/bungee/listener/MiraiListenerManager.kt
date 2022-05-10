@@ -8,12 +8,6 @@ import net.mamoe.mirai.event.events.BotOfflineEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.md_5.bungee.api.ProxyServer
 
-/**
- * **MiraiListenerManager**<br></br>
- * *
- *
- * @since 2022/5/6 15:42
- */
 class MiraiListenerManager : AbstractMiraiListenerManager() {
     override fun start(bot: Bot) {
         val eventChannel = bot.eventChannel

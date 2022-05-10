@@ -25,7 +25,7 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 
 /**
  * <b>AbstractForwarder</b><br>
- * *
+ * Abstract forwarder to forward messages between server and QQ groups.
  *
  * @since 2022/4/8 0:30
  */
@@ -38,6 +38,17 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
         LOGGER = phenyl.getLogger();
     }
 
+    /**
+     * Forward a message to servers.<br>
+     * Phenyl will replace all format-variables to corresponding value except %message%;
+     * %message% would be produced by {@link Formatter}, parsing special messages or URLs and attach click and hover events.
+     *
+     * @param group    Group instance of which the message is from.
+     * @param senderID The sender's QQ ID.
+     * @param message  The message content.
+     * @param nickName The sender's in-group name card or nickname, used for {@code sync} mode.
+     * @see Formatter
+     */
     public void forwardToServer(Group group, Long senderID, MessageChain message, @Nullable String nickName) {
         String messageString = message.contentToString();
 
@@ -59,8 +70,10 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
                 .replace("%nickname%", nickName != null ? nickName : "");
         // get the pattern before and after %message%
         String[] format = preText.split("%message%");
-        Matcher matcher = Pattern.compile("&(?![\\s\\S]*&)\\d").matcher(Config.qq_to_server_format); // get the last color code occurrence before %message%
-        String color = matcher.find() ? matcher.group() : "&f"; // if no color specified, fallback to white
+        // get the last color code occurrence before %message%
+        Matcher matcher = Pattern.compile("&(?![\\s\\S]*&)\\d").matcher(Config.qq_to_server_format);
+        // if no color specified, fallback to white
+        String color = matcher.find() ? matcher.group() : "&f";
         phenyl.getMessenger().sendAllServer(new Formatter<>(phenyl, format, color, message).get());
     }
 
@@ -70,12 +83,13 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
 
     /**
      * Forward a message to QQ group.<br>
-     * This will only send messages to group which is in {@code PhenylConfiguration.enabled_groups}.
+     * Will only send messages to group in {@code Config.enabled_groups}.
      *
      * @param message   The message content.
      * @param userName  The sender's Minecraft username.
      * @param uuid      The sender's Minecraft UUID.
      * @param subServer In which sub server the message is sent.
+     * @return A list of {@link MessageReceipt}s.
      */
     public ArrayList<MessageReceipt<Group>> forwardToQQ(String message, String userName, String uuid, String subServer) {
         for (Player it : phenyl.getMutedPlayer()) {
@@ -103,7 +117,7 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
             referenceReceipts = forwardImageMessage(i18n("imageMessage"), userName, uuid);
         else referenceReceipts = forwardPlainMessage(i18n("imageMessage"), userName, subServer);
 
-        // retrieve and send image
+        // retrieve the image, gives null image if IOException thrown while reading or timed-out
         CompletableFuture<BufferedImage> futureGet = CompletableFuture.supplyAsync(() -> {
             try {
                 return new ImageMessage(phenyl).getImageFromURL(url);
