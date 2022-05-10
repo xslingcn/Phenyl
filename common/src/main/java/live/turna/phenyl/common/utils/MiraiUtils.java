@@ -3,6 +3,7 @@ package live.turna.phenyl.common.utils;
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
@@ -92,6 +93,22 @@ public class MiraiUtils {
             protocol = BotConfiguration.MiraiProtocol.ANDROID_WATCH;
         } else throw new IllegalArgumentException(i18n("matchProtocolFail"));
         return protocol;
+    }
+
+    public String getUserNameOrNameCardOrNick(Long groupId, Long senderId) throws NoSuchElementException {
+        String userName = null;
+        if (Config.forward_mode.equals("command") || Config.forward_mode.equals("bind"))
+            userName = phenyl.getStorage().getBinding(senderId).mcname();
+
+        if (userName == null) {
+            try {
+                Member from = phenyl.getMirai().getBot().getGroupOrFail(groupId).getOrFail(senderId);
+                userName = from.getNameCard().isEmpty() ? from.getNick() : from.getNameCard();
+            } catch (NoSuchElementException e) {
+                throw new NoSuchElementException(String.valueOf(groupId));
+            }
+        }
+        return userName;
     }
 
     /**

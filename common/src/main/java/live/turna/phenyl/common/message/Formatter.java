@@ -5,15 +5,16 @@ import com.google.gson.Gson;
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.message.schema.*;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
+import live.turna.phenyl.common.utils.MiraiUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mamoe.mirai.message.data.*;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,14 +34,18 @@ public class Formatter<P extends AbstractPhenyl> {
     private final transient MessageChain message;
     private final transient String messageString;
     private final transient List<SingleMessage> images;
+    private final transient QuoteReply quote;
 
-    public Formatter(P plugin, String[] format, String color, MessageChain message, @Nullable List<SingleMessage> images) {
+    public Formatter(P plugin, String[] format, String color, MessageChain message) {
         phenyl = plugin;
         this.format = format;
         this.color = color;
         this.message = message;
         this.messageString = message.contentToString();
-        this.images = images;
+        this.images = this.message.stream().filter(Image.class::isInstance).toList();
+        List<SingleMessage> replyList = this.message.stream().filter(QuoteReply.class::isInstance).toList();
+        if (!replyList.isEmpty()) this.quote = (QuoteReply) replyList.get(0);
+        else this.quote = null;
     }
 
     public Component get() {
@@ -182,7 +187,8 @@ public class Formatter<P extends AbstractPhenyl> {
         String pattern = "\\u56fe\\u7247|\\u52a8\\u753b\\u8868\\u60c5";
         Matcher match = Pattern.compile(pattern).matcher(messageString);
         List<String> other = List.of(messageString.split(pattern));
-        TextComponent.Builder result = Component.text().content(altColor(format[0]));
+        TextComponent.Builder result = Component.text().content(altColor(format[0] + quoteReply()));
+
         while (match.find()) {
             if (other.size() > matchCount) {    // append the words other than "\\u56fe\\u7247" and clear events
                 result.append(
@@ -224,7 +230,8 @@ public class Formatter<P extends AbstractPhenyl> {
         String pattern = "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
         Matcher match = Pattern.compile(pattern).matcher(messageString);
         List<String> other = List.of(messageString.split(pattern));
-        TextComponent.Builder result = Component.text().content(altColor(format[0]));
+        TextComponent.Builder result = Component.text().content(altColor(format[0] + quoteReply()));
+
         while (match.find()) {
             if (other.size() > linkCount) {
                 result.append(
@@ -252,9 +259,22 @@ public class Formatter<P extends AbstractPhenyl> {
     }
 
     Component groupRandom() {
-        return Component.text(altColor(format[0] + messageString))
+        return Component.text(altColor(format[0] + quoteReply() + messageString))
                 .append(Component.text(format.length > 1
                         ? altColor(color + format[1])
                         : ""));
+    }
+
+    String quoteReply() {
+        if (quote == null) return "";
+        try {
+            return i18n("quoteReply",
+                    new MiraiUtils(phenyl).getUserNameOrNameCardOrNick(quote.getSource().getTargetId(), quote.getSource().getFromId())
+                    , quote.getSource().getOriginalMessage().contentToString());
+        } catch (NoSuchElementException e) {
+            phenyl.getLogger().error(i18n("noSuchGroup", e.getLocalizedMessage()));
+            if (Config.debug) e.printStackTrace();
+            return "";
+        }
     }
 }
