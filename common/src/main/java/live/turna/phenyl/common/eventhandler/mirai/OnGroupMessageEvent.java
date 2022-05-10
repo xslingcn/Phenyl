@@ -4,12 +4,12 @@ import live.turna.phenyl.common.command.GroupCommandExecutor;
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.message.data.*;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.message.data.QuoteReply;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static live.turna.phenyl.common.message.I18n.i18n;
 
@@ -27,7 +27,6 @@ public abstract class OnGroupMessageEvent<P extends AbstractPhenyl> {
     private transient MessageChain message;
     private transient String messageString;
     private transient String nameCardOrNick;
-    private transient List<SingleMessage> images;
 
     public OnGroupMessageEvent(P plugin) {
         phenyl = plugin;
@@ -45,7 +44,6 @@ public abstract class OnGroupMessageEvent<P extends AbstractPhenyl> {
 
         if (group == null || senderId == null || message == null || messageString.isEmpty()) return;
         if (!Config.enabled_groups.contains(group.getId())) return;
-        images = message.stream().filter(Image.class::isInstance).collect(Collectors.toList());
 
         // message with a command prefix
         if (messageString.startsWith(Config.command_prefix)) {
@@ -56,7 +54,7 @@ public abstract class OnGroupMessageEvent<P extends AbstractPhenyl> {
                         // if is random message that needs to be forwarded under `command` mode
                         String userName = phenyl.getStorage().getBinding(senderId).mcname();
                         if (userName == null) throw new IllegalArgumentException(i18n("notBoundYet"));
-                        phenyl.getForwarder().forwardToServer(group, senderId, messageString.substring(1), nameCardOrNick, images);
+                        phenyl.getForwarder().forwardToServer(group, senderId, messageString.substring(1), nameCardOrNick);
                     }
                     return true;
                 } catch (IllegalArgumentException ex) {
@@ -74,7 +72,7 @@ public abstract class OnGroupMessageEvent<P extends AbstractPhenyl> {
         // random message
         CompletableFuture.supplyAsync(() -> {
             switch (Config.forward_mode) {
-                case "sync", "bind" -> phenyl.getForwarder().forwardToServer(group, senderId, message, nameCardOrNick, images);
+                case "sync", "bind" -> phenyl.getForwarder().forwardToServer(group, senderId, message, nameCardOrNick);
                 default -> {
                     return false;
                 }

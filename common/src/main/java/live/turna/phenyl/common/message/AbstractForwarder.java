@@ -4,19 +4,16 @@ import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.database.Player;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import live.turna.phenyl.common.utils.MiraiUtils;
-import net.kyori.adventure.text.Component;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.SingleMessage;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +38,7 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
         LOGGER = phenyl.getLogger();
     }
 
-    public void forwardToServer(Group group, Long senderID, MessageChain message, @Nullable String nickName, @Nullable List<SingleMessage> images) {
+    public void forwardToServer(Group group, Long senderID, MessageChain message, @Nullable String nickName) {
         String messageString = message.contentToString();
 
         for (Player it : phenyl.getMutedPlayer()) {
@@ -64,15 +61,11 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
         String[] format = preText.split("%message%");
         Matcher matcher = Pattern.compile("&(?![\\s\\S]*&)\\d").matcher(Config.qq_to_server_format); // get the last color code occurrence before %message%
         String color = matcher.find() ? matcher.group() : "&f"; // if no color specified, fallback to white
-        phenyl.getMessenger().sendAllServer(matchMessageType(message, format, color, images));
+        phenyl.getMessenger().sendAllServer(new Formatter<>(phenyl, format, color, message).get());
     }
 
-    public void forwardToServer(Group group, Long senderID, String message, @Nullable String nickName, @Nullable List<SingleMessage> images) {
-        forwardToServer(group, senderID, new MessageChainBuilder().append(message).build(), nickName, images);
-    }
-
-    public Component matchMessageType(MessageChain message, String[] format, String color, @Nullable List<SingleMessage> images) {
-        return new Formatter<>(phenyl, format, color, message, images).get();
+    public void forwardToServer(Group group, Long senderID, String message, @Nullable String nickName) {
+        forwardToServer(group, senderID, new MessageChainBuilder().append(message).build(), nickName);
     }
 
     /**
