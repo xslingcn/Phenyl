@@ -12,7 +12,7 @@ class BungeeCommand(private val phenyl: BungeePhenyl, name: String, alia: String
     override fun execute(sender: CommandSender, args: Array<String>) {
         try {
             ServerCommandExecutor(phenyl, phenyl.senderFactory.wrap(sender), args).match()
-        } catch (e: RuntimeException) {
+        } catch (e: IllegalArgumentException) {
             phenyl.messenger.sendPlayer(e.message, phenyl.senderFactory.wrap(sender))
         }
     }

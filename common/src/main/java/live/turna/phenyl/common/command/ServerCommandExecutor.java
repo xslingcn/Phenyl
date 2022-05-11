@@ -49,12 +49,12 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
     /**
      * Match and perform the commands.
      *
-     * @throws RuntimeException The failing message. <br/>
-     *                          1). commandNotFoundPhenyl: Unknown command. Could be player-only commands called by console.<br/>
-     *                          2). noPermission: The command sender doesn't have the permission to perform it.<br/>
-     *                          3). illegalArgumentPhenyl: The number of arguments doesn't match.
+     * @throws IllegalArgumentException The failing message. <br/>
+     *                                  1). commandNotFoundPhenyl: Unknown command. Could be player-only commands called by console.<br/>
+     *                                  2). noPermission: The command sender doesn't have the permission to perform it.<br/>
+     *                                  3). illegalArgumentPhenyl: The number of arguments doesn't match.
      */
-    public void match() throws RuntimeException {
+    public void match() throws IllegalArgumentException {
         if (args.length == 0) {
             welcome();
             return;
@@ -62,15 +62,15 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         List<ServerCommand> match = Stream.of(ServerCommand.values())
                 .filter(cmd -> cmd.prompt.equals(args[0]))
                 .toList();
-        if (match.isEmpty()) throw new RuntimeException(i18n("commandNotFoundPhenyl"));
+        if (match.isEmpty()) throw new IllegalArgumentException(i18n("commandNotFoundPhenyl"));
         else match.forEach(cmd -> {
             if (sender.isConsole())
                 switch (args[0].toLowerCase()) {
-                    case "bind", "verify", "say", "nomessage", "at" -> throw new RuntimeException(i18n("commandNotFoundPhenyl"));
+                    case "bind", "verify", "say", "nomessage", "at" -> throw new IllegalArgumentException(i18n("commandNotFoundPhenyl"));
                 }
-            if (!sender.hasPermission(cmd.permission)) throw new RuntimeException(i18n("noPermission"));
+            if (!sender.hasPermission(cmd.permission)) throw new IllegalArgumentException(i18n("noPermission"));
             if (!cmd.argCnt.equals(args.length))
-                throw new RuntimeException(i18n("illegalArgumentPhenyl"));
+                throw new IllegalArgumentException(i18n("illegalArgumentPhenyl"));
             else {
                 switch (args[0].toLowerCase()) {
                     case "bind" -> bind();
@@ -248,11 +248,11 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         }
     }
 
-    private void at() {
+    private void at() throws IllegalArgumentException {
         List<Player> playerList = phenyl.getAllBoundPlayer();
-        if (playerList.isEmpty()) throw new RuntimeException(i18n("boundPlayerNotFound"));
+        if (playerList.isEmpty()) throw new IllegalArgumentException(i18n("boundPlayerNotFound"));
         if (playerList.stream().noneMatch(player -> player.mcname().equals(args[1])))
-            throw new RuntimeException(i18n("boundPlayerNotFound"));
+            throw new IllegalArgumentException(i18n("boundPlayerNotFound"));
         Player targetPlayer = playerList.stream().filter(player -> player.mcname().equals(args[1])).findFirst().get();
         // get the pattern before and after %message%
         String[] format = Config.server_to_qq_format
