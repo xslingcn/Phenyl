@@ -71,7 +71,7 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
         // get the pattern before and after %message%
         String[] format = preText.split("%message%");
         // get the last color code occurrence before %message%
-        Matcher matcher = Pattern.compile("&(?![\\s\\S]*&)\\d").matcher(Config.qq_to_server_format);
+        Matcher matcher = Pattern.compile("&(?![\\s\\S]*&)\\d").matcher(format[0]);
         // if no color specified, fallback to white
         String color = matcher.find() ? matcher.group() : "&f";
         phenyl.getMessenger().sendAllServer(new Formatter<>(phenyl, format, color, message).get());
