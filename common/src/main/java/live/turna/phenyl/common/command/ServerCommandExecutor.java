@@ -254,14 +254,22 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         if (playerList.stream().noneMatch(player -> player.mcname().equals(args[1])))
             throw new IllegalArgumentException(i18n("boundPlayerNotFound"));
         Player targetPlayer = playerList.stream().filter(player -> player.mcname().equals(args[1])).findFirst().get();
+        String formatText = Config.server_to_qq_format.equals("image") ? "%username%:%message%" : Config.server_to_qq_format;
         // get the pattern before and after %message%
-        String[] format = Config.server_to_qq_format
+        String[] format = formatText
                 .replace("%sub_server%", new MessageUtils(phenyl).getServerName(sender.getServerName()))
                 .replace("%username%", sender.getUsername())
                 .split("%message%");
         for (Long id : Config.enabled_groups) {
+            Group group;
             try {
-                Group group = phenyl.getMirai().getBot().getGroupOrFail(id);
+                group = phenyl.getMirai().getBot().getGroupOrFail(id);
+            } catch (NoSuchElementException e) {
+                LOGGER.error(i18n("noSuchGroup", String.valueOf(id)));
+                if (Config.debug) e.printStackTrace();
+                continue;
+            }
+            try {
                 Member target = group.getOrFail(targetPlayer.qqid());
                 MessageChain message = new MessageChainBuilder()
                         .append(format[0])
@@ -270,7 +278,8 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
                         .build();
                 phenyl.getMessenger().sendGroup(group, message);
                 phenyl.getMessenger().sendPlayer(i18n("atSent", group.getName(), target.getNameCard().isEmpty() ? target.getNick() : target.getNameCard()), sender);
-            } catch (NoSuchElementException ignored) {
+            } catch (NoSuchElementException e) {
+                phenyl.getMessenger().sendPlayer(i18n("playerNotFoundInGroup", group.getName(), targetPlayer.mcname()), sender);
             }
         }
     }
