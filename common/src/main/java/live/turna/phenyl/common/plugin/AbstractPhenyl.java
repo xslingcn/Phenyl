@@ -32,6 +32,7 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
     protected BindHandler bindHandler;
     protected List<Player> mutedPlayer = new ArrayList<>();
     protected List<Player> noMessagePlayer = new ArrayList<>();
+    protected List<Player> allBoundPlayer = new ArrayList<>();
 
     private Logger LOGGER;
 
@@ -59,6 +60,9 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
         if (!postConfig()) return false;
 
         storage = new StorageFactory(this).createStorage(Config.storage.toLowerCase());
+        mutedPlayer = storage.getMutedPlayer();
+        noMessagePlayer = storage.getNoMessagePlayer();
+        allBoundPlayer = storage.getAllBoundPlayer();
         initMirai();
         initSenderFactory();
         initMessenger();
@@ -70,6 +74,7 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
     public final boolean reload() {
         mutedPlayer = null;
         noMessagePlayer = null;
+        allBoundPlayer = null;
         storage.shutdown();
 
         loadConfig();
@@ -83,6 +88,9 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
         mirai = null;
 
         storage = new StorageFactory(this).createStorage(Config.storage.toLowerCase());
+        mutedPlayer = storage.getMutedPlayer();
+        noMessagePlayer = storage.getNoMessagePlayer();
+        allBoundPlayer = storage.getAllBoundPlayer();
         initMirai();
         return true;
     }
@@ -95,8 +103,6 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
     }
 
     private void initMirai() {
-        mutedPlayer = storage.getMutedPlayer();
-        noMessagePlayer = storage.getNoMessagePlayer();
         CompletableFuture.supplyAsync(() -> {
             try {
                 mirai = new MiraiHandler(this, Config.user_id, Config.user_pass, Config.login_protocol);
@@ -129,6 +135,14 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
 
     public List<Player> getNoMessagePlayer() {
         return noMessagePlayer;
+    }
+
+    public List<Player> getAllBoundPlayer() {
+        return allBoundPlayer;
+    }
+
+    public void updateBoundPlayerList() {
+        allBoundPlayer = storage.getAllBoundPlayer();
     }
 
     public BindHandler getBindHandler() {

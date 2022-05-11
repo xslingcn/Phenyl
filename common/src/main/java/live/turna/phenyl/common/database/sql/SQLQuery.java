@@ -36,6 +36,14 @@ public interface SQLQuery {
     List<Player> getPlayerList(String selectColumn, String selectValue);
 
     /**
+     * Get a list of player of which the selected column IS NOT NULL.
+     *
+     * @param selectColumn The column to select.
+     * @return An empty list if not any player found, or a list of player instances.
+     */
+    List<Player> getNotNUllPlayerList(String selectColumn);
+
+    /**
      * Update players in database.
      *
      * @param setColumn    The column to set.

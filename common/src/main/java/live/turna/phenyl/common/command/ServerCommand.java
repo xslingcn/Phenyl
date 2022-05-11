@@ -16,7 +16,8 @@ public enum ServerCommand {
     BIND("bind", 2, "phenyl.use.bind"),
     VERIFY("verify", 2, "phenyl.use.verify"),
     SAY("say", 2, "phenyl.use.say"),
-    NOMESSAGE("nomessage", 1, "phenyl.use.nomessage");
+    NOMESSAGE("nomessage", 1, "phenyl.use.nomessage"),
+    AT("at", 2, "phenyl.use.at");
 
     final String prompt;
     final Integer argCnt;

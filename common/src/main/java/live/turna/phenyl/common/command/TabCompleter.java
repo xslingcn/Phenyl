@@ -1,5 +1,6 @@
 package live.turna.phenyl.common.command;
 
+import live.turna.phenyl.common.database.Player;
 import live.turna.phenyl.common.instance.PSender;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 
@@ -39,6 +40,12 @@ public class TabCompleter<P extends AbstractPhenyl, S extends PSender> {
                 if (args[0].equals("mute")) {
                     List<PSender> playerList = phenyl.getPlayers().stream().filter(player -> player.getUsername().startsWith(args[1])).toList();
                     playerList.forEach(player -> completions.add(player.getUsername()));
+                    return completions;
+                }
+                if (args[0].equals("at")) {
+                    if (phenyl.getAllBoundPlayer().isEmpty()) return completions;
+                    List<Player> playerList = phenyl.getAllBoundPlayer().stream().filter(player -> player.mcname().startsWith(args[1])).toList();
+                    playerList.subList(0, Math.min(10, playerList.size())).forEach(player -> completions.add(player.mcname()));
                     return completions;
                 }
             }

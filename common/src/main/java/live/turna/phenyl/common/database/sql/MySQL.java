@@ -24,6 +24,7 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 public class MySQL extends AbstractSQLStorage {
     private static final String selectPlayer = "SELECT * FROM %splayer WHERE %s=%s LIMIT 1;";
     private static final String selectPlayerList = "SELECT * FROM %splayer WHERE %s=%s;";
+    private static final String selectNotNullPlayerList = "SELECT * FROM %splayer WHERE %s IS NOT NULL;";
     private static final String updatePlayer = "UPDATE %splayer SET %s=%s WHERE %s=%s;";
     private static final String insertPlayer = "INSERT IGNORE INTO %splayer(%s) VALUES('%s');";
     private static final String insertMessage = "INSERT IGNORE INTO %smessage(%s) VALUES(%s);";
@@ -100,6 +101,29 @@ public class MySQL extends AbstractSQLStorage {
                     result.add(new Player(resultSet.getInt("id"),
                             resultSet.getString("uuid"),
                             resultSet.getString("qqid") == null ? null : Long.parseLong(resultSet.getString("qqid")),
+                            resultSet.getString("mcname")));
+                }
+            }
+            connection.close();
+            return result;
+        } catch (SQLException e) {
+            LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (Config.debug) e.printStackTrace();
+        }
+        return result;
+    }
+
+    public List<Player> getNotNUllPlayerList(String selectColumn) {
+        ResultSet resultSet;
+        List<Player> result = new java.util.ArrayList<>();
+        try {
+            Connection connection = dataSource.getConnection();
+            resultSet = connection.prepareStatement(String.format(selectNotNullPlayerList, Config.table_prefix, selectColumn)).executeQuery();
+            if (resultSet.isBeforeFirst()) {
+                while (resultSet.next()) {
+                    result.add(new Player(resultSet.getInt("id"),
+                            resultSet.getString("uuid"),
+                            Long.parseLong(resultSet.getString("qqid")),
                             resultSet.getString("mcname")));
                 }
             }

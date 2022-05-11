@@ -76,6 +76,7 @@ public class BindHandler {
                 throw new IllegalArgumentException(i18n("invalidCode"));
 
             BindResult bindResult = new Confirm(identifier, code).get();
+            phenyl.updateBoundPlayerList();
 
             // Code not found in binding queue.
             if (bindResult == null) throw new IllegalArgumentException(i18n("invalidCode"));

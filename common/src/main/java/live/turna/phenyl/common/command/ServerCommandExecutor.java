@@ -12,9 +12,15 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.Member;
+import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -60,7 +66,7 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
         else match.forEach(cmd -> {
             if (sender.isConsole())
                 switch (args[0].toLowerCase()) {
-                    case "bind", "verify", "say", "nomessage" -> throw new RuntimeException(i18n("commandNotFoundPhenyl"));
+                    case "bind", "verify", "say", "nomessage", "at" -> throw new RuntimeException(i18n("commandNotFoundPhenyl"));
                 }
             if (!sender.hasPermission(cmd.permission)) throw new RuntimeException(i18n("noPermission"));
             if (!cmd.argCnt.equals(args.length))
@@ -71,6 +77,7 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
                     case "verify" -> verify();
                     case "say" -> say();
                     case "nomessage" -> noMessage();
+                    case "at" -> at();
                 }
             }
             switch (args[0]) {
@@ -238,6 +245,33 @@ public class ServerCommandExecutor<P extends AbstractPhenyl, S extends PSender> 
             phenyl.getStorage().updateNoMessagePlayer(sender.getUUID().toString(), true);
             phenyl.getNoMessagePlayer().add(phenyl.getStorage().getBinding(sender.getUUID().toString()));
             phenyl.getMessenger().sendPlayer(i18n("noMessage"), sender);
+        }
+    }
+
+    private void at() {
+        List<Player> playerList = phenyl.getAllBoundPlayer();
+        if (playerList.isEmpty()) throw new RuntimeException(i18n("boundPlayerNotFound"));
+        if (playerList.stream().noneMatch(player -> player.mcname().equals(args[1])))
+            throw new RuntimeException(i18n("boundPlayerNotFound"));
+        Player targetPlayer = playerList.stream().filter(player -> player.mcname().equals(args[1])).findFirst().get();
+        // get the pattern before and after %message%
+        String[] format = Config.server_to_qq_format
+                .replace("%sub_server%", new MessageUtils(phenyl).getServerName(sender.getServerName()))
+                .replace("%username%", sender.getUsername())
+                .split("%message%");
+        for (Long id : Config.enabled_groups) {
+            try {
+                Group group = phenyl.getMirai().getBot().getGroupOrFail(id);
+                Member target = group.getOrFail(targetPlayer.qqid());
+                MessageChain message = new MessageChainBuilder()
+                        .append(format[0])
+                        .append(new At(target.getId()))
+                        .append(format.length > 1 ? format[1] : "")
+                        .build();
+                phenyl.getMessenger().sendGroup(group, message);
+                phenyl.getMessenger().sendPlayer(i18n("atSent", group.getName(), target.getNameCard().isEmpty() ? target.getNick() : target.getNameCard()), sender);
+            } catch (NoSuchElementException ignored) {
+            }
         }
     }
 }

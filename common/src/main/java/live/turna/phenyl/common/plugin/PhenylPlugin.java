@@ -87,6 +87,18 @@ public interface PhenylPlugin {
     List<Player> getNoMessagePlayer();
 
     /**
+     * Get the list of all bound players;
+     *
+     * @return A list of player instances, of which would never hold a NULL qqid. Could be empty if no one had bound yet.
+     */
+    List<Player> getAllBoundPlayer();
+
+    /**
+     * Get the bound player list from storage again. Called after each binding operation.
+     */
+    void updateBoundPlayerList();
+
+    /**
      * Get a player instance by username.
      *
      * @param username The player's Minecraft username.

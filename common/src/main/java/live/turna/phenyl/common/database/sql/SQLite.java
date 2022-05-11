@@ -25,6 +25,7 @@ import static live.turna.phenyl.common.message.I18n.i18n;
 public class SQLite extends AbstractSQLStorage {
     private static final String selectPlayer = "SELECT * FROM player WHERE %s=%s LIMIT 1;";
     private static final String selectPlayerList = "SELECT * FROM player WHERE %s=%s;";
+    private static final String selectNotNullPlayerList = "SELECT * FROM player WHERE %s IS NOT NULL;";
     private static final String updatePlayer = "UPDATE player SET %s=%s WHERE %s=%s;";
     private static final String insertPlayer = "INSERT OR IGNORE INTO player(%s) VALUES('%s');";
     private static final String insertMessage = "INSERT INTO message(%s) VALUES(%s);";
@@ -105,6 +106,29 @@ public class SQLite extends AbstractSQLStorage {
                     result.add(new Player(resultSet.getInt("id"),
                             resultSet.getString("uuid"),
                             resultSet.getString("qqid") == null ? null : Long.parseLong(resultSet.getString("qqid")),
+                            resultSet.getString("mcname")));
+                }
+                player.close();
+                return result;
+            }
+        } catch (SQLException e) {
+            LOGGER.error(i18n("queryFail"), e.getLocalizedMessage());
+            if (Config.debug) e.printStackTrace();
+        }
+        return result;
+    }
+
+    public List<Player> getNotNUllPlayerList(String selectColumn) {
+        ResultSet resultSet;
+        List<Player> result = new java.util.ArrayList<>();
+        try {
+            player = playerConnection.createStatement();
+            resultSet = player.executeQuery(String.format(selectNotNullPlayerList, selectColumn));
+            if (resultSet.isBeforeFirst()) {
+                while (resultSet.next()) {
+                    result.add(new Player(resultSet.getInt("id"),
+                            resultSet.getString("uuid"),
+                            Long.parseLong(resultSet.getString("qqid")),
                             resultSet.getString("mcname")));
                 }
                 player.close();

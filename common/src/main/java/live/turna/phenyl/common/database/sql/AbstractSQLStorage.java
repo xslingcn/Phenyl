@@ -48,6 +48,10 @@ public abstract class AbstractSQLStorage implements SQLQuery, PhenylStorage {
         return getPlayerList("nomessage", "1");
     }
 
+    public List<Player> getAllBoundPlayer() {
+        return getNotNUllPlayerList("qqid");
+    }
+
     public boolean addBinding(String uuid, Long qqid) {
         return updatePlayer("qqid", qqid.toString(), "uuid", uuid);
     }
