@@ -110,12 +110,15 @@ public class GroupCommandExecutor<P extends AbstractPhenyl> {
      */
     public void status() {
         List<String> listFormat = new ArrayList<>();
-        phenyl.getStatus().forEach((serverName, status) -> listFormat.add(serverName + " - " + "[" + (status ? "√" : "×") + "]" + "\n"));
-        MessageChainBuilder reply = new MessageChainBuilder()
-                .append(new QuoteReply(message));
-        StringBuilder listContent = new StringBuilder();
-        listFormat.forEach(listContent::append);
-        phenyl.getMessenger().sendGroup(group, reply.append(listContent.toString().trim()).build());
+        phenyl.getStatus().thenApply(statusMap -> {
+            statusMap.forEach((serverName, status) -> listFormat.add(serverName + " - " + "[" + (status ? "√" : "×") + "]" + "\n"));
+            MessageChainBuilder reply = new MessageChainBuilder()
+                    .append(new QuoteReply(message));
+            StringBuilder listContent = new StringBuilder();
+            listFormat.forEach(listContent::append);
+            phenyl.getMessenger().sendGroup(group, reply.append(listContent.toString().trim()).build());
+            return null;
+        });
     }
 
 }

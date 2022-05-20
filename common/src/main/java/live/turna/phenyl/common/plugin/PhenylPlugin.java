@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <b>PhenylPlugin</b><br>
@@ -143,7 +144,7 @@ public interface PhenylPlugin {
      *
      * @return The status.
      */
-    HashMap<String, Boolean> getStatus();
+    CompletableFuture<HashMap<String, Boolean>> getStatus();
 
     /**
      * Get the count of total online players.

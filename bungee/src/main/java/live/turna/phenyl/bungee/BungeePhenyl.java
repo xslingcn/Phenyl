@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 public final class BungeePhenyl extends AbstractPhenyl {
 
@@ -179,9 +179,10 @@ public final class BungeePhenyl extends AbstractPhenyl {
     }
 
     @Override
-    public HashMap<String, Boolean> getStatus() {
+    public CompletableFuture<HashMap<String, Boolean>> getStatus() {
         MessageUtils messageUtils = new MessageUtils(this);
         HashMap<String, Boolean> serverStatus = new HashMap<>();
+        CompletableFuture<HashMap<String, Boolean>> statusFuture = new CompletableFuture<>();
         Config.enabled_servers.forEach(server -> {
             if (!ProxyServer.getInstance().getServers().containsKey(server)) {
                 serverStatus.put(messageUtils.getServerName(server), false);
@@ -192,16 +193,11 @@ public final class BungeePhenyl extends AbstractPhenyl {
                     serverStatus.put(messageUtils.getServerName(server), true);
                 } else
                     serverStatus.put(messageUtils.getServerName(server), false);
+                if (serverStatus.size() == Config.enabled_servers.size())
+                    statusFuture.complete(serverStatus);
             });
         });
-        while (serverStatus.size() != Config.enabled_servers.size()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                if (Config.debug) e.printStackTrace();
-            }
-        }
-        return serverStatus;
+        return statusFuture;
     }
 
     @Override
