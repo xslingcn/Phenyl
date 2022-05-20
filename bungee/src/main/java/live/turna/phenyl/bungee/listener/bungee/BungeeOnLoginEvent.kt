@@ -8,7 +8,7 @@ import net.md_5.bungee.event.EventHandler
 
 class BungeeOnLoginEvent(plugin: BungeePhenyl) : OnLoginEvent<BungeePhenyl>(plugin), Listener {
     @EventHandler
-    fun onLoginEvent(e: ServerConnectedEvent) {
+    fun onLogin(e: ServerConnectedEvent) {
         super.fill(phenyl.senderFactory.wrap(e.player), messageUtils.getServerName(e.server.info.name))
         super.handle()
     }

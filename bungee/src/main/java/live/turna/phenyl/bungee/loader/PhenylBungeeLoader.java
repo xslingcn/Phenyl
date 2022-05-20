@@ -7,7 +7,7 @@ public final class PhenylBungeeLoader extends Plugin {
     BungeePhenyl plugin = new BungeePhenyl(this);
 
     @Override
-    public void onLoad(){
+    public void onLoad() {
         plugin.onLoad();
     }
 
