@@ -27,6 +27,7 @@ public final class BungeePhenyl extends AbstractPhenyl {
 
     private final transient Plugin loader;
     private final transient MiraiListenerManager miraiListenerManager = new MiraiListenerManager();
+    private final transient BungeeNativeLogger nativeLogger;
     private transient BungeeListenerManager bungeeListenerManager;
     private transient BungeeConfig bungeeConfig;
     private transient BungeeSenderFactory senderFactory;
@@ -35,6 +36,7 @@ public final class BungeePhenyl extends AbstractPhenyl {
 
     public BungeePhenyl(Plugin loader) {
         this.loader = loader;
+        nativeLogger = new BungeeNativeLogger(loader.getLogger());
     }
 
     public void onLoad() {
@@ -150,8 +152,8 @@ public final class BungeePhenyl extends AbstractPhenyl {
     }
 
     @Override
-    public Logger getNativeLogger() {
-        return loader.getLogger();
+    public BungeeNativeLogger getNativeLogger() {
+        return nativeLogger;
     }
 
     @Override

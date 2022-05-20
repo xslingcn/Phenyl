@@ -6,6 +6,7 @@ import live.turna.phenyl.common.database.Player;
 import live.turna.phenyl.common.instance.PSender;
 import live.turna.phenyl.common.instance.SenderFactory;
 import live.turna.phenyl.common.listener.AbstractMiraiListenerManager;
+import live.turna.phenyl.common.logger.NativeLogger;
 import live.turna.phenyl.common.message.AbstractForwarder;
 import live.turna.phenyl.common.message.messenger.AbstractMessenger;
 import live.turna.phenyl.common.mirai.MiraiHandler;
@@ -70,7 +71,7 @@ public interface PhenylPlugin {
      *
      * @return The native logger.
      */
-    java.util.logging.Logger getNativeLogger();
+    NativeLogger getNativeLogger();
 
     /**
      * Get the list of muted players.
