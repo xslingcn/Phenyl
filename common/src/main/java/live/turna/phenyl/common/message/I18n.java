@@ -34,27 +34,19 @@ public class I18n {
     private final transient Locale defaultLocale = Locale.getDefault();
     private final transient ResourceBundle defaultBundle;
     private final transient ResourceBundle customBundle;
+    private final transient AbstractPhenyl phenyl;
+    private final transient Logger LOGGER;
     private transient Locale currentLocale = defaultLocale;
     private transient ResourceBundle localeBundle;
     private transient Map<String, MessageFormat> messageFormatCache = new HashMap<>();
 
-    private final transient AbstractPhenyl phenyl;
-    private final transient Logger LOGGER;
-
-    public void onEnable() {
-        instance = this;
-    }
-
-    public void onDisable() {
-        instance = null;
-    }
-
     public I18n(AbstractPhenyl plugin) {
-        phenyl=plugin;
-        LOGGER=phenyl.getLogger();
+        phenyl = plugin;
+        LOGGER = phenyl.getLogger();
         defaultBundle = ResourceBundle.getBundle(MESSAGES, Locale.ENGLISH);
         localeBundle = defaultBundle;
         customBundle = NULL_BUNDLE;
+        instance = this;
     }
 
     /**

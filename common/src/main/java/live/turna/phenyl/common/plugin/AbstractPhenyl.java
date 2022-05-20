@@ -43,7 +43,6 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
 
     public final boolean enable() {
         i18n = new I18n(this);
-        i18n.onEnable();
 
         logging = new Logging(this);
         logging.onEnable();
@@ -99,7 +98,6 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
         storage.shutdown();
         stopListening();
         if (mirai != null) mirai.onDisable();
-        i18n.onDisable();
     }
 
     private void initMirai() {
