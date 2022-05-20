@@ -12,11 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.kyori", "adventure-api", "4.10.1")
-    implementation("net.kyori", "adventure-platform-api", "4.1.0")
-    implementation("net.kyori", "adventure-platform-facet", "4.1.0")
-    implementation("net.kyori", "adventure-text-serializer-gson", "4.10.0")
-    implementation("net.kyori", "adventure-text-serializer-legacy", "4.10.0")
+    compileOnly("net.kyori", "adventure-api", "4.10.1")
     compileOnly("com.google.guava", "guava", "31.1-jre")
     compileOnly("com.google.code.gson", "gson", "2.9.0")
     compileOnly("org.apache.logging.log4j", "log4j-core", "2.17.1")

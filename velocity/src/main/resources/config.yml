@@ -1,0 +1,215 @@
+################################
+#     General configuration    #
+################################
+# locale: localization of your server.
+locale: en
+
+# debug: whether to print debug info.
+debug: false
+
+################################
+#      Mirai configuration     #
+################################
+
+# user_id: your bot's QQ number.
+user_id: "your_qq_number"
+
+# user_pass: Your bot's QQ password.
+# If you select ANDROID_PHONE as protocol, make sure your password length is less than 16.
+user_pass: "your_qq_pass"
+
+# login_protocol: the protocol used to log in.
+# Acceptable options: ANDROID_PHONE, ANDROID_PAD, ANDROID_WATCH. If meet problem logging in, try switching the protocol.
+login_protocol: "ANDROID_PHONE"
+
+# enabled_groups: the QQ groups you want to enable Phenyl.
+enabled_groups:
+  - 797717041
+  - 958173932
+
+################################
+#   Bungeecord configuration   #
+################################
+
+# server_alias: the alias of your bungee servers.
+# If not set, Phenyl will use the server name.
+server_alias:
+  lobby: "Lobby"
+  survival: "survival"
+  test: "Test"
+
+# enabled_servers: the servers you want to enable message forwarding.
+enabled_servers:
+  - lobby
+  - survival
+  - test
+
+################################
+#   Database configuration     #
+################################
+
+# database: the kind of database you choose to store binding information(and chat messages).
+# Acceptable options: sqlite, mysql, postgresql.
+storage: "sqlite"
+
+# save_message: whether to save messages.
+# If you find out the message database/table to be too large, feel free to delete/drop it.
+save_message: true
+
+# If you chose sqlite above, ignore the following configs.
+host: "127.0.0.1"
+port: 3306
+username: "root"
+password: "123456"
+database: "Phenyl"
+table_prefix: "ph_"
+
+################################
+#    Message configuration     #
+################################
+
+# forward_mode: how Phenyl forward messages.
+# Acceptable options:
+#   sync - Sync all messages between QQ and Server.
+#          %username% variable is *NOT AVAILABLE* for qq-to-server messages under this mode . Use %nickname% instead.
+#   command - Use `/ph say ~` on server and prefix in QQ to send messages.
+#   bind - Only messages from users that bound username and QQ number would be forwarded.
+forward_mode: "bind"
+
+# forward_image: whether to get images from links sent by players and forward to QQ.
+forward_image: true
+
+# get_image_timeout: the time limit when retrieving an image from remote.
+get_image_timeout: 5
+
+# nomessage_with_cross_server: if a nomessaged player receives cross server messages.
+# True to not receive, false to receive.
+nomessage_with_cross_server: true
+
+# new_player_greeting: whether to send a greeting message when a player joins for the first time.
+new_player_greeting: true
+
+# Variables:
+#   %sub_server% - Server where the player who sent the message is at.
+#   %group_id% - The id of the group.
+#   %group_name% - The name of the group.
+#   %username% - Minecraft username.
+#   %nickname% - Nickname or name card if available in QQ group.
+#   %message% - Message content.
+
+# cross_sever_format: in-game cross server message format. Set to "disabled" to disable it.
+# Available variables:
+#   %sub_server%, %username%, %message%
+cross_sever_format: "&7[%sub_server%]%username%:%message%"
+
+# qq_to_server_format: format of QQ message forwarded to server.
+# Use %nickname% instead of %username% if you selected sync mode.
+# Available variables:
+#   %group_id%, %group_id%, %group_name%, %username%, %nickname%, %message%
+qq_to_server_format: "&7[QQ]%username%:%message%"
+
+# server_to_qq_format: format of server chat message forwarded to QQ. Set to "image" to send image messages.
+# Available variables:
+#   %sub_server%, %username%, %message%
+server_to_qq_format: "image"
+
+# online_total_format: get how many players are online.
+# Available variables:
+#   %player_count%
+online_total_format: "Total players: %player_count%"
+
+# online_total_format: get player list in each sub-server.
+# Available variables:
+#   %sub_server%, %username%
+online_list_format: "[%sub_server%]%username%"
+
+# on_join: message sent to QQ when players joined the game. Set to "disabled" to disable it.
+# Add "image:" in front of your format to send image messages.
+# Available variables:
+#   %sub_server%, %username%
+on_join: "image:%username% joined the %sub_server%"
+
+# on_leave: message sent to QQ when players left the game. Set to "disabled" to disable it.
+# Add "image:" in front of your format to send image messages.
+# Available variables:
+#   %username%
+on_leave: "image:%username% left the game"
+
+# on_join: message sent to all sub-servers when players joined the game. Set to "disabled" to disable it.
+# You may use it with Essentials, disabling each sub-server's joining message.
+# Available variables:
+#   %sub_server%, %username%
+on_join_broadcast: "&e%username% joined the %sub_server%"
+
+# on_leave: message sent to all sub-servers when players left the game. Set to "disabled" to disable it.
+# You may use it with Essentials, disabling each sub-server's joining message.
+# Available variables:
+#   %username%
+on_leave_broadcast: "&e%username% left the game"
+
+################################
+#  Image message configuration #
+################################
+
+# crafatar_url: the crafatar url from which Phenyl will get the avatars.
+# In case your server is using custom yggdrasil authentication, fork crafatar and modify it to provide your own avatar service.
+crafatar_url: "https://crafatar.com"
+
+# avatar_size: the size of avatar.
+avatar_size: 40
+
+# username_avatar_margin: the margin between avatar and username.
+username_avatar_margin: 40
+
+# message_min_width: minimum width of the image message.
+# If you find the username not been fully shown, turn this a little bigger.
+message_min_width: 230
+
+# message_max_width: maximum width of the image message.
+message_max_width: 340
+
+# overall_padding: the overall padding.
+# This is the padding surrounding avatar and message.
+overall_padding: 25
+
+# username_offset: how much the username goes down.
+username_offset: 10
+
+# message_padding: how much the message content goes down.
+message_offset: 15
+
+# username_size: font size of the username.
+username_size: 30
+
+# message_size: font size of the message.
+message_size: 30
+
+# font: the font you want to use.
+# Please make sure your device has installed the required font already.
+font: "Sarasa Mono SC"
+
+################################
+#    Binding configuration     #
+################################
+
+# command_prefix: prefix of group messages to be produced as commands.
+command_prefix: "#"
+
+# group_command: command sent in QQ groups to bind.
+bind_command: "bind"
+
+# confirm_command: command sent in QQ groups to confirm binding.
+confirm_command: "confirm"
+
+# online_command: command to get a list of online players.
+online_command: "online"
+
+# status_command: command to show the status of each enabled sub-servers.
+status_command: "status"
+
+# verification: the pattern of generating verification code.
+# If you want to change the length of the code, just change the `6` to other numbers.
+verification: "[0-9]{6}"
+
+# Here lie dragons!
+version: 2

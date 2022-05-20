@@ -37,6 +37,8 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
     private Logger LOGGER;
 
     public final void load() {
+        if (!getDir().exists())
+            getDir().mkdir();
         if (!setupLog4j()) throw new RuntimeException("Failed loading libraries.");
         LOGGER = LogManager.getLogger("PhenylMain");
     }

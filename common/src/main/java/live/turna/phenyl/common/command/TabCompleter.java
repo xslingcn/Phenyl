@@ -27,9 +27,14 @@ public class TabCompleter<P extends AbstractPhenyl, S extends PSender> {
     }
 
     public Iterable<String> onTabComplete() {
-        if (sender.isConsole() || args.length == 0) return null;
+        if (sender.isConsole()) return null;
         List<String> completions = new ArrayList<>();
         switch (args.length) {
+            case 0 -> {
+                Stream.of(ServerCommand.values()).filter(cmd -> sender.hasPermission(cmd.permission))
+                        .forEach(cmd -> completions.add(cmd.prompt));
+                return completions;
+            }
             case 1 -> {
                 Stream.of(ServerCommand.values()).filter(cmd -> sender.hasPermission(cmd.permission))
                         .forEach(cmd -> completions.add(cmd.prompt));
