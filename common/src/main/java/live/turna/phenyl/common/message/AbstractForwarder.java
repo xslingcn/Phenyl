@@ -127,7 +127,7 @@ public abstract class AbstractForwarder<P extends AbstractPhenyl> {
         }).completeOnTimeout(null, Config.get_image_timeout, TimeUnit.SECONDS);
         futureGet.thenApplyAsync((BufferedImage image) -> {
             if (image == null) {
-                receipts.set(new MiraiUtils(phenyl).sendAllGroup(i18n("getImageFail"), referenceReceipts));
+                receipts.set(new MiraiUtils(phenyl).sendAllGroup(i18n("getImageFail", url), referenceReceipts));
                 return false;
             }
             try {
