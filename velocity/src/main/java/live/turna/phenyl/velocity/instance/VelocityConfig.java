@@ -1,17 +1,16 @@
 package live.turna.phenyl.velocity.instance;
 
-import com.google.common.reflect.TypeToken;
 import live.turna.phenyl.common.config.Config;
 import live.turna.phenyl.common.config.ConfigLoader;
 import live.turna.phenyl.common.plugin.AbstractPhenyl;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.HashMap;
 
 import static live.turna.phenyl.common.message.I18n.i18n;
 
@@ -28,6 +27,7 @@ public class VelocityConfig extends Config implements ConfigLoader {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void load() {
         File configFile = new File(phenyl.getDir(), "config.yml");
         if (!configFile.exists()) {
@@ -53,12 +53,7 @@ public class VelocityConfig extends Config implements ConfigLoader {
         user_id = config.getNode("user_id").getString();
         user_pass = config.getNode("user_pass").getString();
         login_protocol = config.getNode("login_protocol").getString();
-        try {
-            enabled_groups = config.getNode("enabled_groups").getList(new TypeToken<>() {
-            });
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
-        }
+        enabled_groups = config.getNode("enabled_groups").getList(l -> Long.valueOf(String.valueOf(l)));
 
         // Database configuration
         storage = config.getNode("storage").getString();
@@ -99,14 +94,14 @@ public class VelocityConfig extends Config implements ConfigLoader {
         message_size = config.getNode("message_size").getInt();
         font = config.getNode("font").getString();
 
-        // Bungee configuration
+        // Velocity configuration
         try {
-            server_alias = config.getNode("server_alias").getValue(new TypeToken<>() {
-            });
-            enabled_servers = config.getNode("enabled_servers").getList(Object::toString);
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
+            server_alias = config.getNode("server_alias").getValue(HashMap.class::cast);
+        } catch (ClassCastException e) {
+            LOGGER.error(i18n("invalidSettings", "server_alias - ") + e.getLocalizedMessage());
+            if (debug) e.printStackTrace();
         }
+        enabled_servers = config.getNode("enabled_servers").getList(Object::toString);
 
         // Binding configuration
         command_prefix = config.getNode("command_prefix").getString();

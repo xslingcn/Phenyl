@@ -28,7 +28,7 @@ enabled_groups:
   - 958173932
 
 ################################
-#   Bungeecord configuration   #
+#     Server configuration     #
 ################################
 
 # server_alias: the alias of your bungee servers.
