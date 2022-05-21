@@ -173,16 +173,16 @@ public class VelocityPhenyl extends AbstractPhenyl {
         HashMap<String, Boolean> serverStatus = new HashMap<>();
         CompletableFuture<HashMap<String, Boolean>> statusFuture = new CompletableFuture<>();
         Config.enabled_servers.forEach(server -> {
-            if (loader.getProxy().getServer(server).isEmpty()) {
+            if (loader.getProxy().getServer(server).isPresent()) {
+                try {
+                    loader.getProxy().getServer(server).get().ping().get();
+                    serverStatus.put(messageUtils.getServerName(server), true);
+                } catch (Exception e) {
+                    serverStatus.put(messageUtils.getServerName(server), false);
+                }
+            } else
                 serverStatus.put(messageUtils.getServerName(server), false);
-                return;
-            }
-            try {
-                loader.getProxy().getServer(server).get().ping().get();
-                serverStatus.put(messageUtils.getServerName(server), true);
-            } catch (Exception e) {
-                serverStatus.put(messageUtils.getServerName(server), false);
-            }
+
             if (serverStatus.size() == Config.enabled_servers.size())
                 statusFuture.complete(serverStatus);
 
