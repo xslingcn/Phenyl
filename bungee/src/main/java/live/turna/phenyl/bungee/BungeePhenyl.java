@@ -33,6 +33,7 @@ public final class BungeePhenyl extends AbstractPhenyl {
     private transient BungeeSenderFactory senderFactory;
     private transient BungeeForwarder forwarder;
     private transient BungeeMessenger messenger;
+    private transient Metrics metrics;
 
     public BungeePhenyl(Plugin loader) {
         this.loader = loader;
@@ -116,7 +117,8 @@ public final class BungeePhenyl extends AbstractPhenyl {
 
     @Override
     protected void initMetrics() {
-        new Metrics(loader, 14309);
+        metrics = new Metrics(loader, 14309);
+        metrics.addCustomChart(new Metrics.SingleLineChart("bound_players", () -> allBoundPlayer.size()));
     }
 
     @Override

@@ -35,6 +35,7 @@ public class VelocityPhenyl extends AbstractPhenyl {
     private transient VelocityMessenger messenger;
     private transient VelocitySenderFactory senderFactory;
     private transient VelocityForwarder forwarder;
+    private transient Metrics metrics;
 
 
     public VelocityPhenyl(PhenylVelocityLoader loader) {
@@ -117,7 +118,8 @@ public class VelocityPhenyl extends AbstractPhenyl {
 
     @Override
     protected void initMetrics() {
-
+        metrics = loader.getMetricsFactory().make(loader, 15252);
+        metrics.addCustomChart(new Metrics.SingleLineChart("bound_players", () -> allBoundPlayer.size()));
     }
 
     @Override

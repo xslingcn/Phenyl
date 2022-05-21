@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginDescription;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import live.turna.phenyl.velocity.Metrics;
 import live.turna.phenyl.velocity.VelocityPhenyl;
 import live.turna.phenyl.velocity.instance.VelocityNativeLogger;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import java.nio.file.Path;
 public class PhenylVelocityLoader {
     private final VelocityPhenyl phenyl = new VelocityPhenyl(this);
     private final VelocityNativeLogger logger;
+    private final Metrics.Factory metricsFactory;
 
     @Inject
     private ProxyServer proxy;
@@ -33,8 +35,9 @@ public class PhenylVelocityLoader {
     private PluginDescription description;
 
     @Inject
-    public PhenylVelocityLoader(Logger logger) {
+    public PhenylVelocityLoader(Logger logger, Metrics.Factory metricsFactory) {
         this.logger = new VelocityNativeLogger(logger);
+        this.metricsFactory = metricsFactory;
     }
 
     public ProxyServer getProxy() {
@@ -51,6 +54,10 @@ public class PhenylVelocityLoader {
 
     public PluginDescription getDescription() {
         return description;
+    }
+
+    public Metrics.Factory getMetricsFactory() {
+        return metricsFactory;
     }
 
     @Subscribe(order = PostOrder.FIRST)
