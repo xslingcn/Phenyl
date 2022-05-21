@@ -81,7 +81,7 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
         loadConfig();
         logging.onEnable();
         i18n.updateLocale(Config.locale);
-        stopListening();
+        stopServerListener();
 
         if (!postConfig()) return false;
         if (!dependencyManager.onEnable()) return false;
@@ -98,16 +98,17 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
 
     public final void disable() {
         storage.shutdown();
-        stopListening();
+        stopServerListener();
         if (mirai != null) mirai.onDisable();
     }
 
     private void initMirai() {
         CompletableFuture.supplyAsync(() -> {
             try {
+                initMiraiListenerManager();
                 mirai = new MiraiHandler(this, Config.user_id, Config.user_pass, Config.login_protocol);
                 mirai.onEnable();
-                startListening();
+                startServerListener();
                 return true;
             } catch (Exception e) {
                 LOGGER.error(e.getLocalizedMessage());
@@ -162,15 +163,17 @@ public abstract class AbstractPhenyl implements PhenylPlugin {
 
     protected abstract void initMessenger();
 
+    protected abstract void initMiraiListenerManager();
+
     protected abstract void loadConfig();
 
     protected abstract boolean postConfig();
 
     protected abstract void registerCommand();
 
-    protected abstract void startListening();
+    protected abstract void startServerListener();
 
-    protected abstract void stopListening();
+    protected abstract void stopServerListener();
 
     protected abstract void initMetrics();
 }

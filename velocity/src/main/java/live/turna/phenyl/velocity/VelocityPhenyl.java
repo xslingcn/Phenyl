@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class VelocityPhenyl extends AbstractPhenyl {
     private final transient PhenylVelocityLoader loader;
-    private final transient MiraiListenerManager miraiListenerManager = new MiraiListenerManager(this);
+    private transient MiraiListenerManager miraiListenerManager;
     private transient VelocityListenerManager velocityListenerManager;
     private transient VelocityConfig velocityConfig;
     private transient VelocityMessenger messenger;
@@ -81,6 +81,11 @@ public class VelocityPhenyl extends AbstractPhenyl {
     }
 
     @Override
+    protected void initMiraiListenerManager() {
+        miraiListenerManager = new MiraiListenerManager(this);
+    }
+
+    @Override
     protected void loadConfig() {
         velocityConfig = new VelocityConfig(this);
         velocityConfig.load();
@@ -100,13 +105,13 @@ public class VelocityPhenyl extends AbstractPhenyl {
     }
 
     @Override
-    protected void startListening() {
+    protected void startServerListener() {
         velocityListenerManager = new VelocityListenerManager(this);
         velocityListenerManager.start();
     }
 
     @Override
-    protected void stopListening() {
+    protected void stopServerListener() {
         velocityListenerManager.end();
     }
 

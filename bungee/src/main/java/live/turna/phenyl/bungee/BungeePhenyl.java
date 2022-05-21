@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class BungeePhenyl extends AbstractPhenyl {
 
     private final transient Plugin loader;
-    private final transient MiraiListenerManager miraiListenerManager = new MiraiListenerManager();
     private final transient BungeeNativeLogger nativeLogger;
+    private transient MiraiListenerManager miraiListenerManager;
     private transient BungeeListenerManager bungeeListenerManager;
     private transient BungeeConfig bungeeConfig;
     private transient BungeeSenderFactory senderFactory;
@@ -83,6 +83,11 @@ public final class BungeePhenyl extends AbstractPhenyl {
     }
 
     @Override
+    protected void initMiraiListenerManager() {
+        miraiListenerManager = new MiraiListenerManager();
+    }
+
+    @Override
     protected void loadConfig() {
         bungeeConfig = new BungeeConfig(this);
         bungeeConfig.load();
@@ -99,13 +104,13 @@ public final class BungeePhenyl extends AbstractPhenyl {
     }
 
     @Override
-    protected void startListening() {
+    protected void startServerListener() {
         bungeeListenerManager = new BungeeListenerManager(this);
         bungeeListenerManager.start();
     }
 
     @Override
-    protected void stopListening() {
+    protected void stopServerListener() {
         bungeeListenerManager.end();
     }
 
