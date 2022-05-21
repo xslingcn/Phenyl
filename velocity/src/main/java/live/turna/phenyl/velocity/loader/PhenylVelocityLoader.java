@@ -6,7 +6,6 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.PluginDescription;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -34,9 +33,6 @@ public class PhenylVelocityLoader {
     private PluginDescription description;
 
     @Inject
-    private PluginContainer pluginContainer;
-
-    @Inject
     public PhenylVelocityLoader(Logger logger) {
         this.logger = new VelocityNativeLogger(logger);
     }
@@ -55,10 +51,6 @@ public class PhenylVelocityLoader {
 
     public PluginDescription getDescription() {
         return description;
-    }
-
-    public PluginContainer getPluginContainer() {
-        return pluginContainer;
     }
 
     @Subscribe(order = PostOrder.FIRST)
