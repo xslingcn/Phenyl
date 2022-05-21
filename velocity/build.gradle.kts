@@ -44,10 +44,9 @@ tasks.jar {
         attributes("Implementation-Title" to "Phenyl")
         attributes("Implementation-Version" to archiveVersion.get())
     }
-//    from(configurations.runtimeClasspath.get().files.filter {
-//        it.name.equals("common-${archiveVersion.get()}.jar")
-//    }.map { zipTree(it) })
-    from(configurations.runtimeClasspath.get().files.map { if (it.isDirectory) it else zipTree(it) })
+    from(configurations.runtimeClasspath.get().files.filter {
+        it.name.equals("common-${archiveVersion.get()}.jar")
+    }.map { zipTree(it) })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveFileName.set("Phenyl-${archiveVersion.get()}-$platform.jar")
     destinationDirectory.set(file(project.rootProject.buildDir.path + "/libs"))
