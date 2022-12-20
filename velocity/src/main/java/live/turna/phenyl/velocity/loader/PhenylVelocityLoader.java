@@ -18,7 +18,7 @@ import java.io.File;
 import java.nio.file.Path;
 
 @Plugin(id = "phenyl", name = "Phenyl", version = "1.1.12",
-        url = "https://github.com/TurnALive/Phenyl", description = "Chat bridge for TurnALive", authors = {"TurnALive"})
+        url = "https://github.com/xslingcn/Phenyl", description = "Easy-to-use Chatbridge", authors = {"xslingcn"})
 public class PhenylVelocityLoader {
     private final VelocityPhenyl phenyl = new VelocityPhenyl(this);
     private final VelocityNativeLogger logger;

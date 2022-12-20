@@ -60,7 +60,7 @@ tasks.jar {
 bungee {
     name = "Phenyl"
     version = version
-    description = "Chat bridge for TurnALive"
+    description = "Easy-to-use Chat bridge"
     main = "live.turna.phenyl.bungee.loader.PhenylBungeeLoader"
-    author = "TurnALive"
+    author = "xslingcn"
 }
